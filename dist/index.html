@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Campsi Admin</title>
+    <link rel="stylesheet" href="style/normalize.css">
+    <link rel="stylesheet" href="style/app.css">
+    <link rel="stylesheet" href="style/components.css">
+</head>
+<body>
+<div id="app" class="loggedin">
+    <div id="project">
+        <div class="wrapper">
+            <div class="logo">
+                <img src="https://campsi.imgix.net/56261291c0e9425a0b9404d8-rykOupXJg.png?w=200&h=200&fit=clamp">
+            </div>
+            <form class="login">
+                <div class="control">
+                    <input type="email" name="email" size="30" placeholder="email">
+                </div>
+                <div class="control">
+                    <input type="password" name="password" size="30" placeholder="password">
+                </div>
+                <div class="submit">
+                    <button>Connexion</button>
+                </div>
+            </form>
+            <nav>
+                <!--<p class="section">Collections</p>
+                <a href="#" class="collection active">Actualités</a>
+                <a href="#" class="collection">Compétitions</a>
+                <a href="#" class="collection">Clients</a>
+                <a href="#" class="collection">Équipes</a>
+                <p class="section">Documents</p>
+                <a href="#" class="document">Contact</a>
+                <a href="#" class="document">Configuration</a>-->
+            </nav>
+        </div>
+        <div class="user">
+            <div class="name">
+                Romain Bessuges-Meusy
+            </div>
+            <button class="logout">Déconnexion</button>
+        </div>
+    </div>
+    <div id="entries">
+        <div class="wrapper">
+            <nav>
+                <!--<a href="#">
+                    <div class="data">
+                        <div data-label="Groupe">Offset Numérique Quadri</div>
+                        <div class="image" data-label="Photo">
+                            <img src="https://campsi.imgix.net/56261291c0e9425a0b9404d8-N1JNnVjzg.jpg?fit=max&h=150&w=150"/>
+                        </div>
+                    </div>
+                    <div class="infos">
+                        <div class="date">26/08/2016 à 12h45</div>
+                        <div class="author">Romain Bessuges</div>
+                    </div>
+                </a>-->
+            </nav>
+        </div>
+    </div>
+    <div id="form">
+        <div class="wrapper">
+
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.1.0.js"
+            integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk="
+            crossorigin="anonymous"></script>
+    <script src="campsi.core.js"></script>
+    <script src="campsi.components.js"></script>
+    <script>
+        var Campsi = require("campsi-core");
+        var form;
+        var Context = function () {
+
+        };
+        Context.prototype.translate = function () {
+            return '*translation'
+        };
+
+        Campsi.create('form', {
+            context: new Context(),
+            options: {fields: [], additionalClasses: ['main']}
+        }, function (comp) {
+            form = comp;
+            comp.attachEvents();
+            $('#form').find('> .wrapper').append(form.render());
+        });
+
+        //        Campsi.wakeUp($("#campsi-form").find(' > .component'), new Context(), function (form) {
+        //            window.FormComponent = form;
+        //            form.bind('change', function () {
+        //                $('#value').text(JSON.stringify(form.value, null, 2))
+        //            });
+        //            $('#value').text(JSON.stringify(form.value, null, 2));
+        //            form.attachEvents();
+        //        });
+
+        $('#project').find('.login').on('submit', function (e) {
+            $('#app').removeClass('login').addClass('loggedin');
+            e.preventDefault();
+            return false;
+        });
+
+        var baseUrl = 'https://www.campsi.io/api/v1/projects/campsi-demo-pizzeria/';
+
+        var currentCollectionId;
+
+
+        $.getJSON(baseUrl, function (json) {
+            var nav = [];
+            json.collections.forEach(function (collection) {
+                nav.push($('<a class="collection">').attr({
+                    href: '#/collections/' + collection.identifier,
+                    'data-id': collection._id
+                }).text(collection.name))
+            });
+            $('#project').find('nav').append(nav)
+        });
+
+        $(window).on('hashchange', load);
+
+        function load() {
+            var parts = window.location.hash.substr(2).split('/');
+            if (parts[0] === 'collections' && parts[1]) {
+                $.getJSON(baseUrl + 'collections/' + parts[1], function (collection) {
+                    $('#project').find('nav a')
+                            .removeClass('active')
+                            .filter('[data-id=' + collection._id + ']')
+                            .addClass('active');
+
+                    form.setOptions(collection, function () {
+                        if (currentCollectionId !== collection._id) {
+                            loadEntries(collection);
+                            currentCollectionId = collection._id;
+                        }
+
+                        if (parts[2]) {
+                            loadEntry(collection, parts[2]);
+                        }
+                    });
+                });
+            }
+        }
+
+        function loadEntry(collection, entryId) {
+            $.getJSON(baseUrl + 'collections/' + collection._id + '/entries/' + entryId, function (entry) {
+                form.setValue(entry.data, function () {
+                    console.info($('#entries').find('nav a'));
+                    $('#entries').find('nav a')
+                            .removeClass('active')
+                            .filter('[data-id=' + entryId + ']')
+                            .addClass('active');
+                });
+            });
+        }
+
+        function loadEntries(currentCollection) {
+            var entries = [];
+            var done = 0;
+
+            function complete() {
+                $('#entries').find('nav').empty().append(entries);
+            }
+
+            $.getJSON(baseUrl + 'collections/' + currentCollection._id + '/entries', function (res) {
+                res.entries.forEach(function (entry, i) {
+                    form.getHtml(entry.data, currentCollection, function (html) {
+                        entries[i] = getEntryHtml(currentCollection._id, entry._id, html);
+                        done++;
+                        if (done === res.entries.length) {
+                            complete();
+                        }
+                    });
+                });
+            });
+        }
+
+        function getEntryHtml(collectionId, entryId, data) {
+            var $a = $('<a>');
+            $a.attr('href', '#/collections/' + collectionId + '/' + entryId);
+            $a.attr('data-id', entryId);
+            $a.append('<div class="data"></div><div class="infos meta"></div>');
+            $a.find('.data').append(data);
+            return $a;
+
+        }
+
+        load();
+    </script>
+</div>
+</body>
+</html>

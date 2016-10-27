@@ -1,0 +1,673 @@
+.component.form_field {
+    padding-top: 1em;
+}
+
+.component.form_field:first-child {
+    padding-top: 0;
+}
+
+.component.form_field.horizontal {
+    flex-wrap: wrap;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+.form_field.horizontal .label {
+    margin-right: 1em;
+}
+.component.form_field:hover {
+    /*outline: 1px solid rgba(255, 0, 0, 0.2);*/
+}
+
+.component.form_field .component.form_field .component.form_field {
+    padding: 0 1em;
+}
+
+
+.newItem, .array_item {
+    border: 1px solid #CCC;
+    box-shadow: 0 2px 4px #EEE;
+    margin-bottom: 1em;
+    padding: 1em;
+}
+
+
+.component.form .label {
+    /*padding: 0.5em 0;*/
+    /*line-height: 1.5em;*/
+}
+
+.component.form .help {
+    font-size: 0.8em;
+    padding: 0.5em;
+}
+
+.component.form .help:empty {
+    display: none;
+}
+
+.component.form .help::before {
+    content: 'i';
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-weight: bold;
+    display: inline-block;
+    padding: 0.2em;
+    background: #1e90ff;
+    border-radius: 5em;
+    width: 1em;
+    height: 1em;
+    line-height: 1.1em;
+    text-align: center;
+    color: #fff;
+    vertical-align: baseline;
+    margin-right: 0.2em;
+}
+
+.component.checkbox input {
+    margin-right: 0.5em;
+}
+
+.component.checkbox_group label {
+    line-height: 1.5em;
+    margin-right: 1em;
+}
+
+.component.uploader {
+    width: 100%;
+}
+
+.component.uploader input[type=submit] {
+    visibility: hidden;
+}
+
+.component.uploader.has-files input[type=submit] {
+    visibility: visible;
+}
+
+.component.uploader .control {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0.5em;
+}
+
+.component.uploader .control input[type=file] {
+    -ms-flex: 1;
+    flex: 1;
+    color: #fff;
+    font-size: 0.9em;
+}
+
+.component.uploader .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    display: none;
+    transition: width 0.1s linear;
+}
+
+.component.date_time input {
+    text-align: right;
+}
+
+.date_datetime input.component.date {
+    width: auto;
+    display: inline;
+}
+
+.date_datetime div.component.date_time {
+    display: inline-block;
+    margin-left: 1em;
+}
+
+.component.number_rating {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.component.number_rating span {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    display: inline-block;
+    height: 1.5em;
+    width: 1.5em;
+    opacity: 0.3;
+    text-align: center;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.component.number_rating span:last-child {
+    margin: 0;
+}
+
+.component.number_rating span.checked {
+    opacity: 1;
+}
+
+.component.number_rating span.hover {
+    color: #274586;
+    opacity: 1;
+}
+
+.component.file,
+.component.file_image {
+    overflow: hidden;
+    position: relative;
+}
+
+.component.file .buttons,
+.component.file_image .buttons {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.component.file .download,
+.component.file_image .download,
+.component.file .info,
+.component.file_image .info {
+    min-width: 3em;
+    margin: 0.5em;
+    margin-left: 0;
+}
+
+.component.file .preview,
+.component.file_image .preview {
+    display: none;
+    position: relative;
+    text-align: center;
+    padding: 1em;
+    background: #fff;
+}
+
+.component.file .preview svg,
+.component.file_image .preview svg {
+    height: 140px;
+    width: 105px;
+}
+
+.component.file .preview:after,
+.component.file_image .preview:after {
+    content: attr(data-filename);
+    color: #fff;
+    position: absolute;
+    text-align: center;
+    top: 55px;
+    width: 100px;
+    height: 70px;
+    vertical-align: middle;
+    left: 50%;
+    margin-left: -50px;
+    display: block;
+    font-size: 0.9em;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+}
+
+.component.file .preview:before,
+.component.file_image .preview:before {
+    content: attr(data-ext);
+    color: rgba(255, 255, 255, 0.6);
+    position: absolute;
+    text-align: center;
+    bottom: 25px;
+    width: 100%;
+    left: 0;
+    display: block;
+    font-size: 1.3em;
+}
+
+.component.file .preview img,
+.component.file_image .preview img {
+    max-width: 100%;
+}
+
+.component.file .meta,
+.component.file_image .meta {
+    position: absolute;
+    top: 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    color: #fff;
+    font-size: 0.8em;
+}
+
+.component.file .meta table,
+.component.file_image .meta table {
+    margin-top: 4em;
+    width: 100%;
+}
+
+.component.file .meta th,
+.component.file_image .meta th,
+.component.file .meta td,
+.component.file_image .meta td {
+    padding: 0 0.5em;
+}
+
+.component.file .meta th,
+.component.file_image .meta th {
+    width: 12em;
+    text-align: left;
+}
+
+.component.file .meta td,
+.component.file_image .meta td {
+    font-family: monospace;
+}
+
+.component.file .has-file .preview,
+.component.file_image .has-file .preview,
+.component.file .has-file .buttons,
+.component.file_image .has-file .buttons {
+    display: block;
+}
+
+.component.file .show-info .meta,
+.component.file_image .show-info .meta {
+    display: block;
+}
+
+.payment_credit-card .new-card {
+    border-radius: 0.5em;
+    padding: 2em 1em;
+    box-shadow: 0 2px 5px #000;
+}
+
+.payment_credit-card .new-card .control {
+    margin-bottom: 0.5em;
+}
+
+.payment_credit-card .new-card label {
+    font-size: 0.9em;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: block;
+}
+
+.payment_credit-card .new-card input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5em;
+    color: #fff;
+    text-shadow: -1px -1px 1px rgba(255, 255, 255, 0.5), 1px 1px 1px rgba(0, 0, 0, 0.5);
+    outline: none;
+}
+
+.payment_credit-card .new-card input:focus {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.payment_credit-card .new-card .line {
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.payment_credit-card .new-card .control.expiration {
+    -ms-flex: 1;
+    flex: 1;
+    text-align: right;
+    padding-right: 2em;
+}
+
+.payment_credit-card .new-card .control.number input {
+    width: 100%;
+}
+
+input.component.text {
+    padding: 2px;
+    width: 100%;
+}
+
+input.component.text::-webkit-input-placeholder {
+    padding-top: 0;
+    font-weight: 400;
+    font-style: italic;
+}
+
+input.component.text::-moz-placeholder {
+    padding-top: 0;
+    font-weight: 400;
+    font-style: italic;
+}
+
+input.component.text:-ms-input-placeholder {
+    padding-top: 0;
+    font-weight: 400;
+    font-style: italic;
+}
+
+input.component.text::placeholder {
+    padding-top: 0;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.component.text_area {
+    position: relative;
+    width: 100%;
+    min-height: 5rem;
+    padding: 0.5em;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.text_rich .toolbar {
+    border-radius: 0.5em 0.5em 0 0;
+    border-bottom: 0;
+    padding: 0.5em;
+}
+
+.text_rich .toolbar button {
+    min-width: 3em;
+    margin-right: 0.5em;
+}
+
+.text_rich .editor {
+    height: 15em;
+    background: #fff;
+    border-top: none;
+}
+
+.campsi_collection-designer_field[data-comp-type="text/rich"] .form_field[data-name="toolbarButtons"] .component.checkbox {
+    display: inline-block;
+    margin-right: 0.5em;
+}
+
+.campsi_collection-designer_field[data-comp-type="text/rich"] .form_field[data-name="toolbarButtons"] .component.checkbox input {
+    width: auto;
+}
+
+.text_code {
+    height: 40em;
+    position: relative;
+    width: 100%;
+    font-size: 10px;
+}
+
+.component.url {
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.component.url input {
+    -ms-flex: 1;
+    flex: 1;
+    font-family: Consolas, Menlo, Monaco, monospace;
+    font-size: 12px;
+}
+
+.tags.component li {
+    display: inline-block;
+    background: #1e90ff;
+    color: #fff;
+    padding: 0.2em 2em 0.2em 0.7em;
+    margin: 0.2em;
+    position: relative;
+    border-radius: 0.2em;
+    overflow: hidden;
+}
+
+.tags.component li a {
+    position: absolute;
+    height: 100%;
+    right: 0;
+    top: 0;
+    width: 1.5em;
+    text-align: center;
+    display: block;
+    line-height: 1.3em;
+    color: #fff;
+    margin-left: 0.5em;
+    font-weight: bolder;
+    text-decoration: none;
+}
+
+.tags.component li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.component.geo_address,
+#entry .component.geo_address {
+    padding: 0.5em;
+}
+
+.component.geo_address .form_field,
+#entry .component.geo_address .form_field {
+    padding: 0.2em;
+    margin: 0;
+}
+
+.component.geo_address .form_field > .label,
+#entry .component.geo_address .form_field > .label {
+    font-size: 1em;
+    padding: 0;
+    padding-top: 0.2em;
+    font-weight: 400;
+}
+
+.component.geo_address .form_field.postal-code,
+#entry .component.geo_address .form_field.postal-code,
+.component.geo_address .form_field.city,
+#entry .component.geo_address .form_field.city {
+    float: left;
+}
+
+.component.geo_address .form_field.postal-code input.component.text,
+#entry .component.geo_address .form_field.postal-code input.component.text,
+.component.geo_address .form_field.city input.component.text,
+#entry .component.geo_address .form_field.city input.component.text {
+    width: auto;
+}
+
+.component.geo_address .form_field.country,
+#entry .component.geo_address .form_field.country,
+.component.geo_address .form_field.region,
+#entry .component.geo_address .form_field.region {
+    clear: left;
+}
+
+.component.select_radios > label {
+    display: block;
+    line-height: 1.5em;
+}
+
+.component.select_radios input {
+    margin-right: 0.5em;
+}
+
+.component.select_radios.inline > label {
+    display: inline-block;
+    margin-right: 1em;
+}
+
+.dropdown-options {
+    margin-top: 0.5em;
+}
+
+.dropdown-options .placeholder {
+    display: none;
+}
+
+.dropdown-options > .label {
+    -ms-flex-item-align: auto;
+    align-self: auto;
+}
+
+.dropdown-options .newItem {
+    background: #f9f9f9;
+    border-radius: 0.3em;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    padding: 0.5em;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 0.5em;
+}
+
+.dropdown-options .newItem .form {
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.dropdown-options .newItem input[type=submit] {
+    display: inline-block;
+    width: auto;
+}
+
+.dropdown-options .newItem .fields {
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.dropdown-options .newItem .fields .form_field {
+    margin-right: 0.5em;
+    padding: 0;
+    margin-left: 0;
+}
+
+.dropdown-options .newItem .fields .form_field[data-name="value"] {
+    width: 6em;
+}
+
+.dropdown-options .newItem .fields .form_field[data-name="label"] {
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.dropdown-options .array_item {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-bottom: 0.4em;
+}
+
+.dropdown-options .array_item .container {
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.dropdown-options .array_item .fields {
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.dropdown-options .array_item .fields .form_field {
+    padding: 0;
+    margin-right: 0.5em;
+    margin-left: 0;
+}
+
+.dropdown-options .array_item .fields .form_field[data-name="value"] {
+    width: 6em;
+}
+
+.dropdown-options .array_item .fields .form_field[data-name="label"] {
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.designer-blocks-components > .control > .array > .items {
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.designer-blocks-components > .control > .array > .items > .array_item > .drag-handle {
+    height: 1.5em;
+    width: 1.5em;
+    text-align: center;
+    font-size: 0.8em;
+    color: #fff;
+    background: url("/images/ui/drag-handle-3.png") no-repeat;
+    cursor: all-scroll;
+    background-size: 100% 100%;
+    transition: opacity 0.2s ease-out;
+    opacity: 0.5;
+}
+
+.designer-blocks-block {
+    position: relative;
+    padding: 0.5em;
+    margin: 0.5em;
+}
+
+.designer-blocks-block > button.remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.component.blocks {
+    text-align: center;
+}
+
+.component.blocks .components {
+    margin-top: 1em;
+    border-radius: 0.5em;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.component.blocks .components button {
+    margin: 0;
+    margin-left: -1px;
+    border-radius: 0;
+}
+
+.blocks_block {
+    position: relative;
+    padding: 1.5em 0.5em 0.5em 0.5em;
+    border-bottom: none;
+}
+
+.blocks_block span.remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none;
+    padding: 0 0.5em;
+    cursor: pointer;
+}
+
+.blocks_block:hover span.remove {
+    display: block;
+}
+
+.blocks_block span.role {
+    position: absolute;
+    text-transform: uppercase;
+    font-size: 0.7em;
+    padding-left: 0.5em;
+    display: block;
+    top: 0;
+    left: 0;
+    cursor: move;
+}
+
+#value {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 20em;
+    padding: 1em;
+    background: #fff;
+    display: none;
+}
