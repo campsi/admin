@@ -2,8 +2,14 @@ import Api from "./Api";
 import { Component, createContext } from "react";
 import AdminMenu from "./components/AdminMenu/AdminMenu";
 import Service from "./components/Service/Service";
-import { AppStyle, MainSidebar } from "./components/Elements";
+import {
+  AppStyle,
+  MainSidebar,
+  NotificationCenter,
+} from "./components/Elements";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { v4 } from "uuid";
+import Notification from "./components/Notification/Notification";
 
 export const AppContext = createContext({ service: new Api(), api: null });
 
@@ -28,7 +34,44 @@ class App extends Component {
     services: {},
     accessToken,
     api: new Api({ apiUrl: process.env.REACT_APP_API_URL, accessToken }),
-    jobs: [],
+    notifications: [],
+    /**
+     *
+     * @param notification
+     * @returns {string} the id of the notification
+     */
+    notify: (notification) => {
+      const id = v4();
+      this.setState({
+        notifications: this.state.notifications.concat([
+          { ...notification, id, createdAt: new Date() },
+        ]),
+      });
+      return () => {
+        this.state.removeNotification(id);
+      };
+    },
+    removeNotification: (id, immediately = false) => {
+      const notification = this.state.notifications.find((n) => n.id === id);
+      if (!notification) {
+        return;
+      }
+
+      const minimumTime = 1000;
+      const now = new Date();
+      const timeLeft = minimumTime - (now - notification.createdAt);
+      if(timeLeft > 0 && !immediately){
+        console.info('too short, removing later');
+        setTimeout(() => {
+          this.state.removeNotification(id, true);
+        }, timeLeft);
+        return;
+      }
+
+      this.setState({
+        notifications: this.state.notifications.filter((n) => n.id !== id),
+      });
+    },
     /**
      * Set the accessToken in the local storage and set it for the API as well
      * We keep it in here to make check if the user is authenticated or not,
@@ -67,6 +110,17 @@ class App extends Component {
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           <AppStyle>
+            <NotificationCenter>
+              {this.state.notifications.map((notification) => (
+                <Notification
+                  key={notification.id}
+                  {...notification}
+                  onDiscard={() =>
+                    this.state.removeNotification(notification.id, true)
+                  }
+                />
+              ))}
+            </NotificationCenter>
             {this.state.services && (
               <>
                 <MainSidebar>

@@ -16,20 +16,23 @@ class AuthService extends Component {
   }
 
   async fetchMe() {
-    const { api, service } = this.props;
+    const { api, service, notify } = this.props;
+    const discardNotification = notify({ title: "Fetching user details" });
     const response = await api.client.get(`${service.name}/me`);
-    this.setState({ me: response.data });
+    this.setState({ me: response.data }, discardNotification);
   }
 
   async fetchProviders() {
-    const { api, service } = this.props;
+    const { api, service, notify } = this.props;
+    const discardNotification = notify({ title: "Fetching Providers" });
     const response = await api.client.get(`${service.name}/providers`);
     this.setState(
       {
         providers: response.data,
         hasLocalProvider:
           response.data.map((p) => p.name).indexOf("local") !== -1,
-      }
+      },
+      discardNotification
     );
   }
 

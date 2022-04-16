@@ -1,8 +1,7 @@
 import { Component } from "react";
 import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
-import {Link} from "react-router-dom";
-
+import { Link } from "react-router-dom";
 
 class ResourceListing extends Component {
   state = {
@@ -10,36 +9,40 @@ class ResourceListing extends Component {
     page: 1,
     items: [],
     totalCount: 0,
-    lastPage: 1
+    lastPage: 1,
   };
   componentDidMount() {
     this.fetchData();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if(prevProps.params !== this.props.params){
+    if (prevProps.params.resourceName !== this.props.params.resourceName) {
       this.fetchData();
     }
   }
 
   async fetchData() {
-    const {api, service} = this.props;
-    const {resourceName} = this.props.params;
-    const {perPage, page} = this.state;
+    const { api, service, notify, removeNotification } = this.props;
+    const { resourceName } = this.props.params;
+    const { perPage, page } = this.state;
+    const discardNotification = notify({ title: "Fetching Documents" });
     const response = await api.client.get(
       `/${service.name}/${resourceName}?perPage=${perPage}&page=${page}`
     );
-    this.setState({
-      items: response.data,
-      isFetching: false,
-      lastPage: Number(response.headers["x-last-page"]),
-      totalCount: Number(response.headers["x-total-count"]),
-    });
+    this.setState(
+      {
+        items: response.data,
+        isFetching: false,
+        lastPage: Number(response.headers["x-last-page"]),
+        totalCount: Number(response.headers["x-total-count"]),
+      },
+      discardNotification
+    );
   }
 
   render() {
     const { service } = this.props;
-    const {resourceName} = this.props.params;
+    const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
     const properties = Object.keys(resource.schema.properties || {}).map(
       (prop) => {
@@ -52,13 +55,11 @@ class ResourceListing extends Component {
         <code>
           /{service.name}/{resourceName}
         </code>
-        <div>
-          Found {this.state.totalCount} elements
-        </div>
+        <div>Found {this.state.totalCount} elements</div>
         <table>
           <thead>
             <tr>
-              <th/>
+              <th />
               <th>ID</th>
               <th>Created At</th>
               <th>Created By</th>
@@ -74,10 +75,15 @@ class ResourceListing extends Component {
           <tbody>
             {this.state.items.map((item) => (
               <tr key={item.id}>
-                <td><input type="checkbox"/></td>
+                <td>
+                  <input type="checkbox" />
+                </td>
                 <td title={item.id}>
-                  <Link to={`/services/${service.name}/resources/${resourceName}/${item.id}`} key={item.id}>
-                  {item.id.substring(20)}
+                  <Link
+                    to={`/services/${service.name}/resources/${resourceName}/${item.id}`}
+                    key={item.id}
+                  >
+                    {item.id.substring(20)}
                   </Link>
                 </td>
                 <td>{new Date(item.createdAt).toLocaleString()}</td>
