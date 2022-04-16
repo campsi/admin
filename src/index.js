@@ -1,14 +1,17 @@
-var $ = require('jquery');
-var page = require('page');
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
-// fetch project name and icon
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
 
-// login & get access token
-
-// list collections (entities ?)
-
-// routing
-
-$.getJSON('https://www.campsi.io/api/v1/projects/afp/', function (json) {
-
-});
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
