@@ -7,6 +7,10 @@ export const MainSidebar = styled.aside`
 
 export const AppStyle = styled.div`
   display: flex;
+  
+  main {
+    padding: 30px;
+  }
 `
 
 export const NotificationCenter = styled.div`

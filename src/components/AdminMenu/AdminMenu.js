@@ -1,37 +1,59 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { Menu, Layout } from "antd";
+import {
+  CloudOutlined,
+  ContainerOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
+import { useState } from "react";
 
 export default function AdminMenu({ services }) {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div>
-      <h2>Services</h2>
-      <ul>
+    <Layout.Sider
+      collapsible
+      collapsed={collapsed}
+      onCollapse={() => setCollapsed(!collapsed)}
+    >
+      <Menu
+        mode="inline"
+        theme="dark"
+        defaultSelectedKeys={["1"]}
+        defaultOpenKeys={["sub1"]}
+      >
         {Object.keys(services).map((serviceName) => {
           const service = services[serviceName];
-          return (
-            <li key={serviceName}>
-              <Link to={`/services/${serviceName}`}>
-                {serviceName} - {service.class}
-              </Link>
-              {["DocsService", "VersionedDocsService"].includes(
-                service.class
-              ) && (
-                <ul>
+          switch (service.class) {
+            case "DocsService":
+            case "VersionedDocsService":
+              return (
+                <Menu.SubMenu
+                  title={service.title || serviceName}
+                  key={`subMenu/${serviceName}`}
+                  icon={<ContainerOutlined />}
+                >
                   {Object.keys(service.resources).map((resourceName) => {
                     const resource = service.resources[resourceName];
+                    const link = `/services/${serviceName}/resources/${resourceName}`;
                     return (
-                      <li key={resourceName}>
-                        <Link to={`/services/${serviceName}/resources/${resourceName}`}>
-                          {resourceName} - {resource.label} - {resource.class}
-                        </Link>
-                      </li>
+                      <Menu.Item key={link} icon={<UnorderedListOutlined />}>
+                        <Link to={link}>{resource.label}</Link>
+                      </Menu.Item>
                     );
                   })}
-                </ul>
-              )}
-            </li>
-          );
+                </Menu.SubMenu>
+              );
+            default:
+              const link = `/services/${serviceName}`;
+              return (
+                <Menu.Item key={link} icon={<CloudOutlined />}>
+                  <Link to={link}>{service.title || serviceName}</Link>
+                </Menu.Item>
+              );
+          }
         })}
-      </ul>
-    </div>
+      </Menu>
+    </Layout.Sider>
   );
 }

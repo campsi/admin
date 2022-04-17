@@ -17,17 +17,7 @@ function Service(props) {
   }
   service.name = serviceName;
   const ServiceComponent = ServiceComponents[service.class];
-  return (
-    <div>
-      <h1>
-        <label>Service name</label> <code>/{service.name}</code>
-      </h1>
-      <h2>
-        <label>Class</label> {service.class}
-      </h2>
-      {ServiceComponent && <ServiceComponent service={service}/>}
-    </div>
-  );
+  return ServiceComponent ? <ServiceComponent service={service}/> : null;
 }
 
 export default Service;

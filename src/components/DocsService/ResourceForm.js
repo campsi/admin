@@ -1,30 +1,39 @@
 import { Component } from "react";
 import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
-import Form from "@rjsf/core";
-
+import Form from "@rjsf/antd";
+import { Layout, Radio, Typography } from "antd";
+const { Title } = Typography;
 class ResourceForm extends Component {
   state = {
-    fetching: {
-      users: false,
-      data: false,
-    },
-    data: {},
+    selectedState: undefined,
+    mode: "edit",
   };
 
   componentDidMount() {
-    this.fetchData();
+    if (this.props.params.id !== "new") {
+      this.fetchData();
+    } else {
+      this.setState({
+        mode: "create",
+        doc: {},
+      });
+    }
   }
 
   async fetchData() {
-    const { api, service, params } = this.props;
+    const { api, service, params, notify } = this.props;
     const { resourceName, id } = params;
+    const discardNotification = notify({ title: "Fetching Document" });
     const response = await api.client.get(
       `${service.name}/${resourceName}/${id}`
     );
-    this.setState({
-      doc: response.data,
-    });
+    this.setState(
+      {
+        doc: response.data,
+      },
+      discardNotification
+    );
   }
 
   async patchItem(patch) {}
@@ -46,8 +55,8 @@ class ResourceForm extends Component {
     }
 
     return (
-      <div>
-        <h1>Resource form</h1>
+      <Layout style={{ padding: 30 }}>
+        <Title>Resource form</Title>
 
         <table>
           <tbody>
@@ -66,18 +75,26 @@ class ResourceForm extends Component {
           </tbody>
         </table>
         <div>
-          {Object.keys(resourceClass.states).map((state) => {
-            return (
-              <button key={state}>
-                {state} {state === selectedState ? "*" : ""}
-              </button>
-            );
-          })}
+          <Radio.Group
+            value={selectedState}
+            onChange={(event) => {
+              this.setState({ selectedState: event.target.value });
+            }}
+            style={{ marginBottom: 16 }}
+          >
+            {Object.keys(resourceClass.states).map((state) => {
+              return (
+                <Radio.Button key={state} value={state}>
+                  {state}
+                </Radio.Button>
+              );
+            })}
+          </Radio.Group>
         </div>
-        <div>
+        <div className="site-layout-background main-page-content">
           <Form schema={resource.schema} formData={doc.data} />
         </div>
-      </div>
+      </Layout>
     );
   }
 }

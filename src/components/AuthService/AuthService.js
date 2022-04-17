@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { withAppContext } from "../../App";
+import { Layout } from "antd";
 
 class AuthService extends Component {
   state = {
@@ -10,7 +11,7 @@ class AuthService extends Component {
 
   componentDidMount() {
     this.fetchProviders();
-    if (this.props.accessToken) {
+    if (this.props.authenticated) {
       this.fetchMe();
     }
   }
@@ -40,7 +41,7 @@ class AuthService extends Component {
     const { api, service, setAccessToken, revokeAccessToken } = this.props;
     const { me } = this.state;
     return (
-      <div>
+      <Layout.Content className="site-layout-background main-page-content">
         <h1>Auth</h1>
         {me && (
           <div>
@@ -140,7 +141,7 @@ class AuthService extends Component {
             </form>
           </div>
         )}
-      </div>
+      </Layout.Content>
     );
   }
 }
