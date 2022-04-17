@@ -13,6 +13,7 @@ export default function AdminMenu({ services }) {
   return (
     <Layout.Sider
       collapsible
+      width={250}
       collapsed={collapsed}
       onCollapse={() => setCollapsed(!collapsed)}
     >
@@ -21,7 +22,7 @@ export default function AdminMenu({ services }) {
         theme="dark"
         defaultSelectedKeys={["1"]}
         defaultOpenKeys={["sub1"]}
-        style={{height: '100%'}}
+        style={{minHeight: '100%'}}
       >
         {Object.keys(services).map((serviceName) => {
           const service = services[serviceName];

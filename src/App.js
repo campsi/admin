@@ -76,21 +76,19 @@ class App extends Component {
     return (
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
-          <Layout>
-            {this.state.services && (
+          {this.state.services && (
+            <Layout hasSider style={{minHeight: '100vh'}}>
+              <AdminMenu services={this.state.services} />
               <Layout>
-                <AdminMenu services={this.state.services} />
-                <Layout>
-                  <Routes>
-                    <Route
-                      path="/services/:serviceName/*"
-                      element={<Service services={services} />}
-                    />
-                  </Routes>
-                </Layout>
+                <Routes>
+                  <Route
+                    path="/services/:serviceName/*"
+                    element={<Service services={services} />}
+                  />
+                </Routes>
               </Layout>
-            )}
-          </Layout>
+            </Layout>
+          )}
         </AppContext.Provider>
       </BrowserRouter>
     );
