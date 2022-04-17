@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { withAppContext } from "../../App";
-import { Layout } from "antd";
+import { Layout, Form, Typography, Button, Input, Card, Space } from "antd";
+const { Title } = Typography;
 
 class AuthService extends Component {
   state = {
@@ -37,12 +38,48 @@ class AuthService extends Component {
     );
   }
 
+  async login(event) {
+    const { api, service, setAccessToken } = this.props;
+
+    event.preventDefault();
+    const email = event.target.querySelector("input[type=email]").value;
+    const password = event.target.querySelector("input[type=password]").value;
+    const response = await api.client.post(`${service.name}/local/signin`, {
+      username: email,
+      email,
+      password,
+      mode: "signin",
+    });
+    if (response.data?.token) {
+      setAccessToken(response.data?.token);
+      await this.fetchMe();
+    }
+  }
+
+  async register(event) {
+    const { api, service, setAccessToken } = this.props;
+
+    event.preventDefault();
+    const email = event.target.querySelector("input[type=email]").value;
+    const password = event.target.querySelector("input[type=password]").value;
+    const response = await api.client.post(`${service.name}/local/signup`, {
+      username: email,
+      displayName: email,
+      email,
+      password,
+    });
+
+    if (response.data?.token) {
+      setAccessToken(response.data?.token);
+      await this.fetchMe();
+    }
+  }
   render() {
-    const { api, service, setAccessToken, revokeAccessToken } = this.props;
+    const { api, service, revokeAccessToken } = this.props;
     const { me } = this.state;
     return (
-      <Layout.Content className="site-layout-background main-page-content">
-        <h1>Auth</h1>
+      <Layout.Content className="main-page-content">
+        <Title>Auth</Title>
         {me && (
           <div>
             <h2>Me</h2>
@@ -50,97 +87,55 @@ class AuthService extends Component {
             <textarea defaultValue={JSON.stringify(me, null, 2)} />
           </div>
         )}
-        <h2>Providers</h2>
-        {this.state.providers
-          .filter((p) => p.name !== "local")
-          .map((provider) => (
-            <div key={provider.name}>
-              <button
-                onClick={() => {
-                  window.location.href = `${api.client.defaults.baseURL}/${service.name}/${provider.name}`;
-                }}
-              >
-                {provider.name}
-              </button>
-            </div>
-          ))}
-        {this.state.hasLocalProvider && (
-          <div>
-            <h2>Local</h2>
-            <form
-              onSubmit={async (event) => {
-                event.preventDefault();
-                const email =
-                  event.target.querySelector("input[type=email]").value;
-                const password = event.target.querySelector(
-                  "input[type=password]"
-                ).value;
-                const response = await api.client.post(
-                  `${service.name}/local/signin`,
-                  {
-                    username: email,
-                    email,
-                    password,
-                    mode: "signin",
-                  }
-                );
-                if (response.data?.token) {
-                  setAccessToken(response.data?.token);
-                  this.fetchMe();
-                }
-              }}
-            >
-              <h3>Sign in</h3>
-              <div>
-                <label>Email</label>
-                <input
-                  type="email"
-                  defaultValue="romainbessuges+admin@gmail.com"
-                />
-              </div>
-              <div>
-                <label>Password</label>
-                <input type="password" defaultValue="test" />
-              </div>
-              <div>
-                <button>Log in</button>
-              </div>
-            </form>
-            <form
-              onSubmit={async (event) => {
-                event.preventDefault();
-                const email =
-                  event.target.querySelector("input[type=email]").value;
-                const password = event.target.querySelector(
-                  "input[type=password]"
-                ).value;
-                const response = await api.client.post(
-                  `${service.name}/local/signup`,
-                  {
-                    username: email,
-                    displayName: email,
-                    email,
-                    password,
-                  }
-                );
-                console.info(response);
-              }}
-            >
-              <h3>Signup</h3>
-              <div>
-                <label>Email</label>
-                <input type="email" />
-              </div>
-              <div>
-                <label>Password</label>
-                <input type="password" />
-              </div>
-              <div>
-                <button>Sign up</button>
-              </div>
-            </form>
-          </div>
-        )}
+        <Space direction="vertical" size="middle" style={{ display: "flex" }}>
+          <Card title="Identify providers">
+            <Button.Group>
+              {this.state.providers
+                .filter((p) => p.name !== "local")
+                .map((provider) => (
+                  <Button
+                    key={provider.name}
+                    onClick={() => {
+                      window.location.href = `${api.client.defaults.baseURL}/${service.name}/${provider.name}`;
+                    }}
+                  >
+                    {provider.name}
+                  </Button>
+                ))}
+            </Button.Group>
+          </Card>
+          {this.state.hasLocalProvider && (
+            <>
+              <Card title="Log in">
+                <Form onSubmit={(event) => this.login(event)}>
+                  <Form.Item label="Email">
+                    <Input
+                      type="email"
+                      defaultValue="romainbessuges+admin@gmail.com"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Password">
+                    <Input type="password" defaultValue="test" />
+                  </Form.Item>
+                  <Button>Log in</Button>
+                </Form>
+              </Card>
+              <Card title="Create Account">
+                <Form
+                  onSubmit={(event) => this.register(event)}
+                >
+                  <Form.Item label="Email">
+                    <Input type="email" />
+                  </Form.Item>
+                  <Form.Item label="Password">
+                    <Input type="password" />
+                  </Form.Item>
+                  <Button>Sign up</Button>
+                </Form>
+              </Card>
+            </>
+          )}
+        </Space>
       </Layout.Content>
     );
   }
