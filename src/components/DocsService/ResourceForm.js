@@ -22,18 +22,14 @@ class ResourceForm extends Component {
   }
 
   async fetchData() {
-    const { api, service, params, notify } = this.props;
+    const { api, service, params } = this.props;
     const { resourceName, id } = params;
-    const discardNotification = notify({ title: "Fetching Document" });
     const response = await api.client.get(
       `${service.name}/${resourceName}/${id}`
     );
-    this.setState(
-      {
-        doc: response.data,
-      },
-      discardNotification
-    );
+    this.setState({
+      doc: response.data,
+    });
   }
 
   async patchItem(patch) {}

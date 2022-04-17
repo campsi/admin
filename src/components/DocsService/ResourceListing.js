@@ -3,7 +3,7 @@ import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import { Link } from "react-router-dom";
 import { CheckOutlined } from "@ant-design/icons";
-import { Layout, Typography, Table } from "antd";
+import { Layout, Typography, Table, notification } from "antd";
 const { Title } = Typography;
 
 class ResourceListing extends Component {
@@ -31,7 +31,7 @@ class ResourceListing extends Component {
   }
 
   async fetchData() {
-    const { api, service, notify, authenticated } = this.props;
+    const { api, service, authenticated } = this.props;
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
@@ -47,33 +47,29 @@ class ResourceListing extends Component {
       ];
     if (!allowedMethods) {
       if (authenticated) {
-        notify({
-          title: "Resource is not available",
-          message: "This resource cannot be fetched when logged in",
+        notification.open({
+          message: "Resource is not available",
+          description: "This resource cannot be fetched when logged in",
         });
       } else {
-        notify({
-          title: "Resource is not public",
-          message:
+        notification.open({
+          message: "Resource is not public",
+          description:
             "This resource cannot be fetched anonymously, please log in first.",
         });
       }
       return;
     }
 
-    const discardNotification = notify({ title: "Fetching Documents" });
     const response = await api.client.get(
       `/${service.name}/${resourceName}?perPage=${perPage}&page=${page}`
     );
-    this.setState(
-      {
-        items: response.data,
-        isFetching: false,
-        lastPage: Number(response.headers["x-last-page"]),
-        totalCount: Number(response.headers["x-total-count"]),
-      },
-      discardNotification
-    );
+    this.setState({
+      items: response.data,
+      isFetching: false,
+      lastPage: Number(response.headers["x-last-page"]),
+      totalCount: Number(response.headers["x-total-count"]),
+    });
   }
 
   render() {

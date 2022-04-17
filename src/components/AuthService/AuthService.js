@@ -18,24 +18,19 @@ class AuthService extends Component {
   }
 
   async fetchMe() {
-    const { api, service, notify } = this.props;
-    const discardNotification = notify({ title: "Fetching user details" });
+    const { api, service } = this.props;
     const response = await api.client.get(`${service.name}/me`);
-    this.setState({ me: response.data }, discardNotification);
+    this.setState({ me: response.data });
   }
 
   async fetchProviders() {
-    const { api, service, notify } = this.props;
-    const discardNotification = notify({ title: "Fetching Providers" });
+    const { api, service } = this.props;
     const response = await api.client.get(`${service.name}/providers`);
-    this.setState(
-      {
-        providers: response.data,
-        hasLocalProvider:
-          response.data.map((p) => p.name).indexOf("local") !== -1,
-      },
-      discardNotification
-    );
+    this.setState({
+      providers: response.data,
+      hasLocalProvider:
+        response.data.map((p) => p.name).indexOf("local") !== -1,
+    });
   }
 
   async login(event) {
@@ -121,9 +116,7 @@ class AuthService extends Component {
                 </Form>
               </Card>
               <Card title="Create Account">
-                <Form
-                  onSubmit={(event) => this.register(event)}
-                >
+                <Form onSubmit={(event) => this.register(event)}>
                   <Form.Item label="Email">
                     <Input type="email" />
                   </Form.Item>
@@ -142,4 +135,3 @@ class AuthService extends Component {
 }
 
 export default withAppContext(AuthService);
-//export default AuthService;

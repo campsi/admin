@@ -3,16 +3,10 @@ import Api from "./Api";
 import { Component, createContext } from "react";
 import AdminMenu from "./components/AdminMenu/AdminMenu";
 import Service from "./components/Service/Service";
-import {
-  NotificationCenter,
-} from "./components/Elements";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { v4 } from "uuid";
-import Notification from "./components/Notification/Notification";
-import 'antd/dist/antd.min.css';
-import {Layout} from "antd";
+import "antd/dist/antd.min.css";
+import { Layout } from "antd";
 
-const NOTIFICATION_TIMEOUT = Number(process.env.REACT_APP_NOTIFICATION_TIMEOUT) || 5000;
 export const AppContext = createContext({ service: new Api(), api: null });
 
 export function withAppContext(Component) {
@@ -31,16 +25,6 @@ withAppContext.propTypes = {
   services: PropTypes.object,
   authenticated: PropTypes.bool,
   api: PropTypes.instanceOf(Api),
-  notifications: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string,
-      message: PropTypes.string,
-      id: PropTypes.string,
-      createdAt: PropTypes.date,
-    })
-  ),
-  notify: PropTypes.func,
-  removeNotification: PropTypes.func,
   setAccessToken: PropTypes.func,
   revokeAccessToken: PropTypes.func,
 };
@@ -55,49 +39,6 @@ class App extends Component {
     services: {},
     authenticated: accessToken !== null,
     api: new Api({ apiUrl: process.env.REACT_APP_API_URL, accessToken }),
-    notifications: [],
-    /**
-     *
-     * @param notification
-     * @returns {string} the id of the notification
-     */
-    notify: (notification) => {
-      const id = v4();
-      this.setState({
-        notifications: this.state.notifications.concat([
-          { ...notification, id, createdAt: new Date() },
-        ]),
-      });
-      setTimeout(
-        () => {
-          this.state.removeNotification(id)
-        },
-        NOTIFICATION_TIMEOUT
-      );
-      return () => {
-        this.state.removeNotification(id);
-      };
-    },
-    removeNotification: (id, immediately = false) => {
-      const notification = this.state.notifications.find((n) => n.id === id);
-      if (!notification) {
-        return;
-      }
-
-      const minimumTime = 1000;
-      const now = new Date();
-      const timeLeft = minimumTime - (now - notification.createdAt);
-      if (timeLeft > 0 && !immediately) {
-        setTimeout(() => {
-          this.state.removeNotification(id, true);
-        }, timeLeft);
-        return;
-      }
-
-      this.setState({
-        notifications: this.state.notifications.filter((n) => n.id !== id),
-      });
-    },
     /**
      * Set the accessToken in the local storage and set it for the API as well
      * We keep it in here to make check if the user is authenticated or not,
@@ -134,22 +75,11 @@ class App extends Component {
     const { services } = this.state;
     return (
       <BrowserRouter>
-        <NotificationCenter>
-          {this.state.notifications.map((notification) => (
-            <Notification
-              key={notification.id}
-              {...notification}
-              onDiscard={() =>
-                this.state.removeNotification(notification.id, true)
-              }
-            />
-          ))}
-        </NotificationCenter>
         <AppContext.Provider value={this.state}>
           <Layout>
             {this.state.services && (
               <Layout>
-                  <AdminMenu services={this.state.services} />
+                <AdminMenu services={this.state.services} />
                 <Layout>
                   <Routes>
                     <Route
