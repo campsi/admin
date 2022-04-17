@@ -6,6 +6,7 @@ import Service from "./components/Service/Service";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "antd/dist/antd.min.css";
 import { Layout } from "antd";
+import Playground from "./components/Playground/Playground";
 
 export const AppContext = createContext({ service: new Api(), api: null });
 
@@ -18,16 +19,15 @@ export function withAppContext(Component) {
     );
   }
   WrappedComponent.displayName = `withAppContext(${Component.name})`;
+  WrappedComponent.propTypes = {
+    services: PropTypes.object,
+    authenticated: PropTypes.bool,
+    api: PropTypes.instanceOf(Api),
+    setAccessToken: PropTypes.func,
+    revokeAccessToken: PropTypes.func,
+  };
   return WrappedComponent;
 }
-
-withAppContext.propTypes = {
-  services: PropTypes.object,
-  authenticated: PropTypes.bool,
-  api: PropTypes.instanceOf(Api),
-  setAccessToken: PropTypes.func,
-  revokeAccessToken: PropTypes.func,
-};
 
 const accessToken = localStorage ? localStorage.getItem("access_token") : null;
 
@@ -77,7 +77,7 @@ class App extends Component {
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           {this.state.services && (
-            <Layout hasSider style={{minHeight: '100vh'}}>
+            <Layout hasSider style={{ minHeight: "100vh" }}>
               <AdminMenu services={this.state.services} />
               <Layout>
                 <Routes>
@@ -85,6 +85,7 @@ class App extends Component {
                     path="/services/:serviceName/*"
                     element={<Service services={services} />}
                   />
+                  <Route path="/playground" element={<Playground />} />
                 </Routes>
               </Layout>
             </Layout>

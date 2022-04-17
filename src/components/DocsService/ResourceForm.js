@@ -3,6 +3,8 @@ import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import Form from "@rjsf/antd";
 import { Layout, Radio, Typography } from "antd";
+import LocalizedText from "../LocalizedText/LocalizedText";
+import MatchString from "../MatchString/MatchString";
 const { Title } = Typography;
 class ResourceForm extends Component {
   state = {
@@ -38,7 +40,30 @@ class ResourceForm extends Component {
 
   async updateItem(newValue) {}
 
+  getUISchema() {
+    const { service, params } = this.props;
+    const { resourceName } = params;
+    const resource = service.resources[resourceName];
+    const result = {};
+    const parseSchema = (schema, uiSchema) => {
+      console.info(schema);
+      if (schema.isLocalizedString) {
+        uiSchema["ui:field"] = LocalizedText;
+      } else if (schema.isMatchString) {
+        uiSchema["ui:field"] = MatchString;
+      } else if (schema.properties) {
+        Object.keys(schema.properties).forEach((propertyName) => {
+          uiSchema[propertyName] = {};
+          parseSchema(schema.properties[propertyName], uiSchema[propertyName]);
+        });
+      }
+    };
+    parseSchema(resource.schema, result);
+    return result;
+  }
+
   render() {
+    console.info(this.getUISchema());
     const { service, params } = this.props;
     const { resourceName } = params;
     const resource = service.resources[resourceName];
@@ -53,7 +78,7 @@ class ResourceForm extends Component {
     return (
       <Layout style={{ padding: 30 }}>
         <Title>Resource form</Title>
-
+        {/* TODO Replace with antd Definitions */}
         <table>
           <tbody>
             <tr>
@@ -88,7 +113,11 @@ class ResourceForm extends Component {
           </Radio.Group>
         </div>
         <div className="site-layout-background main-page-content">
-          <Form schema={resource.schema} formData={doc.data} />
+          <Form
+            schema={resource.schema}
+            formData={doc.data}
+            uiSchema={this.getUISchema()}
+          />
         </div>
       </Layout>
     );
