@@ -9,9 +9,8 @@ import {
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { v4 } from "uuid";
 import Notification from "./components/Notification/Notification";
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.min.css';
 import {Layout} from "antd";
-const { Header } = Layout;
 
 const NOTIFICATION_TIMEOUT = Number(process.env.REACT_APP_NOTIFICATION_TIMEOUT) || 5000;
 export const AppContext = createContext({ service: new Api(), api: null });
@@ -148,9 +147,6 @@ class App extends Component {
         </NotificationCenter>
         <AppContext.Provider value={this.state}>
           <Layout>
-            <Header>
-              Campsi Admin
-            </Header>
             {this.state.services && (
               <Layout>
                   <AdminMenu services={this.state.services} />

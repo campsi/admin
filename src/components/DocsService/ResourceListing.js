@@ -160,7 +160,7 @@ class ResourceListing extends Component {
           <Table
             columns={columns}
             dataSource={this.state.items.map((i) => {
-              return { id: i.id, createdAt: i.createdAt, ...i.data };
+              return { id: i.id, createdAt: i.createdAt, ...i.data, key: i.id };
             })}
             scroll={{ x: 1300 }}
             current={this.state.page}
