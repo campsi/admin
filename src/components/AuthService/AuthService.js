@@ -11,10 +11,10 @@ class AuthService extends Component {
     hasLocalProvider: false,
   };
 
-  componentDidMount() {
-    this.fetchProviders();
+  async componentDidMount() {
+    await this.fetchProviders();
     if (this.props.authenticated) {
-      this.fetchMe();
+      await this.fetchMe();
     }
   }
 
@@ -72,11 +72,12 @@ class AuthService extends Component {
     return (
       <Layout.Content className="main-page-content">
         <Title>Auth</Title>
-        <Space direction="vertical" style={{width: '100%'}}>
+        <Space direction="vertical" style={{ width: "100%" }}>
           <Card title="Me">
             <Form
-              onFinish={(values) => {
+              onFinish={async (values) => {
                 setAccessToken(values.accessToken);
+                await this.fetchMe();
               }}
             >
               <Form.Item
@@ -94,7 +95,14 @@ class AuthService extends Component {
             </Form>
             {me && (
               <Form.Item>
-                <Button type="ghost" color={"red"} onClick={() => revokeAccessToken()}>
+                <Button
+                  type="ghost"
+                  color={"red"}
+                  onClick={async () => {
+                    await revokeAccessToken();
+                    this.setState({ me: null });
+                  }}
+                >
                   Sign out
                 </Button>
               </Form.Item>

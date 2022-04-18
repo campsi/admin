@@ -46,19 +46,21 @@ class App extends Component {
      * in the components using the AppContext
      * @param {string} accessToken
      */
-    setAccessToken: (accessToken) => {
+    setAccessToken: async (accessToken) => {
       localStorage.setItem("access_token", accessToken);
-      this.setState({ accessToken }, () => {
-        this.state.api.setAccessToken(accessToken);
+      this.state.api.setAccessToken(accessToken);
+      return new Promise((resolve) => {
+        this.setState({ authenticated: true }, resolve);
       });
     },
     /**
      * Equivalent to a sign out. Clears the access_token from the API and the local storage
      */
-    revokeAccessToken: () => {
+    revokeAccessToken: async () => {
       localStorage.removeItem("access_token");
-      this.setState({ accessToken: null }, () => {
-        this.state.api.revokeAccessToken();
+      this.state.api.revokeAccessToken();
+      return new Promise((resolve) => {
+        this.setState({ authenticated: false }, resolve);
       });
     },
   };

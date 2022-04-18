@@ -19,7 +19,6 @@ function Service(props) {
   }
   service.name = serviceName;
   const ServiceComponent = ServiceComponents[service.class];
-  console.info({services, serviceName, service, ServiceComponent})
   return ServiceComponent ? <ServiceComponent service={service}/> : null;
 }
 
