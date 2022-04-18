@@ -103,21 +103,23 @@ class AutomatorService extends Component {
     totalCount: 0,
   };
 
-  startJob(job) {
-    console.info(job);
+  async startJob(job) {
+    const { api, service } = this.props;
+    await api.client.post(`/${service.name}/jobs`, job);
+    await this.fetchData();
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     if (this.props.authenticated) {
-      this.fetchData();
+      await this.fetchData();
     }
   }
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  async componentDidUpdate(prevProps, prevState, snapshot) {
     if (
       this.state.page !== prevState.page ||
       this.state.perPage !== prevState.perPage
     ) {
-      this.fetchData();
+      await this.fetchData();
     }
   }
 
@@ -180,7 +182,7 @@ class AutomatorService extends Component {
               }
             >
               <Title level={5}>Shared Params</Title>
-              <Form.Item label="Domain" name={["params", "website"]} required>
+              <Form.Item label="Domain" name={["params", "domain"]} required>
                 <Input />
               </Form.Item>
               <Form.Item label="Priority" name={["params", "priority"]}>
@@ -216,12 +218,14 @@ class AutomatorService extends Component {
                   <Form.Item
                     name={["actions", "scanner", "acceptCMP"]}
                     initialValue={true}
+                    valuePropName="checked"
                   >
                     <Checkbox>Accept CMP</Checkbox>
                   </Form.Item>
                   <Form.Item
                     name={["actions", "scanner", "followSubDomains"]}
                     initialValue={false}
+                    valuePropName="checked"
                   >
                     <Checkbox>Follow subdomains</Checkbox>
                   </Form.Item>

@@ -10,7 +10,7 @@
 .rjsf .ant-form-item-with-help .ant-form-item-explain {
   min-height: auto;
 }
-.rjsf .ant-form-item-extra{
+.rjsf .ant-form-item-extra {
   min-height: auto;
 }
 .rjsf .form-group.field {
@@ -20,14 +20,14 @@
   margin-bottom: 0;
 }
 
-.rjsf .form-group.field-boolean{
+.rjsf .form-group.field-boolean {
   margin-bottom: 12px;
 }
 .rjsf fieldset {
   padding: 12px;
-  border: 1px solid #EEE;
+  border: 1px solid #eee;
   border-radius: 2px;
-  background-color: rgba(0,0,0,0.01);
+  background-color: rgba(0, 0, 0, 0.01);
 }
 
 .rjsf > .form-group > fieldset {
@@ -35,18 +35,14 @@
   border: none;
   background-color: transparent;
 }
-.rjsf label[for="root-title"] {
-  font-size: 18px;
-  font-weight: bold;
+.rjsf label[for="root-title"], .rjsf span[id="root-description"] {
+  display: none;
 }
-.rjsf span[id="root-description"] {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 24px;
-  display: block;
-}
-
 
 .rjsf .ant-form-vertical .ant-form-item-label {
   font-weight: 600;
+}
+
+.rjsf.ant-form-vertical .form-group + div {
+  display: none;
 }

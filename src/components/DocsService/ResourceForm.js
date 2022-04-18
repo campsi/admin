@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import Form from "@rjsf/antd";
@@ -7,6 +7,7 @@ import {
   Card,
   Descriptions,
   Layout,
+  notification,
   Radio,
   Space,
   Table,
@@ -21,6 +22,8 @@ class ResourceForm extends Component {
     users: [],
     mode: "edit",
   };
+
+  formRef = React.createRef();
 
   usersColumns = [
     {
@@ -72,7 +75,28 @@ class ResourceForm extends Component {
 
   async deleteItem() {}
 
-  async updateItem(newValue) {}
+  updateItem(newValue) {
+    const { api, service, params } = this.props;
+    const { resourceName, id } = params;
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await api.client.put(
+          `${service.name}/${resourceName}/${id}`,
+          newValue
+        );
+        notification.success({ message: "Document saved" });
+        this.setState(
+          {
+            doc: response.data,
+          },
+          resolve
+        );
+      } catch (error) {
+        notification.error({ message: error.message });
+        reject(error);
+      }
+    });
+  }
 
   getUISchema() {
     const { service, params } = this.props;
@@ -92,6 +116,10 @@ class ResourceForm extends Component {
       }
     };
     parseSchema(resource.schema, result);
+    result["ui:submitButtonOptions"] = {
+      norender: true,
+    };
+
     return result;
   }
 
@@ -117,6 +145,12 @@ class ResourceForm extends Component {
         <Space direction="vertical">
           <Card title="Document details">
             <Descriptions bordered>
+              <Descriptions.Item label="Title">
+                {resource.schema.title}
+              </Descriptions.Item>
+              <Descriptions.Item label="Description">
+                {resource.schema.description}
+              </Descriptions.Item>
               <Descriptions.Item label="Resource Path">
                 {resourceName}
               </Descriptions.Item>
@@ -131,27 +165,48 @@ class ResourceForm extends Component {
               </Descriptions.Item>
             </Descriptions>
           </Card>
-          <Card title="Document data">
-            <Radio.Group
-              value={selectedState}
-              onChange={(event) => {
-                this.setState({ selectedState: event.target.value });
-              }}
-              style={{ marginBottom: 16 }}
-            >
-              {Object.keys(resourceClass.states).map((state) => {
-                return (
-                  <Radio.Button key={state} value={state}>
-                    {state}
-                  </Radio.Button>
-                );
-              })}
-            </Radio.Group>
+          <Card
+            title="Document data"
+            extra={
+              <Radio.Group
+                value={selectedState}
+                onChange={(event) => {
+                  this.setState({ selectedState: event.target.value });
+                }}
+              >
+                {Object.keys(resourceClass.states).map((state) => {
+                  return (
+                    <Radio.Button key={state} value={state}>
+                      {state}
+                    </Radio.Button>
+                  );
+                })}
+              </Radio.Group>}
+            actions={[
+              <Button
+                onClick={() => {
+                  // @link https://github.com/rjsf-team/react-jsonschema-form/issues/2104
+                  this.formRef.formElement.dispatchEvent(
+                    new CustomEvent("submit", {
+                      cancelable: true,
+                      bubbles: true,
+                    })
+                  );
+                }}
+              >
+                Submit
+              </Button>,
+            ]}
+          >
             <Form
               className="rjsf ant-form-vertical"
               schema={resource.schema}
               formData={doc.data}
               uiSchema={this.getUISchema()}
+              ref={(ref) => {
+                this.formRef = ref;
+              }}
+              onSubmit={({ formData }) => this.updateItem(formData)}
             />
           </Card>
           <Card
