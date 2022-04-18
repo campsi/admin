@@ -1,10 +1,12 @@
 import DocsService from "../DocsService/DocsService";
 import AuthService from "../AuthService/AuthService";
 import {useParams} from "react-router-dom";
+import AutomatorService from "../AutomatorService/AutomatorService";
 
 const ServiceComponents = {
   DocsService,
   AuthService,
+  AutomatorService
 };
 
 function Service(props) {
@@ -17,6 +19,7 @@ function Service(props) {
   }
   service.name = serviceName;
   const ServiceComponent = ServiceComponents[service.class];
+  console.info({services, serviceName, service, ServiceComponent})
   return ServiceComponent ? <ServiceComponent service={service}/> : null;
 }
 

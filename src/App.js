@@ -19,15 +19,16 @@ export function withAppContext(Component) {
     );
   }
   WrappedComponent.displayName = `withAppContext(${Component.name})`;
-  WrappedComponent.propTypes = {
-    services: PropTypes.object,
-    authenticated: PropTypes.bool,
-    api: PropTypes.instanceOf(Api),
-    setAccessToken: PropTypes.func,
-    revokeAccessToken: PropTypes.func,
-  };
   return WrappedComponent;
 }
+
+withAppContext.propTypes = {
+  services: PropTypes.object,
+  authenticated: PropTypes.bool,
+  api: PropTypes.instanceOf(Api),
+  setAccessToken: PropTypes.func,
+  revokeAccessToken: PropTypes.func,
+};
 
 const accessToken = localStorage ? localStorage.getItem("access_token") : null;
 
@@ -76,9 +77,9 @@ class App extends Component {
     return (
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
-          {this.state.services && (
+          {services && (
             <Layout hasSider style={{ minHeight: "100vh" }}>
-              <AdminMenu services={this.state.services} />
+              <AdminMenu services={services} />
               <Layout>
                 <Routes>
                   <Route

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { Component } from "react";
 import { withAppContext } from "../../App";
 import { Layout, Form, Typography, Button, Input, Card, Space } from "antd";
@@ -33,20 +34,16 @@ class AuthService extends Component {
     });
   }
 
-  async login(event) {
+  async login(values) {
     const { api, service, setAccessToken } = this.props;
-
-    event.preventDefault();
-    const email = event.target.querySelector("input[type=email]").value;
-    const password = event.target.querySelector("input[type=password]").value;
     const response = await api.client.post(`${service.name}/local/signin`, {
-      username: email,
-      email,
-      password,
+      username: values.email,
+      email: values.email,
+      password: values.password,
       mode: "signin",
     });
     if (response.data?.token) {
-      setAccessToken(response.data?.token);
+      setAccessToken(response.data.token);
       await this.fetchMe();
     }
   }
@@ -70,19 +67,39 @@ class AuthService extends Component {
     }
   }
   render() {
-    const { api, service, revokeAccessToken } = this.props;
+    const { api, service, revokeAccessToken, setAccessToken } = this.props;
     const { me } = this.state;
     return (
       <Layout.Content className="main-page-content">
         <Title>Auth</Title>
-        {me && (
-          <div>
-            <h2>Me</h2>
-            <button onClick={() => revokeAccessToken()}>Sign out</button>
-            <textarea defaultValue={JSON.stringify(me, null, 2)} />
-          </div>
-        )}
-        <Space direction="vertical" size="middle" style={{ display: "flex" }}>
+        <Space direction="vertical" style={{width: '100%'}}>
+          <Card title="Me">
+            <Form
+              onFinish={(values) => {
+                setAccessToken(values.accessToken);
+              }}
+            >
+              <Form.Item
+                label="Access Token"
+                name="accessToken"
+                initialValue={api.accessToken}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Update Access Token
+                </Button>
+              </Form.Item>
+            </Form>
+            {me && (
+              <Form.Item>
+                <Button type="ghost" color={"red"} onClick={() => revokeAccessToken()}>
+                  Sign out
+                </Button>
+              </Form.Item>
+            )}
+          </Card>
           <Card title="Identify providers">
             <Button.Group>
               {this.state.providers
@@ -102,17 +119,24 @@ class AuthService extends Component {
           {this.state.hasLocalProvider && (
             <>
               <Card title="Log in">
-                <Form onSubmit={(event) => this.login(event)}>
-                  <Form.Item label="Email">
-                    <Input
-                      type="email"
-                      defaultValue="romainbessuges+admin@gmail.com"
-                    />
+                <Form
+                  onFinish={(values) => this.login(values)}
+                  initialValues={{
+                    email: "romainbessuges+admin@gmail.com",
+                    password: "test",
+                  }}
+                >
+                  <Form.Item label="Email" name="email">
+                    <Input type="email" />
                   </Form.Item>
-                  <Form.Item label="Password">
-                    <Input type="password" defaultValue="test" />
+                  <Form.Item label="Password" name="password">
+                    <Input type="password" />
                   </Form.Item>
-                  <Button>Log in</Button>
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                      Log in
+                    </Button>
+                  </Form.Item>
                 </Form>
               </Card>
               <Card title="Create Account">
@@ -133,5 +157,18 @@ class AuthService extends Component {
     );
   }
 }
+
+AuthService.propTypes = {
+  service: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    class: PropTypes.string.isRequired,
+    providers: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string,
+      })
+    ),
+  }),
+  ...withAppContext.propTypes,
+};
 
 export default withAppContext(AuthService);

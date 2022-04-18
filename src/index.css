@@ -6,3 +6,47 @@
   padding: 30px;
   margin-top: 30px;
 }
+
+.rjsf .ant-form-item-with-help .ant-form-item-explain {
+  min-height: auto;
+}
+.rjsf .ant-form-item-extra{
+  min-height: auto;
+}
+.rjsf .form-group.field {
+  margin-bottom: 24px;
+}
+.rjsf .ant-row.ant-form-item {
+  margin-bottom: 0;
+}
+
+.rjsf .form-group.field-boolean{
+  margin-bottom: 12px;
+}
+.rjsf fieldset {
+  padding: 12px;
+  border: 1px solid #EEE;
+  border-radius: 2px;
+  background-color: rgba(0,0,0,0.01);
+}
+
+.rjsf > .form-group > fieldset {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+.rjsf label[for="root-title"] {
+  font-size: 18px;
+  font-weight: bold;
+}
+.rjsf span[id="root-description"] {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 24px;
+  display: block;
+}
+
+
+.rjsf .ant-form-vertical .ant-form-item-label {
+  font-weight: 600;
+}

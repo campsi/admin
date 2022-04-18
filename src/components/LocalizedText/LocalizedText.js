@@ -7,7 +7,7 @@ export default function LocalizedText(props) {
   const value = props.formData?.$lang || { [selectedLanguage]: "" };
   const fieldValue = value[selectedLanguage];
   return (
-    <Form.Item label={props.name}>
+    <Form.Item label={props.schema.title || props.name}>
       <div style={{ display: "flex" }}>
         <LanguageSelect
           onChange={(l) => setSelectedLanguage(l)}
