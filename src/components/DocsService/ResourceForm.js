@@ -77,13 +77,16 @@ class ResourceForm extends Component {
 
   updateItem(newValue) {
     const { api, service, params } = this.props;
+    const { mode } = this.state;
     const { resourceName, id } = params;
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await api.client.put(
-          `${service.name}/${resourceName}/${id}`,
-          newValue
-        );
+        const method = mode === "create" ? "post" : "put";
+        const url =
+          mode === "create"
+            ? `${service.name}/${resourceName}/`
+            : `${service.name}/${resourceName}/${id}`;
+        const response = await api.client[method](url, newValue);
         notification.success({ message: "Document saved" });
         this.setState(
           {
@@ -145,10 +148,10 @@ class ResourceForm extends Component {
         <Space direction="vertical">
           <Card title="Document details">
             <Descriptions bordered>
-              <Descriptions.Item label="Title">
+              <Descriptions.Item label="Title" span={2}>
                 {resource.schema.title}
               </Descriptions.Item>
-              <Descriptions.Item label="Description">
+              <Descriptions.Item label="Description" span={2}>
                 {resource.schema.description}
               </Descriptions.Item>
               <Descriptions.Item label="Resource Path">
@@ -181,9 +184,14 @@ class ResourceForm extends Component {
                     </Radio.Button>
                   );
                 })}
-              </Radio.Group>}
+              </Radio.Group>
+            }
             actions={[
+              <Button onClick={() => this.fetchData()}>
+                Reload from API
+              </Button>,
               <Button
+                type={"primary"}
                 onClick={() => {
                   // @link https://github.com/rjsf-team/react-jsonschema-form/issues/2104
                   this.formRef.formElement.dispatchEvent(
