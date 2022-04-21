@@ -8,11 +8,15 @@ export default function MatchString(props) {
   const properties =
     !props.schema?.properties || MatchString.defaultProps.schema.properties;
 
+  function getOptionLabel(name){
+    return `${properties[name].title}${value[name] ? ' *' : ''}`
+  }
+
   return (
     <Space direction="horizontal">
       <Select
         options={Object.keys(properties).map((name) => {
-          return { value: name, text: props.schema.properties[name].title };
+          return { value: name, label: getOptionLabel(name) };
         })}
         value={selectedOption}
         onChange={setSelectedOption}
