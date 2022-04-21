@@ -46,3 +46,7 @@
 .rjsf.ant-form-vertical .form-group + div {
   display: none;
 }
+
+.detection-strategy + .panel.panel-default.panel-body {
+  display: none;
+}

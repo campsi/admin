@@ -28,7 +28,7 @@ class Api {
       // not required, it's mostly for fun
       "X-Requested-With-App": "campsi/admin",
       "Content-type": "application/json; charset=utf-8",
-      "Accept": 'application/json'
+      Accept: "application/json",
     },
   };
 
@@ -46,7 +46,7 @@ class Api {
       settings.headers["Authorization"] = `Bearer ${options.accessToken}`;
     }
     this.client = axios.create({
-      baseURL: settings.apiUrl.replace(/\/$/, ''),
+      baseURL: settings.apiUrl.replace(/\/$/, ""),
       timeout: settings.timeout,
       headers: settings.headers,
     });
@@ -67,13 +67,8 @@ class Api {
    * @returns {Promise<CampsiService[]>}
    */
   async getServices() {
-    try {
-      const response = await this.client.get("/");
-      return response.data.services || [];
-    } catch (err) {
-      console.error("could not fetch services", err);
-      return [];
-    }
+    const response = await this.client.get("/");
+    return response.data.services || [];
   }
 }
 

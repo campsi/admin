@@ -65,13 +65,20 @@ class App extends Component {
     },
   };
 
-  componentDidMount() {
-    this.fetchData();
+  async componentDidMount() {
+    await this.fetchData();
   }
 
   async fetchData() {
-    const services = await this.state.api.getServices();
-    this.setState({ services });
+    try {
+      const services = await this.state.api.getServices();
+      this.setState({services});
+    } catch (err){
+      if (this.state.authenticated){
+        await this.state.revokeAccessToken();
+        await this.fetchData();
+      }
+    }
   }
 
   render() {

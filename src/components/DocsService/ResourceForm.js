@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import Form from "@rjsf/antd";
@@ -16,6 +17,7 @@ import {
 import LocalizedText from "../LocalizedText/LocalizedText";
 import MatchString from "../MatchString/MatchString";
 const { Title } = Typography;
+
 class ResourceForm extends Component {
   state = {
     selectedState: undefined,
@@ -102,15 +104,22 @@ class ResourceForm extends Component {
   }
 
   getUISchema() {
-    const { service, params } = this.props;
+    const { service, params, customWidgets } = this.props;
     const { resourceName } = params;
     const resource = service.resources[resourceName];
     const result = {};
     const parseSchema = (schema, uiSchema) => {
-      if (schema.isLocalizedString) {
+      if (customWidgets[schema["ui:field"]]) {
+        uiSchema["ui:field"] = customWidgets[schema["ui:field"]];
+      } else if (customWidgets[schema["ui:widget"]]) {
+        uiSchema["ui:widget"] = customWidgets[schema["ui:widget"]];
+      } else if (schema.isLocalizedString) {
         uiSchema["ui:field"] = LocalizedText;
       } else if (schema.isMatchString) {
         uiSchema["ui:field"] = MatchString;
+      } else if (schema.items) {
+        uiSchema.items = {};
+        parseSchema(schema.items, uiSchema.items);
       } else if (schema.properties) {
         Object.keys(schema.properties).forEach((propertyName) => {
           uiSchema[propertyName] = {};
@@ -147,7 +156,7 @@ class ResourceForm extends Component {
         <Title>Resource form</Title>
         <Space direction="vertical">
           <Card title="Document details">
-            <Descriptions bordered>
+            <Descriptions bordered column={2}>
               <Descriptions.Item label="Title" span={2}>
                 {resource.schema.title}
               </Descriptions.Item>
@@ -187,9 +196,7 @@ class ResourceForm extends Component {
               </Radio.Group>
             }
             actions={[
-              <Button onClick={() => this.fetchData()}>
-                Reload from API
-              </Button>,
+              <Button onClick={() => this.fetchData()}>Reload from API</Button>,
               <Button
                 type={"primary"}
                 onClick={() => {
@@ -228,5 +235,19 @@ class ResourceForm extends Component {
     );
   }
 }
+
+ResourceForm.propTypes = {
+  service: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    class: PropTypes.string.isRequired,
+  }).isRequired,
+  customWidgets: PropTypes.objectOf(PropTypes.element),
+  ...withParams.propTypes,
+  ...withAppContext.propTypes,
+};
+
+ResourceForm.defaultProps = {
+  customWidgets: {},
+};
 
 export default withAppContext(withParams(ResourceForm));
