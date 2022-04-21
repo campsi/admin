@@ -14,8 +14,6 @@ import {
   Table,
   Typography,
 } from "antd";
-import LocalizedText from "../LocalizedText/LocalizedText";
-import MatchString from "../MatchString/MatchString";
 const { Title } = Typography;
 
 class ResourceForm extends Component {
@@ -109,14 +107,13 @@ class ResourceForm extends Component {
     const resource = service.resources[resourceName];
     const result = {};
     const parseSchema = (schema, uiSchema) => {
+      if(schema['ui:field']){
+        console.info(schema["ui:field"]);
+      }
       if (customWidgets[schema["ui:field"]]) {
         uiSchema["ui:field"] = customWidgets[schema["ui:field"]];
       } else if (customWidgets[schema["ui:widget"]]) {
         uiSchema["ui:widget"] = customWidgets[schema["ui:widget"]];
-      } else if (schema.isLocalizedString) {
-        uiSchema["ui:field"] = LocalizedText;
-      } else if (schema.isMatchString) {
-        uiSchema["ui:field"] = MatchString;
       } else if (schema.items) {
         uiSchema.items = {};
         parseSchema(schema.items, uiSchema.items);

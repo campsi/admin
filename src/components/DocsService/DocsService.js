@@ -2,6 +2,8 @@ import { Route, Routes, useParams } from "react-router-dom";
 import ResourceListing from "./ResourceListing";
 import ResourceForm from "./ResourceForm";
 import DetectionStrategy from "../DetectionStrategy/DetectionStrategy";
+import MatchString from "../MatchString/MatchString";
+import LocalizedText from "../LocalizedText/LocalizedText";
 
 function DocsService(props) {
   useParams();
@@ -10,7 +12,9 @@ function DocsService(props) {
       <Route
         path="resources/:resourceName/:id"
         element={<ResourceForm service={props.service} customWidgets={{
-          'DetectionStrategy': DetectionStrategy
+          'DetectionStrategy': DetectionStrategy,
+          'LocalizedString': LocalizedText,
+          'MatchString': MatchString
         }} />}
       />
       <Route
