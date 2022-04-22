@@ -36,7 +36,6 @@ export default function DetectionStrategy(props) {
     Object.keys(formData).filter((k) => k !== "type")[0] || defaultPart
   );
 
-  console.info(formData);
   const setType = (type) => {
     onChange({
       ...formData,

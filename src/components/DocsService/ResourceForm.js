@@ -107,9 +107,6 @@ class ResourceForm extends Component {
     const resource = service.resources[resourceName];
     const result = {};
     const parseSchema = (schema, uiSchema) => {
-      if(schema['ui:field']){
-        console.info(schema["ui:field"]);
-      }
       if (customWidgets[schema["ui:field"]]) {
         uiSchema["ui:field"] = customWidgets[schema["ui:field"]];
       } else if (customWidgets[schema["ui:widget"]]) {
