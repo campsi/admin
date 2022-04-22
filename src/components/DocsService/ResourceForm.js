@@ -14,6 +14,7 @@ import {
   Table,
   Typography,
 } from "antd";
+import {generateRelationField} from "../RelationField/RelationField";
 const { Title } = Typography;
 
 class ResourceForm extends Component {
@@ -111,6 +112,8 @@ class ResourceForm extends Component {
         uiSchema["ui:field"] = customWidgets[schema["ui:field"]];
       } else if (customWidgets[schema["ui:widget"]]) {
         uiSchema["ui:widget"] = customWidgets[schema["ui:widget"]];
+      } else if (schema["ui:relation"]){
+        uiSchema["ui:field"] = generateRelationField(schema["ui:relation"])
       } else if (schema.items) {
         uiSchema.items = {};
         parseSchema(schema.items, uiSchema.items);
