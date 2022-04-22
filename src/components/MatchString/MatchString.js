@@ -3,11 +3,17 @@ import { Input, Select, Space } from "antd";
 import { useState } from "react";
 
 export default function MatchString(props) {
-  const [selectedOption, setSelectedOption] = useState("equals");
   const value = props.formData || {};
+  const [selectedOption, setSelectedOption] = useState(Object.keys(value)[0] || 'equals');
+
   const properties =
     !props.schema?.properties || MatchString.defaultProps.schema.properties;
 
+  /**
+   * If a value exists for the given option, we append a "*" character
+   * @param name
+   * @returns {string}
+   */
   function getOptionLabel(name){
     return `${properties[name].title}${value[name] ? ' *' : ''}`
   }

@@ -31,8 +31,12 @@ function getOptions(type) {
 export default function DetectionStrategy(props) {
   const { onChange, formData = {} } = props;
   const { type = "cookie" } = formData;
-  const [part, setPart] = useState("domain");
+  let defaultPart = type === "cookie" ? "domain" : "host";
+  const [part, setPart] = useState(
+    Object.keys(formData).filter((k) => k !== "type")[0] || defaultPart
+  );
 
+  console.info(formData);
   const setType = (type) => {
     onChange({
       ...formData,
@@ -41,13 +45,9 @@ export default function DetectionStrategy(props) {
   };
 
   const setMatch = (match) => {
-    console.info(match);
     onChange({
       ...formData,
-      [type]: {
-        ...(formData[type]?.[part] || {}),
-        [part]: match,
-      },
+      [part]: match,
     });
   };
 
@@ -61,7 +61,7 @@ export default function DetectionStrategy(props) {
         <Select value={part} onChange={setPart}>
           {getOptions(type)}
         </Select>
-        <MatchString onChange={setMatch} formData={formData[type]?.[part]} />
+        <MatchString onChange={setMatch} formData={formData[part]} />
       </Space>
     </div>
   );
