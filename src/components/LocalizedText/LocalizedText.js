@@ -12,6 +12,7 @@ export default function LocalizedText(props) {
         <LanguageSelect
           onChange={(l) => setSelectedLanguage(l)}
           value={selectedLanguage}
+          activeLanguages={Object.keys(value)}
         />
         <Input
           value={fieldValue}
