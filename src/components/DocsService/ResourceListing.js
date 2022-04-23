@@ -180,7 +180,7 @@ class ResourceListing extends Component {
               if (value?.$lang) {
                 return renderStringInCell(value.$lang[language]);
               }
-              return "{...}";
+              return JSON.stringify(value);
             case "array":
               const length = Array.from(value || []).length;
               switch (length) {
