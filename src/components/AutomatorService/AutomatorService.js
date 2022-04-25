@@ -16,7 +16,8 @@ import {
 } from "antd";
 import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import {Link, Route, Routes} from "react-router-dom";
+import AutomatorJob from "./AutomatorJob";
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
@@ -147,11 +148,15 @@ class AutomatorService extends Component {
     );
   }
   render() {
+    const { service } = this.props;
     const { jobs, columns } = this.state;
     return (
       <Layout.Content style={{ padding: 30 }}>
         <Title>Automator Service</Title>
         <Space direction="vertical">
+          <Routes>
+            <Route path={`jobs/:id`} element={<AutomatorJob service={service} />} />
+          </Routes>
           <Card title="Jobs">
             <Table
               dataSource={jobs}
