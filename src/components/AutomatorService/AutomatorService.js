@@ -16,8 +16,9 @@ import {
 } from "antd";
 import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
-import {Link, Route, Routes} from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import AutomatorJob from "./AutomatorJob";
+import {ReloadOutlined} from "@ant-design/icons";
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
@@ -155,9 +156,12 @@ class AutomatorService extends Component {
         <Title>Automator Service</Title>
         <Space direction="vertical">
           <Routes>
-            <Route path={`jobs/:id`} element={<AutomatorJob service={service} />} />
+            <Route
+              path={`jobs/:id`}
+              element={<AutomatorJob service={service} />}
+            />
           </Routes>
-          <Card title="Jobs">
+          <Card title="Jobs" extra={<Button onClick={() => this.fetchData()}><ReloadOutlined/></Button>}>
             <Table
               dataSource={jobs}
               columns={columns}
@@ -265,6 +269,20 @@ class AutomatorService extends Component {
                     </Select>
                   </Form.Item>
                   <Form.Item
+                    name={["actions", "provisioning", "name"]}
+                    label="Project Name"
+                    required
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    label="Languages"
+                    name={["actions", "provisioning", "languages"]}
+                    required
+                  >
+                    <Select initialValue={["en", "fr"]} mode="tags" />
+                  </Form.Item>
+                  <Form.Item
                     name="projectId"
                     label="Project ID"
                     help="Fill this field to use an existing project"
@@ -272,9 +290,6 @@ class AutomatorService extends Component {
                     <Input />
                   </Form.Item>
                   <Form.Item name="organizationId" label="Organization ID">
-                    <Input />
-                  </Form.Item>
-                  <Form.Item name="name" label="Project Name">
                     <Input />
                   </Form.Item>
                 </TabPane>
