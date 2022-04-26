@@ -1,5 +1,5 @@
 import { withAppContext } from "../../App";
-import {Card, Descriptions, Space, Tabs} from "antd";
+import { Card, Descriptions, Space, Tabs } from "antd";
 import withParams from "../../utils/withParams";
 import { Component } from "react";
 
@@ -35,38 +35,38 @@ class AutomatorJob extends Component {
     return (
       <Card title={`Automator Job ${this.props.params.id}`}>
         <Space direction="vertical">
-        <Descriptions bordered column={2}>
-          <Descriptions.Item label="status">{job.status}</Descriptions.Item>
-          <Descriptions.Item label="createdBy">
-            {job.createdBy}
-          </Descriptions.Item>
-          <Descriptions.Item label="createdAt">
-            {job.createdAt}
-          </Descriptions.Item>
-          <Descriptions.Item label="Domain">
-            {job.params?.domain}
-          </Descriptions.Item>
-          <Descriptions.Item label="Priority">
-            {job.params?.priority}
-          </Descriptions.Item>
-        </Descriptions>
-        <Tabs>
-          {actions.map((action) => {
-            return (
-              <TabPane tab={action} key={`tab_${action}`}>
-                <textarea
-                  defaultValue={JSON.stringify(
-                    job.actions[action].result,
-                    null,
-                    2
-                  )}
-                  rows={30}
-                  style={{ width: "100%" }}
-                />
-              </TabPane>
-            );
-          })}
-        </Tabs>
+          <Descriptions bordered column={2}>
+            <Descriptions.Item label="status">{job.status}</Descriptions.Item>
+            <Descriptions.Item label="createdBy">
+              {job.createdBy}
+            </Descriptions.Item>
+            <Descriptions.Item label="createdAt">
+              {job.createdAt}
+            </Descriptions.Item>
+            <Descriptions.Item label="Domain">
+              {job.params?.domain}
+            </Descriptions.Item>
+            <Descriptions.Item label="Priority">
+              {job.params?.priority}
+            </Descriptions.Item>
+          </Descriptions>
+          <Tabs>
+            {actions.map((action) => {
+              return (
+                <TabPane tab={action} key={`tab_${action}`}>
+                  <textarea
+                    defaultValue={JSON.stringify(
+                      job.actions[action].result,
+                      null,
+                      2
+                    )}
+                    rows={30}
+                    style={{ width: "100%", fontFamily: "'Menlo', 'Monaco', monospace", fontSize: 11 }}
+                  />
+                </TabPane>
+              );
+            })}
+          </Tabs>
         </Space>
       </Card>
     );
