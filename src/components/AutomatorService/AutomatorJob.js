@@ -1,9 +1,14 @@
 import { withAppContext } from "../../App";
 import { Card, Descriptions, Space, Tabs } from "antd";
 import withParams from "../../utils/withParams";
-import { Component } from "react";
+import React, { Component } from "react";
+import StylesheetDetails from "./Details/StylesheetDetails";
 
 const { TabPane } = Tabs;
+
+const ActionDetails = {
+  stylesheet: StylesheetDetails
+};
 
 class AutomatorJob extends Component {
   state = {
@@ -54,15 +59,30 @@ class AutomatorJob extends Component {
             {actions.map((action) => {
               return (
                 <TabPane tab={action} key={`tab_${action}`}>
-                  <textarea
-                    defaultValue={JSON.stringify(
-                      job.actions[action].result,
-                      null,
-                      2
-                    )}
-                    rows={30}
-                    style={{ width: "100%", fontFamily: "'Menlo', 'Monaco', monospace", fontSize: 11 }}
-                  />
+                  <Tabs tabPosition="right" size="small">
+                    <TabPane tab="Pretty" key={`tab_${action}_pretty`}>
+                      {ActionDetails[action]
+                        ? React.createElement(ActionDetails[action], {
+                            result: job.actions[action].result,
+                          })
+                        : null}
+                    </TabPane>
+                    <TabPane tab="Raw" key={`tab_${action}_raw`}>
+                      <textarea
+                        defaultValue={JSON.stringify(
+                          job.actions[action].result,
+                          null,
+                          2
+                        )}
+                        rows={30}
+                        style={{
+                          width: "100%",
+                          fontFamily: "'Menlo', 'Monaco', monospace",
+                          fontSize: 11,
+                        }}
+                      />
+                    </TabPane>
+                  </Tabs>
                 </TabPane>
               );
             })}
