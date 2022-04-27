@@ -3,12 +3,9 @@ import { Card, Descriptions, Space, Tabs } from "antd";
 import withParams from "../../utils/withParams";
 import React, { Component } from "react";
 import StylesheetDetails from "./Details/StylesheetDetails";
+import ScannerDetails from "./Details/ScannerDetails";
 
 const { TabPane } = Tabs;
-
-const ActionDetails = {
-  stylesheet: StylesheetDetails
-};
 
 class AutomatorJob extends Component {
   state = {
@@ -61,11 +58,8 @@ class AutomatorJob extends Component {
                 <TabPane tab={action} key={`tab_${action}`}>
                   <Tabs tabPosition="right" size="small">
                     <TabPane tab="Pretty" key={`tab_${action}_pretty`}>
-                      {ActionDetails[action]
-                        ? React.createElement(ActionDetails[action], {
-                            result: job.actions[action].result,
-                          })
-                        : null}
+                      {action === 'stylesheet' && <StylesheetDetails result={job.actions[action].result}/>}
+                      {action === 'scanner' && <ScannerDetails result={job.actions[action].result}/>}
                     </TabPane>
                     <TabPane tab="Raw" key={`tab_${action}_raw`}>
                       <textarea
