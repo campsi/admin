@@ -5,6 +5,7 @@ import React, { Component } from "react";
 import StylesheetDetails from "./Details/StylesheetDetails";
 import ScannerDetails from "./Details/ScannerDetails";
 import ProvisioningDetails from "./Details/ProvisioningDetails";
+import ShowcaseDetails from "./Details/ShowcaseDetails";
 
 const { TabPane } = Tabs;
 
@@ -71,6 +72,9 @@ class AutomatorJob extends Component {
                         <ProvisioningDetails
                           result={job.actions[action].result}
                         />
+                      )}
+                      {action === "showcase" && (
+                        <ShowcaseDetails result={job.actions[action].result} />
                       )}
                     </TabPane>
                     <TabPane tab="Raw" key={`tab_${action}_raw`}>

@@ -1,5 +1,4 @@
 import { Descriptions } from "antd";
-import { CheckCircleOutlined } from "@ant-design/icons";
 const { Item } = Descriptions;
 
 function ProvisioningDetails({ result }) {
