@@ -19,7 +19,7 @@ import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
 import { Link, Route, Routes } from "react-router-dom";
 import AutomatorJob from "./AutomatorJob";
-import { ReloadOutlined } from "@ant-design/icons";
+import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
@@ -104,7 +104,9 @@ class AutomatorService extends Component {
     perPage: 25,
     page: 1,
     totalCount: 0,
+    pollingStart: false,
     pollingStatus: "Poll data",
+    pollingDelay: 500000,
   };
 
   async startJob(job) {
@@ -140,22 +142,30 @@ class AutomatorService extends Component {
     });
   }
 
-  async pollData() {
-    this.setState({ pollingStatus: <Spin /> });
-    const duration = 60;
-    const everySec = 5;
-    let currentSec = 0;
+  async startPolling() {
+    this.setState({ pollingStart: new Date() });
+    await this.pollData();
+  }
 
-    for (let i = 0; i < duration; i++) {
-      currentSec++;
-      if (currentSec === everySec) {
-        await this.fetchData();
-        currentSec = 0;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-
+  async stopPolling() {
+    this.setState({ pollingStart: null });
     this.setState({ pollingStatus: "Poll data" });
+  }
+
+  async pollData() {
+    this.setState({
+      pollingStatus: (
+        <Spin indicator={<LoadingOutlined spin />} size={"small"} />
+      ),
+    });
+    await this.fetchData();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    while (
+      Math.abs(this.state.pollingStart - new Date()) < this.state.pollingDelay
+    ) {
+      await this.fetchData();
+    }
+    await this.stopPolling();
   }
 
   getActionTab(action) {
@@ -188,7 +198,13 @@ class AutomatorService extends Component {
                 <Button onClick={() => this.fetchData()}>
                   <ReloadOutlined />
                 </Button>
-                <Button onClick={() => this.pollData()}>
+                <Button
+                  onClick={() => {
+                    this.state.pollingStart
+                      ? this.stopPolling()
+                      : this.startPolling();
+                  }}
+                >
                   {this.state.pollingStatus}
                 </Button>
               </>
