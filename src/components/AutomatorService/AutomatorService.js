@@ -104,7 +104,7 @@ class AutomatorService extends Component {
     perPage: 25,
     page: 1,
     totalCount: 0,
-    pollText: "Poll data",
+    pollingStatus: "Poll data",
   };
 
   async startJob(job) {
@@ -141,7 +141,7 @@ class AutomatorService extends Component {
   }
 
   async pollData() {
-    this.setState({ pollText: <Spin /> });
+    this.setState({ pollingStatus: <Spin /> });
     const duration = 60;
     const everySec = 5;
     let currentSec = 0;
@@ -155,7 +155,7 @@ class AutomatorService extends Component {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
-    this.setState({ pollText: "Poll data" });
+    this.setState({ pollingStatus: "Poll data" });
   }
 
   getActionTab(action) {
@@ -189,7 +189,7 @@ class AutomatorService extends Component {
                   <ReloadOutlined />
                 </Button>
                 <Button onClick={() => this.pollData()}>
-                  {this.state.pollText}
+                  {this.state.pollingStatus}
                 </Button>
               </>
             }
