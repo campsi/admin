@@ -19,7 +19,12 @@ import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
 import { Link, Route, Routes } from "react-router-dom";
 import AutomatorJob from "./AutomatorJob";
-import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
@@ -181,6 +186,7 @@ class AutomatorService extends Component {
   render() {
     const { service } = this.props;
     const { jobs, columns } = this.state;
+
     return (
       <Layout.Content style={{ padding: 30 }}>
         <Title>Automator Service</Title>
@@ -348,16 +354,97 @@ class AutomatorService extends Component {
                   >
                     <Checkbox>Active</Checkbox>
                   </Form.Item>
-                  <Form.Item
-                    label="Format"
-                    name={["actions", "showcase", "output"]}
-                    required
-                  >
-                    <Select>
-                      <Select.Option value="gif">Gif</Select.Option>
-                      <Select.Option value="webm">Webm</Select.Option>
-                    </Select>
-                  </Form.Item>
+                  <Form.List name={["actions", "showcase", "output"]}>
+                    {(fields, { add, remove }, { errors }) => (
+                      <>
+                        {fields.map((field, index) => (
+                          <Form.Item
+                            required={true}
+                            key={field.key}
+                            label={`Showcase Input #${index}`}
+                          >
+                            <Form.Item
+                              label={`Name${index}`}
+                              name={[
+                                "actions",
+                                "showcase",
+                                "output",
+                                `name${index}`,
+                              ]}
+                              required
+                              noStyle
+                            >
+                              <Input placeholder="Name *" />
+                            </Form.Item>
+
+                            <Form.Item
+                              label="Format"
+                              pla
+                              name={["actions", "showcase", "output", "format"]}
+                              required
+                              noStyle
+                            >
+                              <Select
+                                style={{ width: "60%" }}
+                                placeholder="Media Type *"
+                              >
+                                <Select.Option value="gif">Gif</Select.Option>
+                                <Select.Option value="webm">Webm</Select.Option>
+                              </Select>
+                            </Form.Item>
+
+                            <Form.Item
+                              label="Height"
+                              name={[
+                                "actions",
+                                "showcase",
+                                "output",
+                                "viewport",
+                                "height",
+                              ]}
+                              required
+                              noStyle
+                            >
+                              <Input type="number" defaultValue="1800" />
+                            </Form.Item>
+
+                            <Form.Item
+                              label="Width"
+                              name={[
+                                "actions",
+                                "showcase",
+                                "output",
+                                "viewport",
+                                "width",
+                              ]}
+                              required
+                              noStyle
+                            >
+                              <Input type="number" defaultValue="300" />
+                            </Form.Item>
+
+                            {fields.length > 1 ? (
+                              <MinusCircleOutlined
+                                className="dynamic-delete-button"
+                                onClick={() => remove(field.name)}
+                              />
+                            ) : null}
+                          </Form.Item>
+                        ))}
+                        <Form.Item>
+                          <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            style={{ width: "60%" }}
+                            icon={<PlusOutlined />}
+                          >
+                            Add Showcase Input
+                          </Button>
+                          <Form.ErrorList errors={errors} />
+                        </Form.Item>
+                      </>
+                    )}
+                  </Form.List>
                 </TabPane>
                 <TabPane tab={this.getActionTab("gtm")} key="gtm">
                   <Form.Item
