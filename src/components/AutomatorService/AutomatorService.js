@@ -348,6 +348,16 @@ class AutomatorService extends Component {
                   >
                     <Checkbox>Active</Checkbox>
                   </Form.Item>
+                  <Form.Item
+                    label="Format"
+                    name={["actions", "showcase", "output"]}
+                    required
+                  >
+                    <Select>
+                      <Select.Option value="gif">Gif</Select.Option>
+                      <Select.Option value="webm">Webm</Select.Option>
+                    </Select>
+                  </Form.Item>
                 </TabPane>
                 <TabPane tab={this.getActionTab("gtm")} key="gtm">
                   <Form.Item

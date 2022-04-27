@@ -4,6 +4,7 @@ import withParams from "../../utils/withParams";
 import React, { Component } from "react";
 import StylesheetDetails from "./Details/StylesheetDetails";
 import ScannerDetails from "./Details/ScannerDetails";
+import ProvisioningDetails from "./Details/ProvisioningDetails";
 
 const { TabPane } = Tabs;
 
@@ -58,8 +59,19 @@ class AutomatorJob extends Component {
                 <TabPane tab={action} key={`tab_${action}`}>
                   <Tabs tabPosition="right" size="small">
                     <TabPane tab="Pretty" key={`tab_${action}_pretty`}>
-                      {action === 'stylesheet' && <StylesheetDetails result={job.actions[action].result}/>}
-                      {action === 'scanner' && <ScannerDetails result={job.actions[action].result}/>}
+                      {action === "stylesheet" && (
+                        <StylesheetDetails
+                          result={job.actions[action].result}
+                        />
+                      )}
+                      {action === "scanner" && (
+                        <ScannerDetails result={job.actions[action].result} />
+                      )}
+                      {action === "provisioning" && (
+                        <ProvisioningDetails
+                          result={job.actions[action].result}
+                        />
+                      )}
                     </TabPane>
                     <TabPane tab="Raw" key={`tab_${action}_raw`}>
                       <textarea
@@ -73,6 +85,7 @@ class AutomatorJob extends Component {
                           width: "100%",
                           fontFamily: "'Menlo', 'Monaco', monospace",
                           fontSize: 11,
+                          border: 0,
                         }}
                       />
                     </TabPane>
