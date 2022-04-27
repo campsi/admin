@@ -13,12 +13,13 @@ import {
   Badge,
   Select,
   Button,
+  Spin,
 } from "antd";
 import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
 import { Link, Route, Routes } from "react-router-dom";
 import AutomatorJob from "./AutomatorJob";
-import {ReloadOutlined} from "@ant-design/icons";
+import { ReloadOutlined } from "@ant-design/icons";
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
@@ -103,6 +104,7 @@ class AutomatorService extends Component {
     perPage: 25,
     page: 1,
     totalCount: 0,
+    pollText: "Poll data",
   };
 
   async startJob(job) {
@@ -138,6 +140,24 @@ class AutomatorService extends Component {
     });
   }
 
+  async pollData() {
+    this.setState({ pollText: <Spin /> });
+    const duration = 60;
+    const everySec = 5;
+    let currentSec = 0;
+
+    for (let i = 0; i < duration; i++) {
+      currentSec++;
+      if (currentSec === everySec) {
+        await this.fetchData();
+        currentSec = 0;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    this.setState({ pollText: "Poll data" });
+  }
+
   getActionTab(action) {
     return (
       <>
@@ -161,7 +181,19 @@ class AutomatorService extends Component {
               element={<AutomatorJob service={service} />}
             />
           </Routes>
-          <Card title="Jobs" extra={<Button onClick={() => this.fetchData()}><ReloadOutlined/></Button>}>
+          <Card
+            title="Jobs"
+            extra={
+              <>
+                <Button onClick={() => this.fetchData()}>
+                  <ReloadOutlined />
+                </Button>
+                <Button onClick={() => this.pollData()}>
+                  {this.state.pollText}
+                </Button>
+              </>
+            }
+          >
             <Table
               dataSource={jobs}
               columns={columns}
