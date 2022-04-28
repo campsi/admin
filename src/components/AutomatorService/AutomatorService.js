@@ -384,7 +384,7 @@ class AutomatorService extends Component {
                                 <Form.Item
                                   {...field}
                                   name={[field.name, "name"]}
-                                  fieldKey={[field.fieldKey, "name"]}
+                                  key={[field.fieldKey, "name"]}
                                   label="name"
                                   required
                                 >
@@ -394,14 +394,14 @@ class AutomatorService extends Component {
                                   {...field}
                                   label="format"
                                   name={[field.name, "format"]}
-                                  fieldKey={[field.fieldKey, "format"]}
+                                  key={[field.fieldKey, "format"]}
                                   required
                                 >
                                   <Select placeholder="Media Type *">
-                                    <Select.Option value="gif">
+                                    <Select.Option value="GIF">
                                       Gif
                                     </Select.Option>
-                                    <Select.Option value="webm">
+                                    <Select.Option value="WEBM">
                                       Webm
                                     </Select.Option>
                                   </Select>
@@ -410,11 +410,7 @@ class AutomatorService extends Component {
                                   {...field}
                                   name={[field.name, "viewport", "height"]}
                                   required
-                                  fieldKey={[
-                                    field.fieldKey,
-                                    "viewport",
-                                    "height",
-                                  ]}
+                                  key={[field.fieldKey, "viewport", "height"]}
                                   label="Height"
                                 >
                                   <Input type="number" placeholder="height" />
@@ -423,11 +419,7 @@ class AutomatorService extends Component {
                                   {...field}
                                   name={[field.name, "viewport", "width"]}
                                   required
-                                  fieldKey={[
-                                    field.fieldKey,
-                                    "viewport",
-                                    "width",
-                                  ]}
+                                  key={[field.fieldKey, "viewport", "width"]}
                                   label="Width"
                                 >
                                   <Input type="number" placeholder="width" />

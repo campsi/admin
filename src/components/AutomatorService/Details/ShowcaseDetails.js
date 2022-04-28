@@ -1,4 +1,4 @@
-import { Descriptions, Space, Table, Tag } from "antd";
+import { Table } from "antd";
 import { Component } from "react";
 
 class ShowcaseDetails extends Component {

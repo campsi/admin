@@ -1,5 +1,4 @@
-
-import {Descriptions, Space, Table, Tag, Typography} from "antd";
+import { Descriptions, Space, Table, Tag, Typography } from "antd";
 import { GlobalOutlined } from "@ant-design/icons";
 import { withAppContext } from "../../../App";
 import PropTypes from "prop-types";
@@ -54,7 +53,7 @@ function ExpandedVendorRow({ vendor }) {
 class ScannerDetails extends Component {
   state = {
     categories: [],
-    dataSource: this.props.result.map((vendor) => {
+    dataSource: this.props?.result.map((vendor) => {
       return { key: vendor.name, ...vendor };
     }),
   };
@@ -87,7 +86,8 @@ class ScannerDetails extends Component {
       render: (categoryIds) =>
         categoryIds.map((id) => (
           <Tag key={id}>
-            {this.state.categories.filter((c) => c.id === id)[0]?.data.name || id}
+            {this.state.categories.filter((c) => c.id === id)[0]?.data.name ||
+              id}
           </Tag>
         )),
     },
@@ -108,7 +108,9 @@ class ScannerDetails extends Component {
             <Space>
               {Object.keys(value.$lang || {}).map((language) => {
                 return (
-                    <a key={language} href={value.$lang[language]}>{language}</a>
+                  <a key={language} href={value.$lang[language]}>
+                    {language}
+                  </a>
                 );
               })}
             </Space>
