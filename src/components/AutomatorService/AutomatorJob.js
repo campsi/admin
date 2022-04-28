@@ -4,6 +4,8 @@ import withParams from "../../utils/withParams";
 import React, { Component } from "react";
 import StylesheetDetails from "./Details/StylesheetDetails";
 import ScannerDetails from "./Details/ScannerDetails";
+import ProvisioningDetails from "./Details/ProvisioningDetails";
+import ShowcaseDetails from "./Details/ShowcaseDetails";
 
 const { TabPane } = Tabs;
 
@@ -36,8 +38,8 @@ class AutomatorJob extends Component {
 
     return (
       <Card title={`Automator Job ${this.props.params.id}`}>
-        <Space direction="vertical">
-          <Descriptions bordered column={2}>
+        <Space direction="vertical" style={{width: '100%'}}>
+          <Descriptions bordered column={2} size="small">
             <Descriptions.Item label="status">{job.status}</Descriptions.Item>
             <Descriptions.Item label="createdBy">
               {job.createdBy}
@@ -56,27 +58,18 @@ class AutomatorJob extends Component {
             {actions.map((action) => {
               return (
                 <TabPane tab={action} key={`tab_${action}`}>
-                  <Tabs tabPosition="right" size="small">
-                    <TabPane tab="Pretty" key={`tab_${action}_pretty`}>
-                      {action === 'stylesheet' && <StylesheetDetails result={job.actions[action].result}/>}
-                      {action === 'scanner' && <ScannerDetails result={job.actions[action].result}/>}
-                    </TabPane>
-                    <TabPane tab="Raw" key={`tab_${action}_raw`}>
-                      <textarea
-                        defaultValue={JSON.stringify(
-                          job.actions[action].result,
-                          null,
-                          2
-                        )}
-                        rows={30}
-                        style={{
-                          width: "100%",
-                          fontFamily: "'Menlo', 'Monaco', monospace",
-                          fontSize: 11,
-                        }}
-                      />
-                    </TabPane>
-                  </Tabs>
+                  {action === "stylesheet" && (
+                    <StylesheetDetails result={job.actions[action].result} />
+                  )}
+                  {action === "scanner" && (
+                    <ScannerDetails result={job.actions[action].result} />
+                  )}
+                  {action === "provisioning" && (
+                    <ProvisioningDetails result={job.actions[action].result} />
+                  )}
+                  {action === "showcase" && (
+                    <ShowcaseDetails result={job.actions[action].result} />
+                  )}
                 </TabPane>
               );
             })}

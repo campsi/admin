@@ -13,13 +13,17 @@ import {
   Badge,
   Select,
   Button,
-  Spin,
 } from "antd";
 import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
 import { Link, Route, Routes } from "react-router-dom";
 import AutomatorJob from "./AutomatorJob";
-import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
@@ -32,6 +36,7 @@ class AutomatorService extends Component {
   state = {
     activeActions: [],
     jobs: [],
+    isFetching: false,
     columns: [
       {
         title: "ID",
@@ -104,9 +109,9 @@ class AutomatorService extends Component {
     perPage: 25,
     page: 1,
     totalCount: 0,
-    pollingStart: false,
-    pollingStatus: "Poll data",
-    pollingDelay: 500000,
+    pollingStart: null,
+    pollingInterval: 10000,
+    pollingDuration: 500000,
   };
 
   async startJob(job) {
@@ -120,6 +125,7 @@ class AutomatorService extends Component {
       await this.fetchData();
     }
   }
+
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (
       this.state.page !== prevState.page ||
@@ -130,42 +136,54 @@ class AutomatorService extends Component {
   }
 
   async fetchData() {
+    const { service, api } = this.props;
     const { perPage, page, sort } = this.state;
-    const response = await this.props.api.client.get(
-      `${this.props.service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`
-    );
-    this.setState({
-      jobs: response.data.map((j) => {
-        return { ...j, key: j._id };
-      }),
-      totalCount: response.headers["X-Total-Count"],
+    return new Promise((resolve) => {
+      this.setState({ isFetching: true }, async () => {
+        const response = await api.client.get(
+          `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`,
+          { timeout: 20000 }
+        );
+        this.setState(
+          {
+            jobs: response.data.map((j) => {
+              return { ...j, key: j._id };
+            }),
+            totalCount: response.headers["X-Total-Count"],
+            isFetching: false,
+          },
+          () => resolve()
+        );
+      });
     });
   }
 
-  async startPolling() {
-    this.setState({ pollingStart: new Date() });
-    await this.pollData();
+  startPolling() {
+    this.setState({ pollingStart: new Date() }, async () => {
+      await this.pollData();
+    });
   }
 
   async stopPolling() {
     this.setState({ pollingStart: null });
-    this.setState({ pollingStatus: "Poll data" });
   }
 
   async pollData() {
-    this.setState({
-      pollingStatus: (
-        <Spin indicator={<LoadingOutlined spin />} size={"small"} />
-      ),
-    });
-    await this.fetchData();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    while (
-      Math.abs(this.state.pollingStart - new Date()) < this.state.pollingDelay
-    ) {
-      await this.fetchData();
+    const { pollingInterval, pollingDuration, pollingStart } = this.state;
+
+    // No need to continue if polling has been cancelled
+    if (null === pollingStart) {
+      return;
     }
-    await this.stopPolling();
+
+    await this.fetchData();
+    await new Promise((resolve) => setTimeout(resolve, pollingInterval));
+console.info('diff',new Date() - pollingStart);
+    if (new Date() - pollingStart < pollingDuration) {
+      await this.pollData();
+    } else {
+      this.setState({ pollingStart: null });
+    }
   }
 
   getActionTab(action) {
@@ -180,7 +198,8 @@ class AutomatorService extends Component {
   }
   render() {
     const { service } = this.props;
-    const { jobs, columns } = this.state;
+    const { jobs, columns, pollingStart, isFetching } = this.state;
+
     return (
       <Layout.Content style={{ padding: 30 }}>
         <Title>Automator Service</Title>
@@ -196,16 +215,14 @@ class AutomatorService extends Component {
             extra={
               <>
                 <Button onClick={() => this.fetchData()}>
-                  <ReloadOutlined />
+                  {isFetching ? <LoadingOutlined /> : <ReloadOutlined />}
                 </Button>
                 <Button
                   onClick={() => {
-                    this.state.pollingStart
-                      ? this.stopPolling()
-                      : this.startPolling();
+                    pollingStart ? this.stopPolling() : this.startPolling();
                   }}
                 >
-                  {this.state.pollingStatus}
+                  {pollingStart ? "Stop polling" : "Start polling"}
                 </Button>
               </>
             }
@@ -331,13 +348,16 @@ class AutomatorService extends Component {
                     <Select initialValue={["en", "fr"]} mode="tags" />
                   </Form.Item>
                   <Form.Item
-                    name="projectId"
+                    name={["actions", "provisioning", "projectId"]}
                     label="Project ID"
                     help="Fill this field to use an existing project"
                   >
                     <Input />
                   </Form.Item>
-                  <Form.Item name="organizationId" label="Organization ID">
+                  <Form.Item
+                    name={["actions", "provisioning", "organizationId"]}
+                    label="Organization ID"
+                  >
                     <Input />
                   </Form.Item>
                 </TabPane>
@@ -348,6 +368,86 @@ class AutomatorService extends Component {
                   >
                     <Checkbox>Active</Checkbox>
                   </Form.Item>
+                  <Form.List
+                    name={["actions", "showcase", "output"]}
+                    initialValue={[
+                      {
+                        name: "animated_gif",
+                        format: "GIF",
+                        viewport: { width: 1600, height: 900 },
+                      },
+                    ]}
+                  >
+                    {(fields, { add, remove }) => (
+                      <Space direction="vertical">
+                        <div>
+                          {fields.map((field) => {
+                            return (
+                              <Space key={field.key} direction="vertical">
+                                {fields.length > 1 ? (
+                                  <MinusCircleOutlined
+                                    className="dynamic-delete-button"
+                                    onClick={() => remove(field.name)}
+                                  />
+                                ) : null}
+                                <Form.Item
+                                  {...field}
+                                  name={[field.name, "name"]}
+                                  key={[field.fieldKey, "name"]}
+                                  label="name"
+                                  required
+                                >
+                                  <Input />
+                                </Form.Item>
+                                <Form.Item
+                                  {...field}
+                                  label="format"
+                                  name={[field.name, "format"]}
+                                  key={[field.fieldKey, "format"]}
+                                  required
+                                >
+                                  <Select placeholder="Media Type *">
+                                    <Select.Option value="GIF">
+                                      Gif
+                                    </Select.Option>
+                                    <Select.Option value="WEBM">
+                                      Webm
+                                    </Select.Option>
+                                  </Select>
+                                </Form.Item>
+                                <Form.Item
+                                  {...field}
+                                  name={[field.name, "viewport", "height"]}
+                                  required
+                                  key={[field.fieldKey, "viewport", "height"]}
+                                  label="Height"
+                                >
+                                  <Input type="number" placeholder="height" />
+                                </Form.Item>
+                                <Form.Item
+                                  {...field}
+                                  name={[field.name, "viewport", "width"]}
+                                  required
+                                  key={[field.fieldKey, "viewport", "width"]}
+                                  label="Width"
+                                >
+                                  <Input type="number" placeholder="width" />
+                                </Form.Item>
+                              </Space>
+                            );
+                          })}
+                        </div>
+
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          icon={<PlusOutlined />}
+                        >
+                          Add output
+                        </Button>
+                      </Space>
+                    )}
+                  </Form.List>
                 </TabPane>
                 <TabPane tab={this.getActionTab("gtm")} key="gtm">
                   <Form.Item
