@@ -17,15 +17,20 @@ class ShowcaseDetails extends Component {
       title: "Viewport",
       dataIndex: "viewport",
       key: "viewport",
-      render: (item) => {
-        return "Height: " + item["height"] + ", Width: " + item["width"];
-      },
+      render: (item) => <span>{item["width"]} &times; {item["height"]} px</span>,
     },
 
     {
       title: "Public Url",
       dataIndex: "url",
       key: "url",
+      render: (item) => {
+        return (
+          <a href={item}>
+            <img src={item} width={300} alt="showcase render"/>
+          </a>
+        );
+      },
     },
   ];
 
