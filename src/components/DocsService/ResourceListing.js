@@ -107,7 +107,7 @@ class ResourceListing extends Component {
       let str = String(string);
       if (str.indexOf("http") === 0) {
         return (
-          <a href={string} target="_blank">
+          <a href={string} target="_blank" rel="noreferrer">
             {str}
           </a>
         );
