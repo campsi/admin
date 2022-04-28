@@ -116,6 +116,8 @@ class AutomatorService extends Component {
 
   async startJob(job) {
     const { api, service } = this.props;
+
+    console.log(job);
     await api.client.post(`/${service.name}/jobs`, job);
     await this.fetchData();
   }
@@ -367,29 +369,64 @@ class AutomatorService extends Component {
                     {(fields, { add, remove }) => (
                       <Space direction="vertical">
                         <div>
-                        {fields.map((field) => {
-                          return (
-                            <Space key={field.key} direction="vertical">
-                              <Form.Item
-                                {...field}
-                                name={[field.name, "name"]}
-                                fieldKey={[field.fieldKey, "name"]}
-                                label="name"
-                              >
-                                <Input />
-                              </Form.Item>
-                              <Form.Item
-                                {...field}
-                                name={[field.name, "format"]}
-                                fieldKey={[field.fieldKey, "format"]}
-                                label="format"
-                              >
-                                <Input />
-                              </Form.Item>
-                            </Space>
-                          );
-                        })}
-                      </div>
+                          {fields.map((field) => {
+                            return (
+                              <Space key={field.key} direction="vertical">
+                                <Form.Item
+                                  {...field}
+                                  name={[field.name, "name"]}
+                                  fieldKey={[field.fieldKey, "name"]}
+                                  label="name"
+                                  required
+                                >
+                                  <Input />
+                                </Form.Item>
+                                <Form.Item
+                                  {...field}
+                                  label="format"
+                                  name={[field.name, "format"]}
+                                  fieldKey={[field.fieldKey, "format"]}
+                                  required
+                                >
+                                  <Select placeholder="Media Type *">
+                                    <Select.Option value="gif">
+                                      Gif
+                                    </Select.Option>
+                                    <Select.Option value="webm">
+                                      Webm
+                                    </Select.Option>
+                                  </Select>
+                                </Form.Item>
+                                <Form.Item
+                                  {...field}
+                                  name={[field.name, "viewport", "height"]}
+                                  required
+                                  fieldKey={[
+                                    field.fieldKey,
+                                    "viewport",
+                                    "height",
+                                  ]}
+                                  label="Height"
+                                >
+                                  <Input type="number" placeholder="height" />
+                                </Form.Item>
+                                <Form.Item
+                                  {...field}
+                                  name={[field.name, "viewport", "width"]}
+                                  required
+                                  fieldKey={[
+                                    field.fieldKey,
+                                    "viewport",
+                                    "width",
+                                  ]}
+                                  label="Width"
+                                >
+                                  <Input type="number" placeholder="width" />
+                                </Form.Item>
+                              </Space>
+                            );
+                          })}
+                        </div>
 
                         <Button
                           type="dashed"
@@ -401,96 +438,6 @@ class AutomatorService extends Component {
                       </Space>
                     )}
                   </Form.List>
-                  {/*
-                  <Form.List name={["actions", "showcase", "output"]}>
-                    {(fields, { add, remove }, { errors }) => (
-                      <>
-                        {fields.map((field, index) => (
-                          <Form.Item
-                            required={true}
-                            key={field.key}
-                            label={`Showcase Input #${index}`}
-                          >
-                            <Form.Item
-                              label={`Name${index}`}
-                              name={[
-                                `name${index}`,
-                              ]}
-                              required
-                              noStyle
-                            >
-                              <Input placeholder="Name *" />
-                            </Form.Item>
-
-                            <Form.Item
-                              label="Format"
-                              pla
-                              name={["actions", "showcase", "output", "format"]}
-                              required
-                              noStyle
-                            >
-                              <Select
-                                style={{ width: "60%" }}
-                                placeholder="Media Type *"
-                              >
-                                <Select.Option value="gif">Gif</Select.Option>
-                                <Select.Option value="webm">Webm</Select.Option>
-                              </Select>
-                            </Form.Item>
-
-                            <Form.Item
-                              label="Height"
-                              name={[
-                                "actions",
-                                "showcase",
-                                "output",
-                                "viewport",
-                                "height",
-                              ]}
-                              required
-                              noStyle
-                            >
-                              <Input type="number" defaultValue="1800" />
-                            </Form.Item>
-
-                            <Form.Item
-                              label="Width"
-                              name={[
-                                "actions",
-                                "showcase",
-                                "output",
-                                "viewport",
-                                "width",
-                              ]}
-                              required
-                              noStyle
-                            >
-                              <Input type="number" defaultValue="300" />
-                            </Form.Item>
-
-                            {fields.length > 1 ? (
-                              <MinusCircleOutlined
-                                className="dynamic-delete-button"
-                                onClick={() => remove(field.name)}
-                              />
-                            ) : null}
-                          </Form.Item>
-                        ))}
-                        <Form.Item>
-                          <Button
-                            type="dashed"
-                            onClick={() => add()}
-                            style={{ width: "60%" }}
-                            icon={<PlusOutlined />}
-                          >
-                            Add Showcase Input
-                          </Button>
-                          <Form.ErrorList errors={errors} />
-                        </Form.Item>
-                      </>
-                    )}
-                  </Form.List>
-                  */}
                 </TabPane>
                 <TabPane tab={this.getActionTab("gtm")} key="gtm">
                   <Form.Item

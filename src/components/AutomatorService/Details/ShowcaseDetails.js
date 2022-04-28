@@ -31,7 +31,6 @@ class ShowcaseDetails extends Component {
 
   render() {
     const { dataSource } = this.state;
-    console.log(dataSource);
     return <Table columns={this.getColumns()} dataSource={dataSource} />;
   }
 }

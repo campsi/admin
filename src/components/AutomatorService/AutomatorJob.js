@@ -1,17 +1,20 @@
 import { withAppContext } from "../../App";
-import { Card, Descriptions, Space, Tabs } from "antd";
+import { Button, Card, Descriptions, Space, Tabs } from "antd";
 import withParams from "../../utils/withParams";
 import React, { Component } from "react";
 import StylesheetDetails from "./Details/StylesheetDetails";
 import ScannerDetails from "./Details/ScannerDetails";
 import ProvisioningDetails from "./Details/ProvisioningDetails";
 import ShowcaseDetails from "./Details/ShowcaseDetails";
+import TextArea from "antd/lib/input/TextArea";
+import copy from "copy-to-clipboard";
 
 const { TabPane } = Tabs;
 
 class AutomatorJob extends Component {
   state = {
     job: {},
+    copyButtonText: "Copy to clipboard",
   };
   componentDidMount() {
     this.fetchData();
@@ -35,6 +38,11 @@ class AutomatorJob extends Component {
     const actions = Object.keys(job.actions || {}).filter(
       (a) => job.actions?.[a]?.active
     );
+
+    const installationScript =
+      'window.axeptioSettings= { clientId:"' +
+      job.actions?.provisioning.result.projectId +
+      '", }; (function(d,s) { var t = d.getElementsByTagName(s)[0], e = d.createElement(s); e.async = true; e.src = "//static.axept.io/sdk.js"; t.parentNode.insertBefore(e, t); })(document, "script");';
 
     return (
       <Card title={`Automator Job ${this.props.params.id}`}>
@@ -97,6 +105,39 @@ class AutomatorJob extends Component {
                 </TabPane>
               );
             })}
+            {Array.from(actions).includes("provisioning") && (
+              <TabPane
+                tab={"installationScript"}
+                key={`tab_installationScript`}
+              >
+                <TextArea
+                  value={installationScript}
+                  rows={30}
+                  style={{
+                    width: "100%",
+                    fontFamily: "'Menlo', 'Monaco', monospace",
+                    fontSize: 11,
+                    border: 0,
+                  }}
+                />
+
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  onClick={() => {
+                    copy(installationScript);
+                    this.setState({ copyButtonText: "Done" });
+                    setTimeout(
+                      () =>
+                        this.setState({ copyButtonText: "Copy to clipboard" }),
+                      5000
+                    );
+                  }}
+                >
+                  {this.state.copyButtonText}
+                </Button>
+              </TabPane>
+            )}
           </Tabs>
         </Space>
       </Card>
