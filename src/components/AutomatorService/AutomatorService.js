@@ -339,13 +339,16 @@ class AutomatorService extends Component {
                     <Select initialValue={["en", "fr"]} mode="tags" />
                   </Form.Item>
                   <Form.Item
-                    name="projectId"
+                    name={["actions", "provisioning", "projectId"]}
                     label="Project ID"
                     help="Fill this field to use an existing project"
                   >
                     <Input />
                   </Form.Item>
-                  <Form.Item name="organizationId" label="Organization ID">
+                  <Form.Item
+                    name={["actions", "provisioning", "organizationId"]}
+                    label="Organization ID"
+                  >
                     <Input />
                   </Form.Item>
                 </TabPane>
@@ -372,6 +375,12 @@ class AutomatorService extends Component {
                           {fields.map((field) => {
                             return (
                               <Space key={field.key} direction="vertical">
+                                {fields.length > 1 ? (
+                                  <MinusCircleOutlined
+                                    className="dynamic-delete-button"
+                                    onClick={() => remove(field.name)}
+                                  />
+                                ) : null}
                                 <Form.Item
                                   {...field}
                                   name={[field.name, "name"]}
