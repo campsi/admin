@@ -139,7 +139,8 @@ class AutomatorService extends Component {
   async fetchData() {
     const { perPage, page, sort } = this.state;
     const response = await this.props.api.client.get(
-      `${this.props.service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`
+      `${this.props.service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`,
+      { timeout: 20000 }
     );
     this.setState({
       jobs: response.data.map((j) => {
