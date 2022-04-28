@@ -13,7 +13,6 @@ import {
   Badge,
   Select,
   Button,
-  Spin,
 } from "antd";
 import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
@@ -37,6 +36,7 @@ class AutomatorService extends Component {
   state = {
     activeActions: [],
     jobs: [],
+    isFetching: false,
     columns: [
       {
         title: "ID",
@@ -109,15 +109,13 @@ class AutomatorService extends Component {
     perPage: 25,
     page: 1,
     totalCount: 0,
-    pollingStart: false,
-    pollingStatus: "Poll data",
-    pollingDelay: 500000,
+    pollingStart: null,
+    pollingInterval: 10000,
+    pollingDuration: 500000,
   };
 
   async startJob(job) {
     const { api, service } = this.props;
-
-    console.log(job);
     await api.client.post(`/${service.name}/jobs`, job);
     await this.fetchData();
   }
@@ -127,6 +125,7 @@ class AutomatorService extends Component {
       await this.fetchData();
     }
   }
+
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (
       this.state.page !== prevState.page ||
@@ -137,43 +136,54 @@ class AutomatorService extends Component {
   }
 
   async fetchData() {
+    const { service, api } = this.props;
     const { perPage, page, sort } = this.state;
-    const response = await this.props.api.client.get(
-      `${this.props.service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`,
-      { timeout: 20000 }
-    );
-    this.setState({
-      jobs: response.data.map((j) => {
-        return { ...j, key: j._id };
-      }),
-      totalCount: response.headers["X-Total-Count"],
+    return new Promise((resolve) => {
+      this.setState({ isFetching: true }, async () => {
+        const response = await api.client.get(
+          `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`,
+          { timeout: 20000 }
+        );
+        this.setState(
+          {
+            jobs: response.data.map((j) => {
+              return { ...j, key: j._id };
+            }),
+            totalCount: response.headers["X-Total-Count"],
+            isFetching: false,
+          },
+          () => resolve()
+        );
+      });
     });
   }
 
-  async startPolling() {
-    this.setState({ pollingStart: new Date() });
-    await this.pollData();
+  startPolling() {
+    this.setState({ pollingStart: new Date() }, async () => {
+      await this.pollData();
+    });
   }
 
   async stopPolling() {
     this.setState({ pollingStart: null });
-    this.setState({ pollingStatus: "Poll data" });
   }
 
   async pollData() {
-    this.setState({
-      pollingStatus: (
-        <Spin indicator={<LoadingOutlined spin />} size={"small"} />
-      ),
-    });
-    await this.fetchData();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    while (
-      Math.abs(this.state.pollingStart - new Date()) < this.state.pollingDelay
-    ) {
-      await this.fetchData();
+    const { pollingInterval, pollingDuration, pollingStart } = this.state;
+
+    // No need to continue if polling has been cancelled
+    if (null === pollingStart) {
+      return;
     }
-    await this.stopPolling();
+
+    await this.fetchData();
+    await new Promise((resolve) => setTimeout(resolve, pollingInterval));
+console.info('diff',new Date() - pollingStart);
+    if (new Date() - pollingStart < pollingDuration) {
+      await this.pollData();
+    } else {
+      this.setState({ pollingStart: null });
+    }
   }
 
   getActionTab(action) {
@@ -188,7 +198,7 @@ class AutomatorService extends Component {
   }
   render() {
     const { service } = this.props;
-    const { jobs, columns } = this.state;
+    const { jobs, columns, pollingStart, isFetching } = this.state;
 
     return (
       <Layout.Content style={{ padding: 30 }}>
@@ -205,16 +215,14 @@ class AutomatorService extends Component {
             extra={
               <>
                 <Button onClick={() => this.fetchData()}>
-                  <ReloadOutlined />
+                  {isFetching ? <LoadingOutlined /> : <ReloadOutlined />}
                 </Button>
                 <Button
                   onClick={() => {
-                    this.state.pollingStart
-                      ? this.stopPolling()
-                      : this.startPolling();
+                    pollingStart ? this.stopPolling() : this.startPolling();
                   }}
                 >
-                  {this.state.pollingStatus}
+                  {pollingStart ? "Stop polling" : "Start polling"}
                 </Button>
               </>
             }
