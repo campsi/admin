@@ -354,6 +354,54 @@ class AutomatorService extends Component {
                   >
                     <Checkbox>Active</Checkbox>
                   </Form.Item>
+                  <Form.List
+                    name={["actions", "showcase", "output"]}
+                    initialValue={[
+                      {
+                        name: "animated_gif",
+                        format: "GIF",
+                        viewport: { width: 1600, height: 900 },
+                      },
+                    ]}
+                  >
+                    {(fields, { add, remove }) => (
+                      <Space direction="vertical">
+                        <div>
+                        {fields.map((field) => {
+                          return (
+                            <Space key={field.key} direction="vertical">
+                              <Form.Item
+                                {...field}
+                                name={[field.name, "name"]}
+                                fieldKey={[field.fieldKey, "name"]}
+                                label="name"
+                              >
+                                <Input />
+                              </Form.Item>
+                              <Form.Item
+                                {...field}
+                                name={[field.name, "format"]}
+                                fieldKey={[field.fieldKey, "format"]}
+                                label="format"
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Space>
+                          );
+                        })}
+                      </div>
+
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          icon={<PlusOutlined />}
+                        >
+                          Add output
+                        </Button>
+                      </Space>
+                    )}
+                  </Form.List>
+                  {/*
                   <Form.List name={["actions", "showcase", "output"]}>
                     {(fields, { add, remove }, { errors }) => (
                       <>
@@ -366,9 +414,6 @@ class AutomatorService extends Component {
                             <Form.Item
                               label={`Name${index}`}
                               name={[
-                                "actions",
-                                "showcase",
-                                "output",
                                 `name${index}`,
                               ]}
                               required
@@ -445,6 +490,7 @@ class AutomatorService extends Component {
                       </>
                     )}
                   </Form.List>
+                  */}
                 </TabPane>
                 <TabPane tab={this.getActionTab("gtm")} key="gtm">
                   <Form.Item
