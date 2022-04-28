@@ -14,7 +14,7 @@ const getEmbedCode = ({ projectId, version }) => {
     `  t.parentNode.insertBefore(e, t);`,
     `})(document, "script");`,
   ];
-  return lines.join("\n");
+  return lines.filter((l) => !!l).join("\n");
 };
 
 function ProvisioningDetails({ result }) {
@@ -35,7 +35,7 @@ function ProvisioningDetails({ result }) {
             fontSize: 11,
             width: "100%",
           }}
-          initialValue={getEmbedCode(result)}
+          defaultValue={getEmbedCode(result)}
           rows={10}
         />
       </Item>

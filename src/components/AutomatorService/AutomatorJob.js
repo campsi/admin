@@ -38,8 +38,8 @@ class AutomatorJob extends Component {
 
     return (
       <Card title={`Automator Job ${this.props.params.id}`}>
-        <Space direction="vertical">
-          <Descriptions bordered column={2}>
+        <Space direction="vertical" style={{width: '100%'}}>
+          <Descriptions bordered column={2} size="small">
             <Descriptions.Item label="status">{job.status}</Descriptions.Item>
             <Descriptions.Item label="createdBy">
               {job.createdBy}
