@@ -1,12 +1,12 @@
 import { withAppContext } from "../../App";
-import { Card, Descriptions, Empty, Tabs } from "antd";
+import { Button, Card, Descriptions, Empty, Tabs } from "antd";
 import withParams from "../../utils/withParams";
 import React, { Component } from "react";
 import StylesheetDetails from "./Details/StylesheetDetails";
 import ScannerDetails from "./Details/ScannerDetails";
 import ProvisioningDetails from "./Details/ProvisioningDetails";
 import ShowcaseDetails from "./Details/ShowcaseDetails";
-import { LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
 import AutomatorJobActions from "./AutomatorJobActions";
 
 const { TabPane } = Tabs;
@@ -58,19 +58,23 @@ class AutomatorJob extends Component {
   }
 
   render() {
-    const { job } = this.state;
+    const { job, isFetching } = this.state;
     const allActions = Object.keys(AutomatorJobActions);
 
-    if (this.state.isFetching) {
+    if (isFetching) {
       return (
-        <Card>
+        <Card extra={<Button icon={<LoadingOutlined />} />}>
           <LoadingOutlined />
         </Card>
       );
     }
 
     return (
-      <Card>
+      <Card
+        extra={
+          <Button onClick={() => this.fetchData()} icon={<ReloadOutlined />} />
+        }
+      >
         <Tabs type="card" key={job.id}>
           <TabPane tab="job details" key="tab_details">
             <Descriptions bordered column={2} size="small">

@@ -8,7 +8,13 @@ import "antd/dist/antd.min.css";
 import { Layout } from "antd";
 import Playground from "./components/Playground/Playground";
 
-export const AppContext = createContext({ service: new Api(), api: null });
+export const AppContext = createContext({
+  services: {},
+  api: null,
+  authenticated: false,
+  setAccessToken: async () => {},
+  revokeAccessToken: async () => {},
+});
 
 export function withAppContext(Component) {
   function WrappedComponent(props) {
@@ -72,9 +78,9 @@ class App extends Component {
   async fetchData() {
     try {
       const services = await this.state.api.getServices();
-      this.setState({services});
-    } catch (err){
-      if (this.state.authenticated){
+      this.setState({ services });
+    } catch (err) {
+      if (this.state.authenticated) {
         await this.state.revokeAccessToken();
         await this.fetchData();
       }
@@ -87,7 +93,7 @@ class App extends Component {
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           {services && (
-            <Layout hasSider style={{ minHeight: "100vh" }}>
+            <Layout hasSider style={{ minHeight: "100vh"}}>
               <AdminMenu services={services} />
               <Layout>
                 <Routes>

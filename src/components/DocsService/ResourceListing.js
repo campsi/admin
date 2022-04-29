@@ -246,7 +246,6 @@ class ResourceListing extends Component {
                   key: i.id,
                 };
               })}
-              scroll={{ x: 1300 }}
               current={this.state.page}
               totalSize={this.state.totalCount}
               pagination={{
