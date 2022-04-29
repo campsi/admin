@@ -59,7 +59,6 @@ class AutomatorJob extends Component {
             </Descriptions.Item>
           </Descriptions>
           <Tabs>
-            {/* Todo show all actions and active those where job.actions[action].result exists  */}
             {allActions.map((action) => {
               return (
                 <TabPane
