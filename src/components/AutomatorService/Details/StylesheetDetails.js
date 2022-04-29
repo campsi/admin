@@ -9,6 +9,7 @@ function Color({ value }) {
         display: "inline-block",
         border: "1px solid #CCC",
         padding: "3px",
+        marginBottom: "-7px"
       }}
     >
       <div
@@ -24,14 +25,14 @@ function Color({ value }) {
 
 function StylesheetDetails({ result }) {
   return (
-    <Descriptions bordered column={2} size="small">
-      <Item label="Font" span={2}>
+    <Descriptions bordered column={3} size="small">
+      <Item label="Font" span={3}>
         {result.font}
       </Item>
       <Item label="Is Dark Mode">
         {result.isDarkMode ? <CheckCircleOutlined /> : ""}
       </Item>
-      <Item label="Is Monochrome">
+      <Item label="Is Monochrome" span={2}>
         {result.isMonochrome ? <CheckCircleOutlined /> : ""}
       </Item>
       <Item label="Dark Color">

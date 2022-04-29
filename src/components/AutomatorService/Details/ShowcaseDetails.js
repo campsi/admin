@@ -3,10 +3,27 @@ import { Component } from "react";
 
 class ShowcaseDetails extends Component {
   state = {
-    dataSource: this.props.result.map((output) => {
-      return { key: output.name, ...output };
-    }),
+    dataSource: [],
   };
+
+  componentDidMount() {
+    this.updateStateFromProps();
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if(prevProps.result !== this.props.result){
+      this.updateStateFromProps();
+    }
+  }
+
+  updateStateFromProps(){
+    this.setState({
+      dataSource:this.props.result.map((output) => {
+        return { key: output.name, ...output };
+      })
+    })
+  }
+
   getColumns = () => [
     {
       title: "Name",

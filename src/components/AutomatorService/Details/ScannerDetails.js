@@ -143,11 +143,9 @@ ScannerDetails.propTypes = {
     PropTypes.shape({
       name: PropTypes.string,
       categoryIds: PropTypes.arrayOf(PropTypes.string),
-      company: PropTypes.shape(
-        PropTypes.shape({
-          name: PropTypes.string,
-        })
-      ),
+      company: PropTypes.shape({
+        name: PropTypes.string,
+      }),
     })
   ),
 };
