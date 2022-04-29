@@ -1,5 +1,5 @@
 import { withAppContext } from "../../App";
-import { Card, Descriptions, Space, Tabs } from "antd";
+import { Card, Descriptions, Empty, Space, Tabs } from "antd";
 import withParams from "../../utils/withParams";
 import React, { Component } from "react";
 import StylesheetDetails from "./Details/StylesheetDetails";
@@ -32,13 +32,17 @@ class AutomatorJob extends Component {
 
   render() {
     const { job } = this.state;
-    const actions = Object.keys(job.actions || {}).filter(
-      (a) => job.actions?.[a]?.active
-    );
+    const allActions = [
+      "scanner",
+      "stylesheet",
+      "provisioning",
+      "showcase",
+      "gtm",
+    ];
 
     return (
       <Card title={`Automator Job ${this.props.params.id}`}>
-        <Space direction="vertical" style={{width: '100%'}}>
+        <Space direction="vertical" style={{ width: "100%" }}>
           <Descriptions bordered column={2} size="small">
             <Descriptions.Item label="status">{job.status}</Descriptions.Item>
             <Descriptions.Item label="createdBy">
@@ -55,20 +59,35 @@ class AutomatorJob extends Component {
             </Descriptions.Item>
           </Descriptions>
           <Tabs>
-            {actions.map((action) => {
+            {/* Todo show all actions and active those where job.actions[action].result exists  */}
+            {allActions.map((action) => {
               return (
-                <TabPane tab={action} key={`tab_${action}`}>
-                  {action === "stylesheet" && (
-                    <StylesheetDetails result={job.actions[action].result} />
-                  )}
-                  {action === "scanner" && (
-                    <ScannerDetails result={job.actions[action].result} />
-                  )}
-                  {action === "provisioning" && (
-                    <ProvisioningDetails result={job.actions[action].result} />
-                  )}
-                  {action === "showcase" && (
-                    <ShowcaseDetails result={job.actions[action].result} />
+                <TabPane
+                  tab={action}
+                  key={`tab_${action}`}
+                  disabled={typeof job.actions?.[action] === "undefined"}
+                >
+                  {job.actions?.[action]?.result ? (
+                    <>
+                      {action === "stylesheet" && (
+                        <StylesheetDetails
+                          result={job.actions[action].result}
+                        />
+                      )}
+                      {action === "scanner" && (
+                        <ScannerDetails result={job.actions[action].result} />
+                      )}
+                      {action === "provisioning" && (
+                        <ProvisioningDetails
+                          result={job.actions[action].result}
+                        />
+                      )}
+                      {action === "showcase" && (
+                        <ShowcaseDetails result={job.actions[action].result} />
+                      )}
+                    </>
+                  ) : (
+                    <Empty />
                   )}
                 </TabPane>
               );

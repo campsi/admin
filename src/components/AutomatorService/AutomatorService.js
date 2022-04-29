@@ -178,7 +178,6 @@ class AutomatorService extends Component {
 
     await this.fetchData();
     await new Promise((resolve) => setTimeout(resolve, pollingInterval));
-console.info('diff',new Date() - pollingStart);
     if (new Date() - pollingStart < pollingDuration) {
       await this.pollData();
     } else {
@@ -464,22 +463,6 @@ console.info('diff',new Date() - pollingStart);
                 </Button>
               </Form.Item>
             </Form>
-            {/*
-            <Form
-              formContext={{
-
-                labelCol:{ span: 8 },
-                wrapperCol:{ span: 16 },
-                layout: "inline",
-                colon: true
-              }}
-              schema={
-                service.paths["/jobs"].post.requestBody.content[
-                  "application/json"
-                ].schema
-              }
-            />
-            */}
           </Card>
         </Space>
       </Layout.Content>
