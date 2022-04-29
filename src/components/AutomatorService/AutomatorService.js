@@ -225,9 +225,7 @@ class AutomatorService extends Component {
               }}
             />
           </Card>
-          <Card title="Start a new job">
-            <AutomatorJobForm onFinish={(job) => this.startJob(job)} />
-          </Card>
+          <AutomatorJobForm onFinish={(job) => this.startJob(job)} />
         </Space>
       </Layout.Content>
     );
