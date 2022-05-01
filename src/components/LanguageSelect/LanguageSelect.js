@@ -7,6 +7,7 @@ const { Option, OptGroup } = Select;
 function LanguageSelect({
   value = "universal",
   activeLanguages = [],
+  style = {},
   onChange,
 }) {
   const languageNames = languages.getNames("en");
@@ -25,11 +26,13 @@ function LanguageSelect({
     <Select
       showSearch
       filterOption={(input, option) => {
-        return String(option.children).toLowerCase().includes(input.toLowerCase());
+        return String(option.children)
+          .toLowerCase()
+          .includes(input.toLowerCase());
       }}
       value={value}
       onChange={onChange}
-      style={{ width: 150 }}
+      style={style}
     >
       <OptGroup label="Active languages">{activeLanguagesOptions}</OptGroup>
       <OptGroup label="All languages">{otherLanguagesOptions}</OptGroup>

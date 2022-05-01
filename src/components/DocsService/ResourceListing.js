@@ -2,7 +2,7 @@ import { Component } from "react";
 import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import { Link } from "react-router-dom";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, FileOutlined } from "@ant-design/icons";
 import {
   Layout,
   Typography,
@@ -33,10 +33,10 @@ class ResourceListing extends Component {
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
 
-    if(resource.schema['ui:defaultColumns']){
+    if (resource.schema["ui:defaultColumns"]) {
       this.setState({
-        visibleProperties: resource.schema['ui:defaultColumns']
-      })
+        visibleProperties: resource.schema["ui:defaultColumns"],
+      });
     }
 
     this.fetchData();
@@ -179,6 +179,18 @@ class ResourceListing extends Component {
             case "object":
               if (value?.$lang) {
                 return renderStringInCell(value.$lang[language]);
+              }
+              if (value?.url && value?.detectedMimeType) {
+                if (value.detectedMimeType.includes("image")) {
+                  return (
+                    <img
+                      src={value?.url}
+                      style={{ maxHeight: 30, maxWidth: 50 }}
+                      alt={value?.originalName}
+                    />
+                  );
+                }
+                return <FileOutlined title={value.originalName} />;
               }
               return JSON.stringify(value);
             case "array":
