@@ -1,6 +1,6 @@
 import { withAppContext } from "../../App";
 import { Component } from "react";
-import { Divider, Input, Select, Space, Typography } from "antd";
+import {Divider, Form, Input, Select, Space, Typography} from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 /**
  *
@@ -66,10 +66,10 @@ function generateRelationField(properties) {
     }
 
     render() {
-      const { formData, onChange } = this.props;
+      const { formData, onChange, schema } = this.props;
       const { newItemName, items, isCreatingNewItem } = this.state;
       return (
-        <div>
+        <Form.Item label={schema.title}>
           <Select
             showSearch
             value={formData}
@@ -115,7 +115,7 @@ function generateRelationField(properties) {
               );
             }}
           />
-        </div>
+        </Form.Item>
       );
     }
   }
