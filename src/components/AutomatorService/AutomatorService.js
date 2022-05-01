@@ -127,9 +127,12 @@ class AutomatorService extends Component {
       jobsDeleting: [...this.state.jobsDeleting, id],
     });
     await api.client.delete(`/${service.name}/jobs/${id}`);
+    await new Promise(resolve => setTimeout(resolve, 2000))
     await this.setStateAsync({
       jobsDeleting: this.state.jobsDeleting.filter((jobId) => jobId !== id),
+      jobs: this.state.jobs.filter(job => job._id !== id),
     });
+
     if (this.state.jobsDeleting.length === 0) {
       await this.fetchData();
     }
@@ -168,7 +171,7 @@ class AutomatorService extends Component {
   }
 
   async startPolling() {
-    await this.setStateAsync({ pollingStart: new Date()});
+    await this.setStateAsync({ pollingStart: new Date() });
     await this.pollData();
   }
 
@@ -194,12 +197,12 @@ class AutomatorService extends Component {
   }
   render() {
     const { service } = this.props;
-    const { jobs, columns, pollingStart, isFetching } = this.state;
+    const { jobs, columns, pollingStart, isFetching, jobsDeleting } =
+      this.state;
 
     return (
       <Layout.Content style={{ padding: 30, width: "100%" }}>
         <Title>Automator Service</Title>
-        <div>Jobs deleting : {this.state.jobsDeleting.join(', ')}</div>
         <Space direction="vertical">
           <Routes>
             <Route
@@ -225,7 +228,10 @@ class AutomatorService extends Component {
             }
           >
             <Table
-              dataSource={jobs}
+              dataSource={jobs.map((j) => {
+                return { ...j, isBeingDeleted: jobsDeleting.includes(j._id) };
+              })}
+              rowClassName={value => value.isBeingDeleted ? 'fade' : ''}
               columns={columns}
               pagination={{
                 pageSize: this.state.perPage,
