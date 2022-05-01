@@ -81,10 +81,14 @@ class AutomatorService extends Component {
         dataIndex: "_id",
         render: (id) => (
           <Space>
-            <Button
-              icon={<DeleteOutlined />}
-              onClick={() => this.deleteJob(id)}
-            />
+            {this.state.jobsDeleting.includes(id) ? (
+              <Button disabled icon={<LoadingOutlined />} />
+            ) : (
+              <Button
+                icon={<DeleteOutlined />}
+                onClick={() => this.deleteJob(id)}
+              />
+            )}
             <Link to={`/services/${this.props.service.name}/jobs/${id}`}>
               <Button icon={<EyeOutlined />} />
             </Link>
@@ -96,10 +100,17 @@ class AutomatorService extends Component {
     perPage: 25,
     page: 1,
     totalCount: 0,
+    jobsDeleting: [],
     pollingStart: null,
     pollingInterval: 10000,
     pollingDuration: 500000,
   };
+
+  setStateAsync(state) {
+    return new Promise((resolve) => {
+      this.setState(state, () => resolve());
+    });
+  }
 
   async startJob(job) {
     const { api, service } = this.props;
@@ -109,8 +120,19 @@ class AutomatorService extends Component {
 
   async deleteJob(id) {
     const { api, service } = this.props;
+    if (this.state.jobsDeleting.includes(id)) {
+      return;
+    }
+    await this.setStateAsync({
+      jobsDeleting: [...this.state.jobsDeleting, id],
+    });
     await api.client.delete(`/${service.name}/jobs/${id}`);
-    await this.fetchData();
+    await this.setStateAsync({
+      jobsDeleting: this.state.jobsDeleting.filter((jobId) => jobId !== id),
+    });
+    if (this.state.jobsDeleting.length === 0) {
+      await this.fetchData();
+    }
   }
 
   async componentDidMount() {
@@ -131,30 +153,23 @@ class AutomatorService extends Component {
   async fetchData() {
     const { service, api } = this.props;
     const { perPage, page, sort } = this.state;
-    return new Promise((resolve) => {
-      this.setState({ isFetching: true }, async () => {
-        const response = await api.client.get(
-          `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`,
-          { timeout: 20000 }
-        );
-        this.setState(
-          {
-            jobs: response.data.map((j) => {
-              return { ...j, key: j._id };
-            }),
-            totalCount: response.headers["X-Total-Count"],
-            isFetching: false,
-          },
-          () => resolve()
-        );
-      });
+    await this.setStateAsync({ isFetching: true });
+    const response = await api.client.get(
+      `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`,
+      { timeout: 20000 }
+    );
+    await this.setStateAsync({
+      jobs: response.data.map((j) => {
+        return { ...j, key: j._id };
+      }),
+      totalCount: response.headers["X-Total-Count"],
+      isFetching: false,
     });
   }
 
-  startPolling() {
-    this.setState({ pollingStart: new Date() }, async () => {
-      await this.pollData();
-    });
+  async startPolling() {
+    await this.setStateAsync({ pollingStart: new Date()});
+    await this.pollData();
   }
 
   async stopPolling() {
@@ -184,6 +199,7 @@ class AutomatorService extends Component {
     return (
       <Layout.Content style={{ padding: 30, width: "100%" }}>
         <Title>Automator Service</Title>
+        <div>Jobs deleting : {this.state.jobsDeleting.join(', ')}</div>
         <Space direction="vertical">
           <Routes>
             <Route

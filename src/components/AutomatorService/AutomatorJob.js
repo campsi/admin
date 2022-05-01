@@ -6,7 +6,7 @@ import StylesheetDetails from "./Details/StylesheetDetails";
 import ScannerDetails from "./Details/ScannerDetails";
 import ProvisioningDetails from "./Details/ProvisioningDetails";
 import ShowcaseDetails from "./Details/ShowcaseDetails";
-import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
+import {CheckCircleOutlined, LoadingOutlined, ReloadOutlined} from "@ant-design/icons";
 import AutomatorJobActions from "./AutomatorJobActions";
 
 const { TabPane } = Tabs;
@@ -96,7 +96,7 @@ class AutomatorJob extends Component {
           {allActions.map((action) => {
             return (
               <TabPane
-                tab={action}
+                tab={job.actions?.[action]?.result ? <><CheckCircleOutlined /> {action}</> : action}
                 key={`tab_${action}`}
                 disabled={typeof job.actions?.[action] === "undefined"}
               >
