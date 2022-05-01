@@ -1,12 +1,14 @@
 import DocsService from "../DocsService/DocsService";
 import AuthService from "../AuthService/AuthService";
+import AssetsService from "../AssetsService/AssetsService";
 import {useParams} from "react-router-dom";
 import AutomatorService from "../AutomatorService/AutomatorService";
 
 const ServiceComponents = {
   DocsService,
   AuthService,
-  AutomatorService
+  AutomatorService,
+  AssetsService
 };
 
 function Service(props) {
