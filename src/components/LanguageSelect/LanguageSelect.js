@@ -25,7 +25,7 @@ function LanguageSelect({
     <Select
       showSearch
       filterOption={(input, option) => {
-        return String(option.label).toLowerCase().includes(input.toLowerCase());
+        return String(option.children).toLowerCase().includes(input.toLowerCase());
       }}
       value={value}
       onChange={onChange}

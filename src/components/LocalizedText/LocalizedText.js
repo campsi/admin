@@ -1,22 +1,27 @@
 import { useState } from "react";
 import LanguageSelect from "../LanguageSelect/LanguageSelect";
-import { Form, Input } from "antd";
+import {Form, Input, Space} from "antd";
+const {TextArea} = Input;
 
-export default function LocalizedText(props) {
+
+export default function LocalizedText({ formData, schema, name, onChange }) {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
-  const value = props.formData?.$lang || { [selectedLanguage]: "" };
+  const value = formData?.$lang || { [selectedLanguage]: "" };
   const fieldValue = value[selectedLanguage];
+  const InputComponent = schema['ui:multiline'] ? TextArea : Input;
+
   return (
-    <Form.Item label={props.schema.title || props.name}>
-      <div style={{ display: "flex" }}>
+    <Form.Item label={schema.title || name}>
+      <Space direction={schema['ui:multiline'] ? "vertical": "horizontal"} style={{width: '100%'}}>
         <LanguageSelect
           onChange={(l) => setSelectedLanguage(l)}
           value={selectedLanguage}
           activeLanguages={Object.keys(value)}
         />
-        <Input
+        <InputComponent
           value={fieldValue}
           type="text"
+          rows={6}
           onChange={(event) => {
             const formData = {
               $lang: {
@@ -24,10 +29,10 @@ export default function LocalizedText(props) {
                 [selectedLanguage]: event.target.value,
               },
             };
-            props.onChange(formData);
+            onChange(formData);
           }}
         />
-      </div>
+      </Space>
     </Form.Item>
   );
 }
