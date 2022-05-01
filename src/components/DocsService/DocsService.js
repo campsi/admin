@@ -4,6 +4,7 @@ import ResourceForm from "./ResourceForm";
 import DetectionStrategy from "../DetectionStrategy/DetectionStrategy";
 import MatchString from "../MatchString/MatchString";
 import LocalizedText from "../LocalizedText/LocalizedText";
+import Asset from "../Asset/Asset";
 
 function DocsService(props) {
   useParams();
@@ -14,7 +15,8 @@ function DocsService(props) {
         element={<ResourceForm service={props.service} customWidgets={{
           'DetectionStrategy': DetectionStrategy,
           'LocalizedString': LocalizedText,
-          'MatchString': MatchString
+          'MatchString': MatchString,
+          'Asset': Asset
         }} />}
       />
       <Route
