@@ -71,6 +71,7 @@ class AutomatorJob extends Component {
 
     return (
       <Card
+        title="Job detail"
         extra={
           <Button onClick={() => this.fetchData()} icon={<ReloadOutlined />} />
         }

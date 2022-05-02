@@ -2,20 +2,17 @@ import {
   Badge,
   Button,
   Card,
-  Checkbox,
   Form,
   Input,
   InputNumber,
   Select,
-  Space,
+  Space, Switch,
   Tabs,
-  Typography,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
 const { TabPane } = Tabs;
-const { Title } = Typography;
 
 function AutomatorJobForm({ onFinish }) {
   const [formValues, setFormValues] = useState({});
@@ -41,6 +38,9 @@ function AutomatorJobForm({ onFinish }) {
 
   return (
     <Form
+      labelAlign="right"
+      labelCol={{span: 6}}
+      labelWrap={true}
       form={form}
       onFinish={onFinish}
       onValuesChange={(valuesChanges, allValues) => {
@@ -74,14 +74,14 @@ function AutomatorJobForm({ onFinish }) {
             <Select.Option value="high">High</Select.Option>
           </Select>
         </Form.Item>
-        <Title level={5}>Actions</Title>
-        <Tabs>
+        <Tabs type="card">
           <TabPane tab={getActionTab("scanner")} key="scanner">
             <Form.Item
               name={["actions", "scanner", "active"]}
               valuePropName="checked"
+              label="Activate Scanner Action"
             >
-              <Checkbox>Active</Checkbox>
+              <Switch/>
             </Form.Item>
             <Form.Item
               name={["actions", "scanner", "maxTabs"]}
@@ -101,31 +101,35 @@ function AutomatorJobForm({ onFinish }) {
               name={["actions", "scanner", "acceptCMP"]}
               initialValue={true}
               valuePropName="checked"
+              label="Accept CMP"
             >
-              <Checkbox>Accept CMP</Checkbox>
+              <Switch/>
             </Form.Item>
             <Form.Item
               name={["actions", "scanner", "followSubDomains"]}
               initialValue={false}
               valuePropName="checked"
+              label="Follow subdomains"
             >
-              <Checkbox>Follow subdomains</Checkbox>
+              <Switch/>
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
             <Form.Item
               name={["actions", "stylesheet", "active"]}
               valuePropName="checked"
+              label="Activate Stylesheet Action"
             >
-              <Checkbox>Active</Checkbox>
+              <Switch/>
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("provisioning")} key="provisioning">
             <Form.Item
               name={["actions", "provisioning", "active"]}
               valuePropName="checked"
+              label="Activate Provisioning Action"
             >
-              <Checkbox>Active</Checkbox>
+              <Switch/>
             </Form.Item>
             <Form.Item
               name={["actions", "provisioning", "database"]}
@@ -155,9 +159,10 @@ function AutomatorJobForm({ onFinish }) {
               label="Languages"
               name={["actions", "provisioning", "languages"]}
               required={isActionActive("provisioning")}
+              initialValue={['en']}
               rules={[{ required: isActionActive("provisioning") }]}
             >
-              <Select initialValue={["en", "fr"]} mode="tags" />
+              <Select mode="tags" />
             </Form.Item>
             <Form.Item
               name={["actions", "provisioning", "projectId"]}
@@ -173,18 +178,26 @@ function AutomatorJobForm({ onFinish }) {
               <Input />
             </Form.Item>
             <Form.Item
+              label={"Contextual Consent Wall"}
               name={["actions", "provisioning", "withContextualConsentWall"]}
               valuePropName="checked"
             >
-              <Checkbox>Create a Contextual Consent Wall</Checkbox>
+              <Switch/>
+            </Form.Item>
+            <Form.Item
+              label="Invitation email"
+              name={["actions", "provisioning", "invitationEmail"]}
+            >
+              <Input type="text"/>
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("showcase")} key="showcase">
             <Form.Item
               name={["actions", "showcase", "active"]}
+              label="Activate Showcase Action"
               valuePropName="checked"
             >
-              <Checkbox>Active</Checkbox>
+              <Switch/>
             </Form.Item>
             <Form.List
               name={["actions", "showcase", "output"]}
@@ -271,8 +284,9 @@ function AutomatorJobForm({ onFinish }) {
             <Form.Item
               name={["actions", "gtm", "active"]}
               valuePropName="checked"
+              label="Activate GTM Action"
             >
-              <Checkbox>Active</Checkbox>
+              <Switch/>
             </Form.Item>
           </TabPane>
         </Tabs>
