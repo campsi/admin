@@ -1,6 +1,6 @@
 import { withAppContext } from "../../App";
 import { Component } from "react";
-import {Divider, Form, Input, Select, Space, Typography} from "antd";
+import { Divider, Form, Input, Select, Space, Typography } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 /**
  *
@@ -18,7 +18,7 @@ function generateRelationField(properties) {
       perPage: 100,
       page: 1,
       totalCount: 0,
-      newItemName: "",
+      newItemData: {},
       isCreatingNewItem: false,
     };
 
@@ -38,18 +38,13 @@ function generateRelationField(properties) {
       });
     }
 
-    onNewItemNameChange(e) {
-      e.preventDefault();
-      this.setState({ newItemName: e.target.value });
-    }
-
     addNewItem(e) {
       e.preventDefault();
-      const { items, newItemName } = this.state;
+      const { items, newItemData } = this.state;
       const { api, onChange } = this.props;
       this.setState({ isCreatingNewItem: true }, async () => {
-        const response = await api.client.post(`${service}/${resource}`,{
-          [labelIndex]: newItemName,
+        const response = await api.client.post(`${service}/${resource}`, {
+          newItemData,
         });
         if (response.data) {
           this.setState(
@@ -66,8 +61,12 @@ function generateRelationField(properties) {
     }
 
     render() {
-      const { formData, onChange, schema } = this.props;
-      const { newItemName, items, isCreatingNewItem } = this.state;
+      const { formData, onChange, schema, services } = this.props;
+      const relSchema = services[service].resources[resource].schema;
+      const requiredProperties = relSchema.required?.map((propertyName) => {
+        return relSchema.properties[propertyName];
+      });
+      const { items, isCreatingNewItem, newItemData } = this.state;
       return (
         <Form.Item label={schema.title}>
           <Select
@@ -76,6 +75,7 @@ function generateRelationField(properties) {
             optionFilterProp="children"
             onChange={onChange}
             filterOption={(input, option) => {
+              // implement querying
               return String(option.label)
                 .toLowerCase()
                 .includes(input.toLowerCase());
@@ -93,11 +93,27 @@ function generateRelationField(properties) {
                   {menu}
                   <Divider style={{ margin: "8px 0" }} />
                   <Space align="center" style={{ padding: "0 8px 4px" }}>
-                    <Input
-                      placeholder="Please enter item"
-                      value={newItemName}
-                      onChange={(e) => this.onNewItemNameChange(e)}
-                    />
+                    {requiredProperties.map((propSchema) => {
+                      return (
+                        <div key={propSchema.name}>
+                          <Input
+                            type="text"
+                            name={propSchema.name}
+                            placeholder={propSchema.title}
+                            required
+                            value={newItemData[propSchema.name]}
+                            onChange={(e) => {
+                              this.setState({
+                                newItemData: {
+                                  ...newItemData,
+                                  [e.target.name]: e.target.value,
+                                },
+                              });
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
                     <Typography.Link
                       onClick={(e) => this.addNewItem(e)}
                       style={{ whiteSpace: "nowrap" }}

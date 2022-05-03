@@ -92,7 +92,7 @@ class Asset extends Component {
             >
               {formData.url && (
                 <Descriptions column={2} bordered size="small">
-                  {formData.detectedMimeType.indexOf("image" === 0) && (
+                  {formData.detectedMimeType?.includes("image") && (
                     <Item label="Preview" span={2}>
                       <img
                         src={formData.url}
