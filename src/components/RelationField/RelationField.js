@@ -26,6 +26,10 @@ function generateRelationField(properties) {
       await this.fetchData();
     }
 
+    setStateAsync(state) {
+      return new Promise((resolve) => this.setState(state, () => resolve()));
+    }
+
     async fetchData() {
       const { api } = this.props;
       const { perPage, page, totalCount } = this.state;
@@ -38,33 +42,36 @@ function generateRelationField(properties) {
       });
     }
 
-    addNewItem(e) {
+    async addNewItem(e) {
       e.preventDefault();
       const { items, newItemData } = this.state;
       const { api, onChange } = this.props;
-      this.setState({ isCreatingNewItem: true }, async () => {
-        const response = await api.client.post(`${service}/${resource}`, {
-          newItemData,
-        });
+      await this.setStateAsync({ isCreatingNewItem: true });
+      try {
+        const response = await api.client.post(
+          `${service}/${resource}`,
+          newItemData
+        );
         if (response.data) {
-          this.setState(
-            {
-              items: items.concat([response.data]),
-              isCreatingNewItem: false,
-            },
-            () => {
-              onChange(response.data.id);
-            }
-          );
+          await this.setStateAsync({
+            items: items.concat([response.data]),
+            isCreatingNewItem: false,
+          });
+          onChange(response.data.id);
         }
-      });
+      } catch (error) {
+        await this.setStateAsync({
+          isCreatingNewItem: false,
+        });
+        console.error(error);
+      }
     }
 
     render() {
       const { formData, onChange, schema, services } = this.props;
       const relSchema = services[service].resources[resource].schema;
       const requiredProperties = relSchema.required?.map((propertyName) => {
-        return relSchema.properties[propertyName];
+        return { name: propertyName, ...relSchema.properties[propertyName] };
       });
       const { items, isCreatingNewItem, newItemData } = this.state;
       return (
