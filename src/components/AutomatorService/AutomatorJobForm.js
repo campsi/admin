@@ -6,7 +6,8 @@ import {
   Input,
   InputNumber,
   Select,
-  Space, Switch,
+  Space,
+  Switch,
   Tabs,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
@@ -39,7 +40,7 @@ function AutomatorJobForm({ onFinish }) {
   return (
     <Form
       labelAlign="right"
-      labelCol={{span: 6}}
+      labelCol={{ span: 6 }}
       labelWrap={true}
       form={form}
       onFinish={onFinish}
@@ -81,7 +82,7 @@ function AutomatorJobForm({ onFinish }) {
               valuePropName="checked"
               label="Activate Scanner Action"
             >
-              <Switch/>
+              <Switch />
             </Form.Item>
             <Form.Item
               name={["actions", "scanner", "maxTabs"]}
@@ -103,7 +104,7 @@ function AutomatorJobForm({ onFinish }) {
               valuePropName="checked"
               label="Accept CMP"
             >
-              <Switch/>
+              <Switch />
             </Form.Item>
             <Form.Item
               name={["actions", "scanner", "followSubDomains"]}
@@ -111,7 +112,7 @@ function AutomatorJobForm({ onFinish }) {
               valuePropName="checked"
               label="Follow subdomains"
             >
-              <Switch/>
+              <Switch />
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
@@ -120,7 +121,7 @@ function AutomatorJobForm({ onFinish }) {
               valuePropName="checked"
               label="Activate Stylesheet Action"
             >
-              <Switch/>
+              <Switch />
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("provisioning")} key="provisioning">
@@ -129,7 +130,7 @@ function AutomatorJobForm({ onFinish }) {
               valuePropName="checked"
               label="Activate Provisioning Action"
             >
-              <Switch/>
+              <Switch />
             </Form.Item>
             <Form.Item
               name={["actions", "provisioning", "database"]}
@@ -159,7 +160,7 @@ function AutomatorJobForm({ onFinish }) {
               label="Languages"
               name={["actions", "provisioning", "languages"]}
               required={isActionActive("provisioning")}
-              initialValue={['en']}
+              initialValue={["en"]}
               rules={[{ required: isActionActive("provisioning") }]}
             >
               <Select mode="tags" />
@@ -182,13 +183,13 @@ function AutomatorJobForm({ onFinish }) {
               name={["actions", "provisioning", "withContextualConsentWall"]}
               valuePropName="checked"
             >
-              <Switch/>
+              <Switch />
             </Form.Item>
             <Form.Item
               label="Invitation email"
               name={["actions", "provisioning", "invitationEmail"]}
             >
-              <Input type="text"/>
+              <Input type="text" />
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("showcase")} key="showcase">
@@ -197,7 +198,7 @@ function AutomatorJobForm({ onFinish }) {
               label="Activate Showcase Action"
               valuePropName="checked"
             >
-              <Switch/>
+              <Switch />
             </Form.Item>
             <Form.List
               name={["actions", "showcase", "output"]}
@@ -206,6 +207,7 @@ function AutomatorJobForm({ onFinish }) {
                   name: "animated_gif",
                   format: "GIF",
                   viewport: { width: 1600, height: 900 },
+                  dimensions: { width: 800, height: 450 },
                 },
               ]}
             >
@@ -244,9 +246,11 @@ function AutomatorJobForm({ onFinish }) {
                               <Select.Option value="GIF">GIF</Select.Option>
                               <Select.Option value="WEBM">WEBM</Select.Option>
                               <Select.Option value="PNG">PNG</Select.Option>
+                              <Select.Option value="MPEG">MPEG</Select.Option>
                             </Select>
                           </Form.Item>
                           <Space align="center">
+                            <span>Viewport</span>
                             <Form.Item
                               {...field}
                               name={[field.name, "viewport", "width"]}
@@ -260,6 +264,25 @@ function AutomatorJobForm({ onFinish }) {
                               name={[field.name, "viewport", "height"]}
                               required
                               key={[field.fieldKey, "viewport", "height"]}
+                            >
+                              <InputNumber placeholder="height" />
+                            </Form.Item>
+                          </Space>
+                          <Space align="center">
+                            <span>Dimensions</span>
+                            <Form.Item
+                              {...field}
+                              name={[field.name, "dimensions", "width"]}
+                              required
+                              key={[field.fieldKey, "dimensions", "width"]}
+                            >
+                              <InputNumber placeholder="width" />
+                            </Form.Item>
+                            <Form.Item
+                              {...field}
+                              name={[field.name, "dimensions", "height"]}
+                              required
+                              key={[field.fieldKey, "dimensions", "height"]}
                             >
                               <InputNumber placeholder="height" />
                             </Form.Item>
@@ -286,7 +309,7 @@ function AutomatorJobForm({ onFinish }) {
               valuePropName="checked"
               label="Activate GTM Action"
             >
-              <Switch/>
+              <Switch />
             </Form.Item>
           </TabPane>
         </Tabs>

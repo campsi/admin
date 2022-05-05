@@ -1,15 +1,21 @@
 import { withAppContext } from "../../App";
-import { Button, Card, Descriptions, Empty, Tabs } from "antd";
+import { Button, Card, Descriptions, Empty, Tabs, Input } from "antd";
 import withParams from "../../utils/withParams";
 import React, { Component } from "react";
 import StylesheetDetails from "./Details/StylesheetDetails";
 import ScannerDetails from "./Details/ScannerDetails";
 import ProvisioningDetails from "./Details/ProvisioningDetails";
 import ShowcaseDetails from "./Details/ShowcaseDetails";
-import {CheckCircleOutlined, LoadingOutlined, ReloadOutlined} from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  LoadingOutlined,
+  ReloadOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import AutomatorJobActions from "./AutomatorJobActions";
 
 const { TabPane } = Tabs;
+const { TextArea } = Input;
 
 class AutomatorJob extends Component {
   state = {
@@ -43,6 +49,16 @@ class AutomatorJob extends Component {
     if (!job.actions?.[action]?.result) {
       return <Empty />;
     }
+    if (job.actions[action].result.error) {
+      return (
+        <TextArea
+          readOnly
+          rows={6}
+          style={{ width: "100%" }}
+          defaultValue={JSON.stringify(job.actions[action].result.error)}
+        />
+      );
+    }
     switch (action) {
       case "stylesheet":
         return <StylesheetDetails result={job.actions[action].result} />;
@@ -69,6 +85,24 @@ class AutomatorJob extends Component {
       );
     }
 
+    function getTab(action) {
+      if (!job.actions?.[action]?.result) {
+        return action;
+      }
+      if (job.actions[action].result?.error) {
+        return (
+          <>
+            <WarningOutlined /> {action}
+          </>
+        );
+      }
+
+      return (
+        <>
+          <CheckCircleOutlined /> {action}
+        </>
+      );
+    }
     return (
       <Card
         title="Job detail"
@@ -97,7 +131,7 @@ class AutomatorJob extends Component {
           {allActions.map((action) => {
             return (
               <TabPane
-                tab={job.actions?.[action]?.result ? <><CheckCircleOutlined /> {action}</> : action}
+                tab={getTab(action)}
                 key={`tab_${action}`}
                 disabled={typeof job.actions?.[action] === "undefined"}
               >
