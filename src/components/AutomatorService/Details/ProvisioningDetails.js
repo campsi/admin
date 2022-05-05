@@ -1,4 +1,5 @@
 import { Descriptions, Input } from "antd";
+import { withAppContext } from "../../../App";
 const { TextArea } = Input;
 const { Item } = Descriptions;
 
@@ -17,11 +18,13 @@ const getEmbedCode = ({ projectId, version }) => {
   return lines.filter((l) => !!l).join("\n");
 };
 
-function ProvisioningDetails({ result }) {
+function ProvisioningDetails({ result, api }) {
   return (
     <Descriptions bordered column={2}>
       <Item label="ProjectId" span={2}>
-        <a href={`https://admin.axeptio.eu/projects/${result.projectId}`}>
+        <a
+          href={`https://admin.axeptio.eu/projects/${result.projectId}?access_token=${api.accessToken}`}
+        >
           {result.projectId}
         </a>
       </Item>
@@ -43,4 +46,4 @@ function ProvisioningDetails({ result }) {
   );
 }
 
-export default ProvisioningDetails;
+export default withAppContext(ProvisioningDetails);
