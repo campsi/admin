@@ -14,7 +14,8 @@ import {
   Table,
   Typography,
 } from "antd";
-import {generateRelationField} from "../RelationField/RelationField";
+import { generateRelationField } from "../RelationField/RelationField";
+import {cleanLocalizedValue} from "../LocalizedText/LocalizedText";
 const { Title } = Typography;
 
 class ResourceForm extends Component {
@@ -80,6 +81,7 @@ class ResourceForm extends Component {
     const { api, service, params } = this.props;
     const { mode } = this.state;
     const { resourceName, id } = params;
+
     return new Promise(async (resolve, reject) => {
       try {
         const method = mode === "create" ? "post" : "put";
@@ -87,7 +89,10 @@ class ResourceForm extends Component {
           mode === "create"
             ? `${service.name}/${resourceName}/`
             : `${service.name}/${resourceName}/${id}`;
-        const response = await api.client[method](url, newValue);
+        const response = await api.client[method](
+          url,
+          cleanLocalizedValue(newValue)
+        );
         notification.success({ message: "Document saved" });
         this.setState(
           {
@@ -112,8 +117,8 @@ class ResourceForm extends Component {
         uiSchema["ui:field"] = customWidgets[schema["ui:field"]];
       } else if (customWidgets[schema["ui:widget"]]) {
         uiSchema["ui:widget"] = customWidgets[schema["ui:widget"]];
-      } else if (schema["ui:relation"]){
-        uiSchema["ui:field"] = generateRelationField(schema["ui:relation"])
+      } else if (schema["ui:relation"]) {
+        uiSchema["ui:field"] = generateRelationField(schema["ui:relation"]);
       } else if (schema.items) {
         uiSchema.items = {};
         parseSchema(schema.items, uiSchema.items);
@@ -218,6 +223,7 @@ class ResourceForm extends Component {
               ref={(ref) => {
                 this.formRef = ref;
               }}
+              liveValidate
               onSubmit={({ formData }) => this.updateItem(formData)}
             />
           </Card>
