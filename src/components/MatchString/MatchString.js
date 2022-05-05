@@ -2,9 +2,24 @@ import PropTypes from "prop-types";
 import { Input, Select, Space } from "antd";
 import { useState } from "react";
 
+function cleanMatchString(value) {
+  const cleaned =  Object.keys(value).reduce((cleanedValue, key) => {
+    if (value[key]) {
+      return { ...cleanedValue, [key]: value[key] };
+    }
+    return cleanedValue;
+  }, {});
+  if(Object.keys(cleaned).length > 0){
+    return cleaned;
+  }
+  return undefined;
+}
+
 export default function MatchString(props) {
   const value = props.formData || {};
-  const [selectedOption, setSelectedOption] = useState(Object.keys(value)[0] || 'equals');
+  const [selectedOption, setSelectedOption] = useState(
+    Object.keys(value)[0] || "equals"
+  );
 
   const properties =
     !props.schema?.properties || MatchString.defaultProps.schema.properties;
@@ -14,8 +29,8 @@ export default function MatchString(props) {
    * @param name
    * @returns {string}
    */
-  function getOptionLabel(name){
-    return `${properties[name].title}${value[name] ? ' *' : ''}`
+  function getOptionLabel(name) {
+    return `${properties[name].title}${value[name] ? " *" : ""}`;
   }
 
   return (
@@ -31,10 +46,12 @@ export default function MatchString(props) {
         type="text"
         value={value[selectedOption]}
         onChange={(e) => {
-          props.onChange({
-            ...value,
-            [selectedOption]: e.target.value,
-          });
+          props.onChange(
+            cleanMatchString({
+              ...value,
+              [selectedOption]: e.target.value,
+            })
+          );
         }}
       />
     </Space>

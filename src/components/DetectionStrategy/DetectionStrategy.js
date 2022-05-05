@@ -5,9 +5,10 @@ const { Option } = Select;
 
 /**
  * @param {"cookies"|"resources"} type
+ * @param {Object} formData
  * @returns {React.ReactNode[]}
  */
-function getOptions(type) {
+function getOptions(type, formData) {
   const options = {
     cookie: {
       name: "Cookie Name",
@@ -21,8 +22,8 @@ function getOptions(type) {
   };
   return Object.keys(options[type]).map((name) => {
     return (
-      <Option name={name} key={`${type}_${name}`}>
-        {options[type][name]}
+      <Option value={name} key={`${type}_${name}`}>
+        {options[type][name]}{formData[name] ? '*' : ''}
       </Option>
     );
   });
@@ -58,7 +59,7 @@ export default function DetectionStrategy(props) {
           <Option value="resource">Resource</Option>
         </Select>
         <Select value={part} onChange={setPart}>
-          {getOptions(type)}
+          {getOptions(type, formData)}
         </Select>
         <MatchString onChange={setMatch} formData={formData[part]} />
       </Space>
