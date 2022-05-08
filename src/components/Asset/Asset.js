@@ -5,14 +5,17 @@ import {
   Card,
   Col,
   Descriptions,
+  Input,
   Modal,
   Progress,
   Row,
-  Select, Space,
+  Select,
+  Space,
 } from "antd";
 import {
   DeleteOutlined,
-  FileImageOutlined, InfoCircleOutlined,
+  FileImageOutlined,
+  InfoCircleOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
 const { Item } = Descriptions;
@@ -38,7 +41,7 @@ class Asset extends Component {
       isUploading,
       uploadProgress,
       currentAssetsService,
-      detailsVisible
+      detailsVisible,
     } = this.state;
 
     return (
@@ -64,15 +67,18 @@ class Asset extends Component {
                     value={currentAssetsService.name}
                     style={{ width: "auto" }}
                   />
-                  {formData.url ? (
-                    <><Button
-                      onClick={() => this.eraseAsset()}
-                      icon={<DeleteOutlined />}
-                    >
-                      Delete
-                    </Button>
+                  {formData._id ? (
+                    <>
                       <Button
-                        onClick={() => this.setState({detailsVisible: !detailsVisible})}
+                        onClick={() => this.eraseAsset()}
+                        icon={<DeleteOutlined />}
+                      >
+                        Delete
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          this.setState({ detailsVisible: !detailsVisible })
+                        }
                         icon={<InfoCircleOutlined />}
                       >
                         Toggle details
@@ -90,7 +96,7 @@ class Asset extends Component {
                 </Space>
               }
             >
-              {formData.url && (
+              {formData._id && (
                 <Descriptions column={2} bordered size="small">
                   {formData.detectedMimeType?.includes("image") && (
                     <Item label="Preview" span={2}>
@@ -103,22 +109,24 @@ class Asset extends Component {
                   )}
                   {detailsVisible && (
                     <>
-                  <Item label="URL" span={2}>
-                    <a href={formData.url}>{formData.url}</a>
-                  </Item>
-                  <Item label="Original Name" span={2}>
-                    {formData.originalName}
-                  </Item>
-                  <Item label="Created By">{formData.createdBy}</Item>
-                  <Item label="Created At">
-                    {new Date(formData.createdAt).toLocaleString()}
-                  </Item>
-                  <Item label="Detected Mime Type">
-                    {formData.detectedMimeType}
-                  </Item>
-                  <Item label="Client reported Mime Type">
-                    {formData.clientReportedMimeType}
-                  </Item></>)}
+                      <Item label="URL" span={2}>
+                        <a href={formData.url}>{formData.url}</a>
+                      </Item>
+                      <Item label="Original Name" span={2}>
+                        {formData.originalName}
+                      </Item>
+                      <Item label="Created By">{formData.createdBy}</Item>
+                      <Item label="Created At">
+                        {new Date(formData.createdAt).toLocaleString()}
+                      </Item>
+                      <Item label="Detected Mime Type">
+                        {formData.detectedMimeType}
+                      </Item>
+                      <Item label="Client reported Mime Type">
+                        {formData.clientReportedMimeType}
+                      </Item>
+                    </>
+                  )}
                 </Descriptions>
               )}
             </Card>
@@ -140,6 +148,9 @@ class Asset extends Component {
             <div>
               <input type="file" name="file" />
             </div>
+            <div>
+              <Input name="url" placeholder="Remote file URL" />
+            </div>
             {isUploading && (
               <div>
                 <Progress percent={uploadProgress} />
@@ -159,21 +170,32 @@ class Asset extends Component {
     const { api } = this.props;
     const { currentAssetsService } = this.state;
     await this.setStateAsync({ isUploading: true });
-
-    const response = await api.client.post(
-      `${currentAssetsService.name}`,
-      new FormData(form),
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        timeout: 10 * 60 * 1000,
-        onUploadProgress: (event) => {
-          this.setState({ uploadProgress: (event.loaded / event.total) * 100 });
-        },
-      }
-    );
-
+    const formData = new FormData(form);
+    const commonParams = {
+      timeout: 10 * 60 * 1000,
+      onUploadProgress: (event) => {
+        this.setState({ uploadProgress: (event.loaded / event.total) * 100 });
+      },
+    };
+    let response;
+    if (formData.get("url")) {
+      response = await api.client.post(
+        `${currentAssetsService.name}/copy`,
+        { url: formData.get("url") },
+        { ...commonParams }
+      );
+    } else {
+      response = await api.client.post(
+        `${currentAssetsService.name}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          ...commonParams,
+        }
+      );
+    }
     await this.setStateAsync({
       isUploading: false,
       uploadModalVisible: false,

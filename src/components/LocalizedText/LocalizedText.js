@@ -8,7 +8,7 @@ export function cleanLocalizedValue(value) {
     return value.map(cleanLocalizedValue);
   }
 
-  if (typeof value === "object") {
+  if (typeof value === "object" && value !== null) {
     if (value.$lang && Object.keys(value.$lang).length === 0) {
       return undefined;
     }

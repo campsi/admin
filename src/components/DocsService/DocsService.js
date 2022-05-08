@@ -5,6 +5,7 @@ import DetectionStrategy from "../DetectionStrategy/DetectionStrategy";
 import MatchString from "../MatchString/MatchString";
 import LocalizedText from "../LocalizedText/LocalizedText";
 import Asset from "../Asset/Asset";
+import ClearbitSync from "../ClearbitSync/ClearbitSync";
 
 function DocsService(props) {
   useParams();
@@ -16,7 +17,8 @@ function DocsService(props) {
           'DetectionStrategy': DetectionStrategy,
           'LocalizedString': LocalizedText,
           'MatchString': MatchString,
-          'Asset': Asset
+          'Asset': Asset,
+          'ClearbitSync': ClearbitSync
         }} />}
       />
       <Route

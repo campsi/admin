@@ -219,6 +219,11 @@ class ResourceForm extends Component {
               className="rjsf ant-form-vertical"
               schema={resource.schema}
               formData={doc.data}
+              formContext={{
+                id: doc.id,
+                createdAt: doc.createdAt,
+                createdBy: doc.createdBy
+              }}
               uiSchema={this.getUISchema()}
               ref={(ref) => {
                 this.formRef = ref;
