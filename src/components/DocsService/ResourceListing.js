@@ -2,7 +2,7 @@ import { Component } from "react";
 import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import { Link } from "react-router-dom";
-import { CheckOutlined, FileOutlined } from "@ant-design/icons";
+import { CheckOutlined, FileOutlined, SearchOutlined } from "@ant-design/icons";
 import {
   Layout,
   Typography,
@@ -12,9 +12,93 @@ import {
   Space,
   Button,
   Select,
+  Input,
 } from "antd";
 const { Title } = Typography;
 const { Option } = Select;
+
+function renderStringInCell(string) {
+  if (!string) {
+    return "";
+  }
+  let str = String(string);
+  if (str.indexOf("http") === 0) {
+    return (
+      <a href={string} target="_blank" rel="noreferrer">
+        {str}
+      </a>
+    );
+  }
+  return str;
+}
+
+function getColumnRender(property, language) {
+  return (value, row) => {
+    if (property["ui:relation"]) {
+      const { service, resource, labelIndex, embeddedIndex } =
+        property["ui:relation"];
+      if (!value) {
+        return "";
+      }
+      return (
+        <Link to={`/services/${service}/resources/${resource}/${value}`}>
+          {row[embeddedIndex]?.[labelIndex] || value}
+        </Link>
+      );
+    }
+
+    let type = property.type;
+    if (!property.type && Array.isArray(property.oneOf)) {
+      type = typeof value;
+    }
+    switch (type) {
+      case "boolean":
+        return value ? <CheckOutlined /> : null;
+      case "object":
+        if (value?.$lang) {
+          return renderStringInCell(value.$lang[language]);
+        }
+        if (value?.url && value?.detectedMimeType) {
+          if (value.detectedMimeType.includes("image")) {
+            return (
+              <img
+                src={value?.url}
+                style={{ maxHeight: 30, maxWidth: 50 }}
+                alt={value?.originalName}
+              />
+            );
+          }
+          return <FileOutlined title={value.originalName} />;
+        }
+        return JSON.stringify(value);
+      case "array":
+        const length = Array.from(value || []).length;
+        switch (length) {
+          case 0:
+            return "Empty";
+          case 1:
+            return "1 item";
+          default:
+            return `${length} items`;
+        }
+      case "string":
+        return renderStringInCell(value);
+      case "number":
+      default:
+        return value;
+    }
+  };
+}
+
+function renderPropertyOptions(properties) {
+  return properties.map((p) => {
+    return (
+      <Option value={p.name} key={`option_${p.name}`}>
+        {p.title}
+      </Option>
+    );
+  });
+}
 
 class ResourceListing extends Component {
   state = {
@@ -26,9 +110,10 @@ class ResourceListing extends Component {
     selectedState: undefined,
     language: "en",
     visibleProperties: [],
+    filters: {},
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { service } = this.props;
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
@@ -38,21 +123,54 @@ class ResourceListing extends Component {
         visibleProperties: resource.schema["ui:defaultColumns"],
       });
     }
-
-    this.fetchData();
+    await this.fetchData();
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (
-      prevProps.params.resourceName !== this.props.params.resourceName ||
-      this.state.page !== prevState.page ||
-      this.state.perPage !== prevState.perPage
-    ) {
-      this.fetchData();
+  generateFilterDropdown({ name, title }) {
+    return ({ setSelectedKeys, selectedKeys, confirm }) => {
+      const current = selectedKeys[0] || { operator: "*", value: "" };
+      return (
+        <Space style={{ padding: 8 }} direction="horizontal">
+          <Select
+            value={current.operator}
+            onChange={(value) => {
+              setSelectedKeys([{ ...current, operator: value }]);
+            }}
+          >
+            <Option value="">Exact match</Option>
+            <Option value="*">Contains</Option>
+            <Option value="^">Starts With</Option>
+            <Option value="$">Ends With</Option>
+          </Select>
+          <Input
+            placeholder={`Search ${title || name}`}
+            value={current.value}
+            onChange={(e) =>
+              setSelectedKeys(
+                e.target.value ? [{ ...current, value: e.target.value }] : []
+              )
+            }
+            onPressEnter={() => confirm({ closeDropdown: true })}
+          />
+          <Button
+            type="primary"
+            onClick={() => confirm({ closeDropdown: true })}
+            icon={<SearchOutlined />}
+            size="small"
+          >
+            Search
+          </Button>
+        </Space>
+      );
+    };
+  }
+  async componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.params.resourceName !== this.props.params.resourceName) {
+      await this.fetchData();
     }
   }
 
-  async fetchData() {
+  async fetchData(filters = {}, sorter = {}) {
     const { api, service, authenticated } = this.props;
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
@@ -83,8 +201,32 @@ class ResourceListing extends Component {
       return;
     }
 
+    const params = new URLSearchParams({
+      perPage: perPage,
+      page: page,
+    });
+
+    Object.keys(filters)
+      .filter((key) => {
+        return filters[key]?.length > 0;
+      })
+      .forEach((key) => {
+        params.append(
+          `${key}${filters[key][0].operator}`,
+          filters[key][0].value
+        );
+      });
+
+    if (sorter.field) {
+      params.append(
+        "sort",
+        `${sorter.order === "ascend" ? "" : "-"}${sorter.field.join(".")}`
+      );
+    }
+
+    console.info(params.toString());
     const response = await api.client.get(
-      `/${service.name}/${resourceName}?perPage=${perPage}&page=${page}`
+      `/${service.name}/${resourceName}?${params.toString()}`
     );
     this.setState({
       items: response.data,
@@ -94,26 +236,15 @@ class ResourceListing extends Component {
     });
   }
 
+  handleTableChange = async (pagination, filters, sorter) => {
+    await this.fetchData(filters, sorter);
+  };
+
   render() {
     const { service } = this.props;
     const { resourceName } = this.props.params;
     const { language, visibleProperties } = this.state;
     const resource = service.resources[resourceName];
-
-    function renderStringInCell(string) {
-      if (!string) {
-        return "";
-      }
-      let str = String(string);
-      if (str.indexOf("http") === 0) {
-        return (
-          <a href={string} target="_blank" rel="noreferrer">
-            {str}
-          </a>
-        );
-      }
-      return str;
-    }
 
     const allProperties = Object.keys(resource.schema.properties).map(
       (prop) => {
@@ -128,6 +259,7 @@ class ResourceListing extends Component {
       {
         title: "ID",
         dataIndex: "id",
+        sorter: true,
         render: (value) => (
           <Link
             to={`/services/${service.name}/resources/${resourceName}/${value}`}
@@ -138,6 +270,7 @@ class ResourceListing extends Component {
       },
       {
         title: "Created At",
+        sorter: true,
         dataIndex: "createdAt",
         render: (value) => {
           const d = new Date(value);
@@ -152,76 +285,18 @@ class ResourceListing extends Component {
 
     properties.forEach((property) => {
       columns.push({
-        title: property.label || property.name,
-        dataIndex: property.name,
+        title: property.title || property.name,
+        dataIndex: ["data", property.name],
         ellipsis: true,
-        render: (value, row) => {
-          if (property["ui:relation"]) {
-            const { service, resource, labelIndex, embeddedIndex } =
-              property["ui:relation"];
-            if (!value) {
-              return "";
-            }
-            return (
-              <Link to={`/services/${service}/resources/${resource}/${value}`}>
-                {row[embeddedIndex]?.[labelIndex] || value}
-              </Link>
-            );
-          }
-
-          let type = property.type;
-          if (!property.type && Array.isArray(property.oneOf)) {
-            type = typeof value;
-          }
-          switch (type) {
-            case "boolean":
-              return value ? <CheckOutlined /> : null;
-            case "object":
-              if (value?.$lang) {
-                return renderStringInCell(value.$lang[language]);
-              }
-              if (value?.url && value?.detectedMimeType) {
-                if (value.detectedMimeType.includes("image")) {
-                  return (
-                    <img
-                      src={value?.url}
-                      style={{ maxHeight: 30, maxWidth: 50 }}
-                      alt={value?.originalName}
-                    />
-                  );
-                }
-                return <FileOutlined title={value.originalName} />;
-              }
-              return JSON.stringify(value);
-            case "array":
-              const length = Array.from(value || []).length;
-              switch (length) {
-                case 0:
-                  return "Empty";
-                case 1:
-                  return "1 item";
-                default:
-                  return `${length} items`;
-              }
-            case "string":
-              return renderStringInCell(value);
-            case "number":
-            default:
-              return value;
-          }
-        },
+        filterDropdown: this.generateFilterDropdown(property),
+        filterIcon: (filtered) => (
+          <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+        ),
+        sorter: true,
+        render: getColumnRender(property, language),
       });
     });
 
-    function renderPropertyOptions(properties) {
-      return properties.map((p) => {
-        return (
-          <Option value={p.name} key={`option_${p.name}`}>
-            {p.title}
-          </Option>
-        );
-      });
-    }
     return (
       <Layout.Content style={{ padding: 30 }}>
         <Title>
@@ -250,14 +325,9 @@ class ResourceListing extends Component {
           <div className="site-layout-background">
             <Table
               columns={columns}
-              dataSource={this.state.items.map((i) => {
-                return {
-                  id: i.id,
-                  createdAt: i.createdAt,
-                  ...i.data,
-                  key: i.id,
-                };
-              })}
+              rowKey={(item) => item.id}
+              dataSource={this.state.items}
+              onChange={this.handleTableChange}
               current={this.state.page}
               totalSize={this.state.totalCount}
               pagination={{
