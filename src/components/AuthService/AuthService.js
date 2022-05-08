@@ -48,12 +48,11 @@ class AuthService extends Component {
     }
   }
 
-  async register(event) {
+  async register(formData) {
     const { api, service, setAccessToken } = this.props;
 
-    event.preventDefault();
-    const email = event.target.querySelector("input[type=email]").value;
-    const password = event.target.querySelector("input[type=password]").value;
+    const email = formData.email
+    const password = formData.password
     const response = await api.client.post(`${service.name}/local/signup`, {
       username: email,
       displayName: email,
@@ -148,14 +147,24 @@ class AuthService extends Component {
                 </Form>
               </Card>
               <Card title="Create Account">
-                <Form onSubmit={(event) => this.register(event)}>
-                  <Form.Item label="Email">
+                <Form onFinish={(formData) => this.register(formData)}>
+                  <Form.Item
+                    label="Email"
+                    name="email"
+                    rules={[{ required: true }, { type: "email" }]}
+                  >
                     <Input type="email" />
                   </Form.Item>
-                  <Form.Item label="Password">
+                  <Form.Item
+                    name="password"
+                    label="Password"
+                    rules={[{ required: true }]}
+                  >
                     <Input type="password" />
                   </Form.Item>
-                  <Button>Sign up</Button>
+                  <Button type="primary" htmlType="submit">
+                    Sign up
+                  </Button>
                 </Form>
               </Card>
             </>
