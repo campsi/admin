@@ -12,7 +12,7 @@ import {
   Space,
   Button,
   Select,
-  Input,
+  Input
 } from "antd";
 const { Title } = Typography;
 const { Option } = Select;
@@ -204,6 +204,7 @@ class ResourceListing extends Component {
     const params = new URLSearchParams({
       perPage: perPage,
       page: page,
+      //with: "creator", currently not working with sort
     });
 
     Object.keys(filters)
@@ -218,13 +219,12 @@ class ResourceListing extends Component {
       });
 
     if (sorter.field) {
-      params.append(
-        "sort",
-        `${sorter.order === "ascend" ? "" : "-"}${sorter.field.join(".")}`
-      );
+      const field = Array.isArray(sorter.field)
+        ? sorter.field.join(".")
+        : sorter.field;
+      params.append("sort", `${sorter.order === "ascend" ? "" : "-"}${field}`);
     }
 
-    console.info(params.toString());
     const response = await api.client.get(
       `/${service.name}/${resourceName}?${params.toString()}`
     );
@@ -281,6 +281,14 @@ class ResourceListing extends Component {
           );
         },
       },
+      /*
+      currently not working with sort. Need Campsi fix
+      {
+        title: "Creator",
+        sorter: true,
+        dataIndex: ['creator', 'email']
+      },
+      */
     ];
 
     properties.forEach((property) => {
