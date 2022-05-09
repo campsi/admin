@@ -12,7 +12,7 @@ import {
   Space,
   Button,
   Select,
-  Input
+  Input,
 } from "antd";
 const { Title } = Typography;
 const { Option } = Select;
@@ -114,21 +114,17 @@ class ResourceListing extends Component {
   };
 
   async componentDidMount() {
-    const { service } = this.props;
-    const { resourceName } = this.props.params;
-    const resource = service.resources[resourceName];
-
-    if (resource.schema["ui:defaultColumns"]) {
-      this.setState({
-        visibleProperties: resource.schema["ui:defaultColumns"],
-      });
-    }
+    await this.updateVisibleProperties();
     await this.fetchData();
   }
 
-  generateFilterDropdown({ name, title }) {
+  generateFilterDropdown({ name, title, ...property }) {
     return ({ setSelectedKeys, selectedKeys, confirm }) => {
-      const current = selectedKeys[0] || { operator: "*", value: "" };
+      const current = selectedKeys[0] || {
+        operator: "*",
+        value: "",
+        isLocalizedString: property["ui:field"] === "LocalizedString",
+      };
       return (
         <Space style={{ padding: 8 }} direction="horizontal">
           <Select
@@ -166,6 +162,7 @@ class ResourceListing extends Component {
   }
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.params.resourceName !== this.props.params.resourceName) {
+      await this.updateVisibleProperties();
       await this.fetchData();
     }
   }
@@ -212,8 +209,11 @@ class ResourceListing extends Component {
         return filters[key]?.length > 0;
       })
       .forEach((key) => {
+        const propertyPath = filters[key][0].isLocalizedString
+          ? `${key}.$lang.en`
+          : key;
         params.append(
-          `${key}${filters[key][0].operator}`,
+          `${propertyPath}${filters[key][0].operator}`,
           filters[key][0].value
         );
       });
@@ -355,6 +355,23 @@ class ResourceListing extends Component {
         </Space>
       </Layout.Content>
     );
+  }
+
+  async updateVisibleProperties() {
+    return new Promise((resolve) => {
+      const { service } = this.props;
+      const { resourceName } = this.props.params;
+      const resource = service.resources[resourceName];
+      if (!resource.schema["ui:defaultColumns"]) {
+        return resolve();
+      }
+      this.setState(
+        {
+          visibleProperties: resource.schema["ui:defaultColumns"],
+        },
+        () => resolve()
+      );
+    });
   }
 }
 export default withAppContext(withParams(ResourceListing));
