@@ -65,6 +65,13 @@ function AutomatorJobForm({ onFinish }) {
           <Input />
         </Form.Item>
         <Form.Item
+            name={["params", "projectId"]}
+            label="Project ID"
+            help="Fill this field to use an existing project or leave blank if you want to creat a new project"
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
           label="Priority"
           name={["params", "priority"]}
           initialValue="normal"
@@ -166,15 +173,9 @@ function AutomatorJobForm({ onFinish }) {
               <Select mode="tags" />
             </Form.Item>
             <Form.Item
-              name={["actions", "provisioning", "projectId"]}
-              label="Project ID"
-              help="Fill this field to use an existing project"
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
               name={["actions", "provisioning", "organizationId"]}
               label="Organization ID"
+              help="Check if your ID is in the correct database"
             >
               <Input />
             </Form.Item>

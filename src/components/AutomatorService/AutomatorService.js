@@ -113,6 +113,7 @@ class AutomatorService extends Component {
   }
 
   async startJob(job) {
+    console.log(job)
     const { api, service } = this.props;
     await api.client.post(`/${service.name}/jobs`, job);
     await this.fetchData();
