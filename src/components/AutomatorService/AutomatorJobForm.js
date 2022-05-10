@@ -32,8 +32,7 @@ function AutomatorJobForm({ onFinish }) {
   }
 
   const hasProjectId = form.getFieldValue([
-    "actions",
-    "provisioning",
+    "params",
     "projectId",
   ]);
 
@@ -67,7 +66,9 @@ function AutomatorJobForm({ onFinish }) {
         <Form.Item
             name={["params", "projectId"]}
             label="Project ID"
-            help="Fill this field to use an existing project or leave blank if you want to creat a new project"
+            required={(isActionActive("showcase") || isActionActive("gtm")) && !isActionActive("provisioning")}
+            rules={[{ required: (isActionActive("showcase") || isActionActive("gtm")) && !isActionActive("provisioning") }]}
+            help="Fill this field to use an existing project or leave blank if you want to creat a new project with provisioning"
         >
           <Input />
         </Form.Item>
