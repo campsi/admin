@@ -22,6 +22,11 @@ function AutomatorJobForm({ onFinish }) {
   function isActionActive(action) {
     return formValues.actions?.[action]?.active;
   }
+
+  function isNecessaryToUseProjectId(){
+    return (isActionActive("showcase") || isActionActive("gtm")) && !isActionActive("provisioning");
+  }
+
   function getActionTab(action) {
     return (
       <>
@@ -66,8 +71,8 @@ function AutomatorJobForm({ onFinish }) {
         <Form.Item
             name={["params", "projectId"]}
             label="Project ID"
-            required={(isActionActive("showcase") || isActionActive("gtm")) && !isActionActive("provisioning")}
-            rules={[{ required: (isActionActive("showcase") || isActionActive("gtm")) && !isActionActive("provisioning") }]}
+            required={isNecessaryToUseProjectId()}
+            rules={[{ required: isNecessaryToUseProjectId()}]}
             help="Fill this field to use an existing project or leave blank if you want to creat a new project with provisioning"
         >
           <Input />
