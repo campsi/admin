@@ -165,7 +165,7 @@ class AutomatorService extends Component {
       jobs: response.data.map((j) => {
         return { ...j, key: j._id };
       }),
-      totalCount: response.headers["X-Total-Count"],
+      totalCount: response.headers["x-total-count"],
       isFetching: false,
     });
   }
