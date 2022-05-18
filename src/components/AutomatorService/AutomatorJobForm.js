@@ -207,6 +207,14 @@ function AutomatorJobForm({ onFinish }) {
             >
               <Switch />
             </Form.Item>
+            <Form.Item
+                name={["actions", "showcase", "publishProject"]}
+                initialValue={true}
+                valuePropName="checked"
+                label="Publish the project before launch the showcase"
+            >
+              <Switch />
+            </Form.Item>
             <Form.List
               name={["actions", "showcase", "output"]}
               initialValue={[
