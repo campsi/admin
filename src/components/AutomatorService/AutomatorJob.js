@@ -6,6 +6,7 @@ import StylesheetDetails from "./Details/StylesheetDetails";
 import ScannerDetails from "./Details/ScannerDetails";
 import ProvisioningDetails from "./Details/ProvisioningDetails";
 import ShowcaseDetails from "./Details/ShowcaseDetails";
+import GtmDetails from "./Details/GtmDetails";
 import {
   CheckCircleOutlined,
   LoadingOutlined,
@@ -68,6 +69,8 @@ class AutomatorJob extends Component {
         return <ProvisioningDetails result={job.actions[action].result} />;
       case "showcase":
         return <ShowcaseDetails result={job.actions[action].result} />;
+      case "gtm":
+        return <GtmDetails result={job.actions[action].result} />;
       default:
         return <Empty />;
     }

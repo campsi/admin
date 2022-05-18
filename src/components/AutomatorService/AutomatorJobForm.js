@@ -22,6 +22,17 @@ function AutomatorJobForm({ onFinish }) {
   function isActionActive(action) {
     return formValues.actions?.[action]?.active;
   }
+
+  function isNecessaryToUseProjectId() {
+    return (
+      (
+        isActionActive('showcase') ||
+        isActionActive('gtm')
+      ) &&
+      !isActionActive('provisioning')
+    );
+  }
+
   function getActionTab(action) {
     return (
       <>
@@ -32,8 +43,7 @@ function AutomatorJobForm({ onFinish }) {
   }
 
   const hasProjectId = form.getFieldValue([
-    "actions",
-    "provisioning",
+    "params",
     "projectId",
   ]);
 
@@ -61,6 +71,15 @@ function AutomatorJobForm({ onFinish }) {
           name={["params", "domain"]}
           required
           rules={[{ required: true, message: "A website domain is mandatory" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+            name={["params", "projectId"]}
+            label="Project ID"
+            required={isNecessaryToUseProjectId()}
+            rules={[{ required: isNecessaryToUseProjectId()}]}
+            help="Fill this field to use an existing project or leave blank if you want to creat a new project with provisioning"
         >
           <Input />
         </Form.Item>
@@ -166,15 +185,9 @@ function AutomatorJobForm({ onFinish }) {
               <Select mode="tags" />
             </Form.Item>
             <Form.Item
-              name={["actions", "provisioning", "projectId"]}
-              label="Project ID"
-              help="Fill this field to use an existing project"
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
               name={["actions", "provisioning", "organizationId"]}
               label="Organization ID"
+              help="Check if your ID is in the correct database"
             >
               <Input />
             </Form.Item>
@@ -187,9 +200,9 @@ function AutomatorJobForm({ onFinish }) {
             </Form.Item>
             <Form.Item
               label="Invitation email"
-              name={["actions", "provisioning", "invitationEmail"]}
+              name={["actions", "provisioning", "invitationsEmail"]}
             >
-              <Input type="text" />
+              <Select mode="tags" />
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("showcase")} key="showcase">
@@ -197,6 +210,14 @@ function AutomatorJobForm({ onFinish }) {
               name={["actions", "showcase", "active"]}
               label="Activate Showcase Action"
               valuePropName="checked"
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item
+                name={["actions", "showcase", "publishProject"]}
+                initialValue={true}
+                valuePropName="checked"
+                label="Publish the project before launch the showcase"
             >
               <Switch />
             </Form.Item>
