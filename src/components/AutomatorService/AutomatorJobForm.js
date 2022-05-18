@@ -194,9 +194,9 @@ function AutomatorJobForm({ onFinish }) {
             </Form.Item>
             <Form.Item
               label="Invitation email"
-              name={["actions", "provisioning", "invitationEmail"]}
+              name={["actions", "provisioning", "invitationsEmail"]}
             >
-              <Input type="text" />
+              <Select mode="tags" />
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("showcase")} key="showcase">
