@@ -23,8 +23,14 @@ function AutomatorJobForm({ onFinish }) {
     return formValues.actions?.[action]?.active;
   }
 
-  function isNecessaryToUseProjectId(){
-    return (isActionActive("showcase") || isActionActive("gtm")) && !isActionActive("provisioning");
+  function isNecessaryToUseProjectId() {
+    return (
+      (
+        isActionActive('showcase') ||
+        isActionActive('gtm')
+      ) &&
+      !isActionActive('provisioning')
+    );
   }
 
   function getActionTab(action) {
