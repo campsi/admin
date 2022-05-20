@@ -48,6 +48,7 @@ export default function DetectionStrategy(props) {
     onChange({
       ...formData,
       [part]: match,
+      type,
     });
   };
 
