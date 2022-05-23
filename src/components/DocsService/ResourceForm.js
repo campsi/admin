@@ -115,16 +115,23 @@ class ResourceForm extends Component {
           mode === "create"
             ? `${service.name}/${resourceName}/`
             : `${service.name}/${resourceName}/${id}`;
+
         const response = await api.client[method](
           url,
           cleanLocalizedValue(newValue)
         );
         notification.success({message: "Document saved"});
-        this.setState(
-          {
-            doc: response.data,
-            redirectTo: `/services/${service.name}/resources/${resourceName}/${response.data.id}`
-          },
+        const newSate =
+          mode === 'create'
+            ? {
+              doc: response.data,
+              redirectTo: `/services/${service.name}/resources/${resourceName}/${response.data.id}`
+            }
+            : {
+              doc: response.data
+            };
+       this.setState(
+         newSate,
           resolve
         );
       } catch (error) {
@@ -178,7 +185,7 @@ class ResourceForm extends Component {
     } = this.state;
 
     if(redirectTo){
-      return <Navigate replace to={redirectTo} />
+      return <Navigate to={redirectTo} />
     }
 
     if (!doc) {
