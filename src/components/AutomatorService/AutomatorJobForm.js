@@ -67,12 +67,12 @@ function AutomatorJobForm({ onFinish }) {
         ]}
       >
         <Form.Item
-          label="Domain & subdomains"
+          label="Domain"
           name={["params", "domains"]}
           required
           rules={[{ required: true, message: "A website domain is mandatory" }]}
         >
-          <Select mode="tags" />
+          <Input />
         </Form.Item>
         <Form.Item
             name={["params", "projectId"]}
@@ -124,6 +124,12 @@ function AutomatorJobForm({ onFinish }) {
               label="Accept CMP"
             >
               <Switch />
+            </Form.Item>
+            <Form.Item
+              label="Subdomains"
+              name={["params", "scanner","subdomains"]}
+            >
+              <Select mode="tags" />
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
