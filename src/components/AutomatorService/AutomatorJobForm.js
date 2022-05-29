@@ -125,14 +125,6 @@ function AutomatorJobForm({ onFinish }) {
             >
               <Switch />
             </Form.Item>
-            <Form.Item
-              name={["actions", "scanner", "followSubDomains"]}
-              initialValue={false}
-              valuePropName="checked"
-              label="Follow subdomains"
-            >
-              <Switch />
-            </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
             <Form.Item
