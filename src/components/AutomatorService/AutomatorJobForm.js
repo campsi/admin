@@ -67,12 +67,12 @@ function AutomatorJobForm({ onFinish }) {
         ]}
       >
         <Form.Item
-          label="Domain"
-          name={["params", "domain"]}
+          label="Domain & subdomains"
+          name={["params", "domains"]}
           required
           rules={[{ required: true, message: "A website domain is mandatory" }]}
         >
-          <Input />
+          <Select mode="tags" />
         </Form.Item>
         <Form.Item
             name={["params", "projectId"]}
