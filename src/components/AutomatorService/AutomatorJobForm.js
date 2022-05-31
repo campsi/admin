@@ -126,8 +126,8 @@ function AutomatorJobForm({ onFinish }) {
               <Switch />
             </Form.Item>
             <Form.Item
-              label="Subdomains"
               name={["params", "scanner","subdomains"]}
+              label="Subdomains"
             >
               <Select mode="tags" />
             </Form.Item>
