@@ -55,8 +55,8 @@ class AutomatorJob extends Component {
         <TextArea
           readOnly
           rows={6}
-          style={{ width: "100%" }}
-          defaultValue={JSON.stringify(job.actions[action].result.error)}
+          style={{ width: "100%", fontFamily: "Monaco, monospace" }}
+          defaultValue={JSON.stringify(job.actions[action].result.error, null, 2)}
         />
       );
     }
