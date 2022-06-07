@@ -56,7 +56,7 @@ class AutomatorJob extends Component {
           readOnly
           rows={6}
           style={{ width: "100%", fontFamily: "Monaco, monospace" }}
-          defaultValue={JSON.stringify(job.actions[action].result.error, null 2)}
+          defaultValue={JSON.stringify(job.actions[action].result.error, null, 2)}
         />
       );
     }
