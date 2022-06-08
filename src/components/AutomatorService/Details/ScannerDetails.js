@@ -31,6 +31,8 @@ const { Item } = Descriptions;
  * @constructor
  */
 function ExpandedVendorRow({ vendor }) {
+  const codeStyle = { fontFamily: "Monaco, Menlo, monospace", fontSize: 12 };
+  const ulStyle = { ...codeStyle, margin: 0, paddingLeft: 10 };
   return (
     <div>
       <Title level={3}>Detection hints</Title>
@@ -38,11 +40,43 @@ function ExpandedVendorRow({ vendor }) {
       <Title level={4}>Resources</Title>
       {vendor.detectionHints.resources.map((resource, index) => {
         return (
-          <Descriptions key={`resource_${index}`} size="small" bordered col={2}>
-            <Item label="hrefs">{resource.hrefs.join(", ")}</Item>
-            <Item label="hosts">{resource.hosts.join(", ")}</Item>
-            <Item label="pathname">{resource.pathname}</Item>
-            <Item label="hint">{JSON.stringify(resource.hint)}</Item>
+          <Descriptions
+            key={`resource_${index}`}
+            size="small"
+            bordered
+            column={1}
+            style={{ marginBottom: 16 }}
+          >
+            <Item label="hrefs">
+              <ul style={ulStyle}>
+                {resource.hrefs.map((href) => (
+                  <li key={href} title={href}>
+                    {href.substring(0, 100)}
+                  </li>
+                ))}
+              </ul>
+            </Item>
+            <Item label="hosts">
+              {
+                <ul style={ulStyle}>
+                  {resource.hosts.map((host) => (
+                    <li key={host} title={host}>
+                      {host.substring(0, 100)}
+                    </li>
+                  ))}
+                </ul>
+              }
+            </Item>
+            <Item label="pathname">
+              <span style={codeStyle} title={resource.pathname}>
+                {resource.pathname.substring(0, 200)}
+              </span>
+            </Item>
+            <Item label="hint">
+              <span style={codeStyle}>
+                {JSON.stringify(resource.hint, null, 2)}
+              </span>
+            </Item>
           </Descriptions>
         );
       })}
