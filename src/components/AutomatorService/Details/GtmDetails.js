@@ -5,7 +5,7 @@ import { VerticalAlignBottomOutlined } from '@ant-design/icons';
 const { Item } = Descriptions;
 
 function downloadGtmJson(container) {
-  downloadFile(JSON.stringify(container), 'GTMContainer.json', 'application/json');
+  downloadFile(JSON.stringify(container.result), 'GTMContainer.json', 'application/json');
 }
 
 function downloadFile(content, fileName, contentType) {
