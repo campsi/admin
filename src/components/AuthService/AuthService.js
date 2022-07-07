@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { Component } from "react";
 import { withAppContext } from "../../App";
-import { Layout, Form, Typography, Button, Input, Card, Space } from "antd";
+import { Layout, Form, Typography, Button, Input, Card, Space, Tag } from 'antd';
 const { Title } = Typography;
 
 class AuthService extends Component {
@@ -94,6 +94,9 @@ class AuthService extends Component {
             </Form>
             {me && (
               <Form.Item>
+                <Tag color={'green'} key={'Connected'}>
+                  {'Connected'}
+                </Tag>
                 <Button
                   type="ghost"
                   color={"red"}
