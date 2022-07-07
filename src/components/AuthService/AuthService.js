@@ -131,10 +131,6 @@ class AuthService extends Component {
               <Card title="Log in">
                 <Form
                   onFinish={(values) => this.login(values)}
-                  initialValues={{
-                    email: "romainbessuges+admin@gmail.com",
-                    password: "test",
-                  }}
                 >
                   <Form.Item label="Email" name="email">
                     <Input type="email" />
