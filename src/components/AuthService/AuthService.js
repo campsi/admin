@@ -95,7 +95,9 @@ class AuthService extends Component {
             {me && (
               <Form.Item>
                 <Tag color={'green'} key={'Connected'}>
-                  {'Connected'}
+                  {
+                    'Connected'
+                  }
                 </Tag>
                 <Button
                   type="ghost"
