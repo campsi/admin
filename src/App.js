@@ -73,6 +73,10 @@ class App extends Component {
 
   async componentDidMount() {
     await this.fetchData();
+    const params = new URLSearchParams(window.location.search);
+    if(params.access_token){
+       this.state.setAccessToken(params.access_token);
+    }
   }
 
   async fetchData() {
