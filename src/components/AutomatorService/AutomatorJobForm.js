@@ -222,6 +222,7 @@ function AutomatorJobForm({ onFinish }) {
                 {
                   name: "animated_gif",
                   format: "GIF",
+                  userAgent: userAgents[0].value,
                   viewport: { width: 1600, height: 900 },
                   dimensions: { width: 800, height: 450 },
                 },
@@ -267,12 +268,12 @@ function AutomatorJobForm({ onFinish }) {
                           </Form.Item>
                           <Form.Item
                             {...field}
-                            label="User agent"
+                            label="user agent"
                             name={[field.name, "userAgent"]}
                             key={[field.fieldKey, "userAgent"]}
                             required
                           >
-                            <Select placeholder="" defaultValue={userAgents[0].value}>
+                            <Select placeholder="">
                               {userAgents.map((ua) => (
                                 <Select.Option value={ua.value} key={ua.value}>
                                   {ua.name}
