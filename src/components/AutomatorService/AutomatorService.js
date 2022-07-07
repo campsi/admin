@@ -203,7 +203,7 @@ class AutomatorService extends Component {
     return (
       <Layout.Content style={{ padding: 30, width: "100%" }}>
         <Title>Automator Service</Title>
-        <Space direction="vertical">
+        <Space direction="vertical" style={{width: '100%'}}>
           <Routes>
             <Route
               path={`jobs/:id`}
