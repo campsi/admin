@@ -168,6 +168,7 @@ class ResourceListing extends Component {
   }
 
   async fetchData(filters = {}, sorter = {}) {
+    /* Destructuring the props object. */
     const { api, service, authenticated } = this.props;
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
@@ -347,7 +348,7 @@ class ResourceListing extends Component {
                   this.setState({
                     perPage: pageSize,
                     page,
-                  });
+                  }, this.handleTableChange);
                 },
               }}
             />
