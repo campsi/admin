@@ -12,6 +12,7 @@ import {
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import userAgents from "./userAgents";
 
 const { TabPane } = Tabs;
 
@@ -25,11 +26,8 @@ function AutomatorJobForm({ onFinish }) {
 
   function isNecessaryToUseProjectId() {
     return (
-      (
-        isActionActive('showcase') ||
-        isActionActive('gtm')
-      ) &&
-      !isActionActive('provisioning')
+      (isActionActive("showcase") || isActionActive("gtm")) &&
+      !isActionActive("provisioning")
     );
   }
 
@@ -42,10 +40,7 @@ function AutomatorJobForm({ onFinish }) {
     );
   }
 
-  const hasProjectId = form.getFieldValue([
-    "params",
-    "projectId",
-  ]);
+  const hasProjectId = form.getFieldValue(["params", "projectId"]);
 
   return (
     <Form
@@ -75,11 +70,11 @@ function AutomatorJobForm({ onFinish }) {
           <Input />
         </Form.Item>
         <Form.Item
-            name={["params", "projectId"]}
-            label="Project ID"
-            required={isNecessaryToUseProjectId()}
-            rules={[{ required: isNecessaryToUseProjectId()}]}
-            help="Fill this field to use an existing project or leave blank if you want to creat a new project with provisioning"
+          name={["params", "projectId"]}
+          label="Project ID"
+          required={isNecessaryToUseProjectId()}
+          rules={[{ required: isNecessaryToUseProjectId() }]}
+          help="Fill this field to use an existing project or leave blank if you want to creat a new project with provisioning"
         >
           <Input />
         </Form.Item>
@@ -214,10 +209,10 @@ function AutomatorJobForm({ onFinish }) {
               <Switch />
             </Form.Item>
             <Form.Item
-                name={["actions", "showcase", "publishProject"]}
-                initialValue={true}
-                valuePropName="checked"
-                label="Publish the project before launch the showcase"
+              name={["actions", "showcase", "publishProject"]}
+              initialValue={true}
+              valuePropName="checked"
+              label="Publish the project before launch the showcase"
             >
               <Switch />
             </Form.Item>
@@ -227,6 +222,7 @@ function AutomatorJobForm({ onFinish }) {
                 {
                   name: "animated_gif",
                   format: "GIF",
+                  userAgent: userAgents[0].value,
                   viewport: { width: 1600, height: 900 },
                   dimensions: { width: 800, height: 450 },
                 },
@@ -268,6 +264,21 @@ function AutomatorJobForm({ onFinish }) {
                               <Select.Option value="WEBM">WEBM</Select.Option>
                               <Select.Option value="PNG">PNG</Select.Option>
                               <Select.Option value="MPEG">MPEG</Select.Option>
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            {...field}
+                            label="user agent"
+                            name={[field.name, "userAgent"]}
+                            key={[field.fieldKey, "userAgent"]}
+                            required
+                          >
+                            <Select placeholder="">
+                              {userAgents.map((ua) => (
+                                <Select.Option value={ua.value} key={ua.value}>
+                                  {ua.name}
+                                </Select.Option>
+                              ))}
                             </Select>
                           </Form.Item>
                           <Space align="center">
