@@ -1,5 +1,5 @@
 import { Descriptions } from "antd";
-import { CheckCircleOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 const { Item } = Descriptions;
 
 function Color({ value }) {
@@ -30,10 +30,10 @@ function StylesheetDetails({ result }) {
         {result.font}
       </Item>
       <Item label="Is Dark Mode">
-        {result.isDarkMode ? <CheckCircleOutlined /> : ""}
+        {result.isDarkMode ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
       </Item>
       <Item label="Is Monochrome" span={2}>
-        {result.isMonochrome ? <CheckCircleOutlined /> : ""}
+        {result.isMonochrome ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
       </Item>
       <Item label="Dark Color">
         <Color value={result.darkColor} />
