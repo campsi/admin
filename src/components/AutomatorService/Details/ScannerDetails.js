@@ -183,6 +183,9 @@ class ScannerDetails extends Component {
         <TabPane tab="Result Unverified" key="2">
           Content of Tab 2
         </TabPane>
+        <TabPane tab="Result unknown " key="3">
+          Content of Tab 3
+        </TabPane>
       </Tabs>
 
       <Descriptions bordered column={3} size="medium">
