@@ -1,11 +1,18 @@
-import { Descriptions, Space, Table, Tag, Typography } from "antd";
+import { Descriptions, Button, Space, Table, Tag, Typography, Tabs } from "antd";
+import { VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { GlobalOutlined } from "@ant-design/icons";
 import { withAppContext } from "../../../App";
 import PropTypes from "prop-types";
 import { Component } from "react";
+import { downloadFile } from './GtmDetails';
 
 const { Title } = Typography;
 const { Item } = Descriptions;
+const { TabPane } = Tabs;
+
+function downloadPDF(result){
+  downloadFile(JSON.stringify(result), 'rapport.pdf', 'application/pdf');
+}
 
 /**
  *
@@ -158,16 +165,41 @@ class ScannerDetails extends Component {
     },
   ];
 
+
   render() {
     const { dataSource } = this.state;
     return (
-      <Table
-        columns={this.getColumns()}
-        dataSource={dataSource}
-        expandable={{
-          expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} />,
-        }}
-      />
+      <Space size={"large"}>
+      <Tabs tabPosition={"left"}>
+        <TabPane tab="Result Verified" key="1">
+        <Table
+          columns={this.getColumns()}
+          dataSource={dataSource}
+          expandable={{
+            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} />,
+          }}
+        />
+        </TabPane>
+        <TabPane tab="Result Unverified" key="2">
+          Content of Tab 2
+        </TabPane>
+      </Tabs>
+
+      <Descriptions bordered column={3} size="medium">
+        <Item label="Download PDF" span={3}>
+          <Button
+            icon={<VerticalAlignBottomOutlined />}
+            onClick={() => downloadPDF("lien")}
+          />
+        </Item>
+        <Item label="nbPagesParsed" span={2}>
+          f
+        </Item>
+        <Item label="nbPagesParsed">
+          f
+        </Item>
+      </Descriptions>
+      </Space>
     );
   }
 }
