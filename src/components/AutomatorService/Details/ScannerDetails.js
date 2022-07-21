@@ -146,13 +146,12 @@ class ScannerDetails extends Component {
     {
       title: "Technical name",
       dataIndex: "name",
-      sorter: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
       key: "name",
     },
     {
       title: "Title",
       dataIndex: "title",
-      sorter: true,
       key: "title",
       render: (value) => value? value: ""
     },
