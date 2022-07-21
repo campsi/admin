@@ -5,11 +5,11 @@ import { withAppContext } from "../../../App";
 import PropTypes from "prop-types";
 import { Component } from "react";
 import { downloadFile } from './GtmDetails';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+
 
 const { Title } = Typography;
 const { Item } = Descriptions;
-const { TabPane } = Tabs;
-
 function downloadPDF(result){
   downloadFile(JSON.stringify(result), 'rapport.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
@@ -44,10 +44,6 @@ function ExpandedVendorRow({ vendor, isKnown = true }) {
   if(!isKnown){
     return <div>
       <Title level={1}>Pages</Title>
-      {console.log('================================== ==')}
-      {console.log(vendor.pagesFound)}
-      {console.log(typeof vendor.pagesFound)}
-      {console.log('====================================')}
       {Object.keys(vendor.pagesFound).map((resource, index) => {
         return (
           <Descriptions
@@ -125,38 +121,14 @@ class ScannerDetails extends Component {
   state = {
     categories: [],
     metadata: this.props?.result,
-    dataSourceWithConsent: this.props?.result.knownVendors.map((vendor) => {
-      if(this.props.result.knownVendors.find(element => element.name === vendor.name && element.detectedAfterConsent)){
+    dataSource: () => {
+      let vendors = [];
+      this.props?.result.knownVendors.map(vendor => vendors.push(vendor));
+      this.props?.result.unknownVendors.map(vendor => vendors.push(vendor));
+      return vendors.map((vendor) => {
         return { key: vendor.name, ...vendor };
-      }
-      return undefined;
-    }).filter(dataSource => {
-      return dataSource !== undefined;
-    }),
-    dataSourceWithoutConsent: this.props?.result.knownVendors.map((vendor) => {
-      if(this.props.result.knownVendors.find(element => element.name === vendor.name && !element.detectedAfterConsent)){
-        return { key: vendor.name, ...vendor };
-      }
-      return undefined;
-    }).filter(dataSource => {
-      return dataSource !== undefined;
-    }),
-    dataSourceUnknownWithConsent: this.props?.result.unknownVendors.map((vendor) => {
-      if(this.props.result.unknownVendors.find(element => element.name === vendor.name && element.detectedAfterConsent)){
-        return { key: vendor.name, ...vendor };
-      }
-      return undefined;
-    }).filter(dataSource => {
-      return dataSource !== undefined;
-    }),
-    dataSourceUnknownWithoutConsent: this.props?.result.unknownVendors.map((vendor) => {
-      if(this.props.result.unknownVendors.find(element => element.name === vendor.name && !element.detectedAfterConsent)){
-        return { key: vendor.name, ...vendor };
-      }
-      return undefined;
-    }).filter(dataSource => {
-      return dataSource !== undefined;
     })
+    },
   };
   componentDidMount() {
     this.fetchCategories();
@@ -174,24 +146,30 @@ class ScannerDetails extends Component {
     {
       title: "Technical name",
       dataIndex: "name",
+      sorter: true,
       key: "name",
     },
     {
       title: "Title",
       dataIndex: "title",
+      sorter: true,
       key: "title",
+      render: (value) => value? value: ""
     },
     {
       title: "Categories",
       dataIndex: "categoryIds",
       key: "Categories",
-      render: (categoryIds) =>
+      render: (categoryIds) => {
+        if(!categoryIds){
+          return "";
+        }
         categoryIds.map((id) => (
           <Tag key={id}>
             {this.state.categories.filter((c) => c.id === id)[0]?.data.name ||
               id}
           </Tag>
-        )),
+        ))},
     },
     {
       title: "Policy URL",
@@ -223,75 +201,52 @@ class ScannerDetails extends Component {
     {
       title: "Company",
       dataIndex: ["company", "name"],
+      key: "Company",
+      render: (value) => value? value: ""
+    },
+    {
+      title: "IsDetectedAfterConsent",
+      dataIndex: ["detectedAfterConsent"],
+      sorter: (a, b) => (a.detectedAfterConsent === b.detectedAfterConsent)? 0 : a.detectedAfterConsent? -1 : 1,
+      key: "detectedAfterConsent",
+      render: (value) => value? <CheckCircleOutlined /> : <CloseCircleOutlined />
+    },
+    {
+      title: "IsExemptedOfConsent",
+      dataIndex: ["consentExemption"],
+      sorter: (a, b) => (a.consentExemption === b.consentExemption)? 0 : a.consentExemption? -1 : 1,
+      key: "consentExemption",
+      render: (value) => value? <CheckCircleOutlined /> : <CloseCircleOutlined />
     },
   ];
 
-  getUnkownColumns = () => [
-    {
-      title: "Technical name",
-      dataIndex: "name",
-      key: "name",
-    }
-  ];
 
 
   render() {
-    const { dataSourceWithConsent, dataSourceWithoutConsent, dataSourceUnknownWithConsent, dataSourceUnknownWithoutConsent,metadata } = this.state;
+    const { dataSource, metadata } = this.state;
     return (
-      <Space size={"large"}>
-      <Tabs tabPosition={"left"}>
-        <TabPane tab="With consent" key="1">
+      <Space size={"large"} direction={"vertical"}>
+        <Descriptions bordered column={3} size="medium">
+          <Item label="nbPagesParsed" span={2}>
+            {metadata.nbPagesParsed}
+          </Item>
+          <Item label="Vendor(s) Found" span={2}>
+            {Object.keys(dataSource.call(this)).length}
+          </Item>
+          <Item label="Download Excel" span={3}>
+            <Button
+              icon={<VerticalAlignBottomOutlined />}
+              onClick={() => downloadPDF(metadata.xlsxURL)}
+            />
+          </Item>
+        </Descriptions>
         <Table
           columns={this.getColumns()}
-          dataSource={dataSourceWithConsent}
+          dataSource={dataSource.call(this)}
           expandable={{
-            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} />,
+            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} isKnown={vendor.detectedAfterConsent} />,
           }}
         />
-        </TabPane>
-        <TabPane tab="Without consent" key="2">
-        <Table
-          columns={this.getColumns()}
-          dataSource={dataSourceWithoutConsent}
-          expandable={{
-            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} />,
-          }}
-        />
-        </TabPane>
-        <TabPane tab="Unknown with consent" key="3">
-        <Table
-          columns={this.getUnkownColumns()}
-          dataSource={dataSourceUnknownWithConsent}
-          expandable={{
-            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} isKnown={false}/>,
-          }}
-        />
-        </TabPane>
-        <TabPane tab="Unknown without consent" key="4">
-        <Table
-          columns={this.getUnkownColumns()}
-          dataSource={dataSourceUnknownWithoutConsent}
-          expandable={{
-            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} isKnown={false} />,
-          }}
-        />
-        </TabPane>
-      </Tabs>
-
-      <Descriptions bordered column={3} size="medium">
-        <Item label="Download Excel" span={3}>
-          <Button
-            icon={<VerticalAlignBottomOutlined />}
-            onClick={() => downloadPDF(metadata.xlsxURL)}
-          />
-        </Item>
-        <Item label="nbPagesParsed" span={2}>
-          {metadata.nbPagesParsed}
-        </Item>
-        <Item label="Vendor(s) Found" span={2}>
-          {Object.keys(dataSourceWithConsent).length + Object.keys(dataSourceWithoutConsent).length + Object.keys(dataSourceUnknownWithConsent).length + Object.keys(dataSourceUnknownWithoutConsent).length}
-        </Item>
-      </Descriptions>
       </Space>
     );
   }
