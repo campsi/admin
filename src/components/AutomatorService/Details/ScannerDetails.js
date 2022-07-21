@@ -11,7 +11,7 @@ const { Item } = Descriptions;
 const { TabPane } = Tabs;
 
 function downloadPDF(result){
-  downloadFile(JSON.stringify(result), 'rapport.pdf', 'application/pdf');
+  downloadFile(JSON.stringify(result), 'rapport.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 }
 
 /**
@@ -37,9 +37,39 @@ function downloadPDF(result){
  * @returns {JSX.Element}
  * @constructor
  */
-function ExpandedVendorRow({ vendor }) {
+function ExpandedVendorRow({ vendor, isKnown = true }) {
   const codeStyle = { fontFamily: "Monaco, Menlo, monospace", fontSize: 12 };
   const ulStyle = { ...codeStyle, margin: 0, paddingLeft: 10 };
+
+  if(!isKnown){
+    return <div>
+      <Title level={1}>Pages</Title>
+      {console.log('================================== ==')}
+      {console.log(vendor.pagesFound)}
+      {console.log(typeof vendor.pagesFound)}
+      {console.log('====================================')}
+      {Object.keys(vendor.pagesFound).map((resource, index) => {
+        return (
+          <Descriptions
+            key={`resource_${index}`}
+            size="small"
+            bordered
+            column={1}
+            style={{ marginBottom: 16 }}
+          >
+            <Item label="hrefs">
+              <ul style={ulStyle}>
+                <li key={index} title={resource}>
+                  {resource.substring(0, 100)}
+                </li>
+              </ul>
+            </Item>
+          </Descriptions>
+        );
+      })}
+    </div>
+  }
+
   return (
     <div>
       <Title level={3}>Detection hints</Title>
@@ -94,9 +124,35 @@ function ExpandedVendorRow({ vendor }) {
 class ScannerDetails extends Component {
   state = {
     categories: [],
-    dataSource: this.props?.result.map((vendor) => {
-      return { key: vendor.name, ...vendor };
+    metadata: this.props?.result,
+    dataSourceWithConsent: this.props?.result.knownVendors.map((vendor) => {
+      if(this.props.result.knownVendors.find(element => element.name === vendor.name && element.detectedAfterConsent)){
+        return { key: vendor.name, ...vendor };
+      }
+    }).filter(dataSource => {
+      return dataSource !== undefined;
     }),
+    dataSourceWithoutConsent: this.props?.result.knownVendors.map((vendor) => {
+      if(this.props.result.knownVendors.find(element => element.name === vendor.name && !element.detectedAfterConsent)){
+        return { key: vendor.name, ...vendor };
+      }
+    }).filter(dataSource => {
+      return dataSource !== undefined;
+    }),
+    dataSourceUnknownWithConsent: this.props?.result.unknownVendors.map((vendor) => {
+      if(this.props.result.unknownVendors.find(element => element.name === vendor.name && element.detectedAfterConsent)){
+        return { key: vendor.name, ...vendor };
+      }
+    }).filter(dataSource => {
+      return dataSource !== undefined;
+    }),
+    dataSourceUnknownWithoutConsent: this.props?.result.unknownVendors.map((vendor) => {
+      if(this.props.result.unknownVendors.find(element => element.name === vendor.name && !element.detectedAfterConsent)){
+        return { key: vendor.name, ...vendor };
+      }
+    }).filter(dataSource => {
+      return dataSource !== undefined;
+    })
   };
   componentDidMount() {
     this.fetchCategories();
@@ -109,6 +165,7 @@ class ScannerDetails extends Component {
       });
     });
   }
+
   getColumns = () => [
     {
       title: "Technical name",
@@ -165,41 +222,70 @@ class ScannerDetails extends Component {
     },
   ];
 
+  getUnkownColumns = () => [
+    {
+      title: "Technical name",
+      dataIndex: "name",
+      key: "name",
+    }
+  ];
+
 
   render() {
-    const { dataSource } = this.state;
+    const { dataSourceWithConsent, dataSourceWithoutConsent, dataSourceUnknownWithConsent, dataSourceUnknownWithoutConsent,metadata } = this.state;
     return (
       <Space size={"large"}>
       <Tabs tabPosition={"left"}>
-        <TabPane tab="Result Verified" key="1">
+        <TabPane tab="With consent" key="1">
         <Table
           columns={this.getColumns()}
-          dataSource={dataSource}
+          dataSource={dataSourceWithConsent}
           expandable={{
             expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} />,
           }}
         />
         </TabPane>
-        <TabPane tab="Result Unverified" key="2">
-          Content of Tab 2
+        <TabPane tab="Without consent" key="2">
+        <Table
+          columns={this.getColumns()}
+          dataSource={dataSourceWithoutConsent}
+          expandable={{
+            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} />,
+          }}
+        />
         </TabPane>
-        <TabPane tab="Result unknown " key="3">
-          Content of Tab 3
+        <TabPane tab="Unknown with consent" key="3">
+        <Table
+          columns={this.getUnkownColumns()}
+          dataSource={dataSourceUnknownWithConsent}
+          expandable={{
+            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} isKnown={false}/>,
+          }}
+        />
+        </TabPane>
+        <TabPane tab="Unknown without consent" key="4">
+        <Table
+          columns={this.getUnkownColumns()}
+          dataSource={dataSourceUnknownWithoutConsent}
+          expandable={{
+            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} isKnown={false} />,
+          }}
+        />
         </TabPane>
       </Tabs>
 
       <Descriptions bordered column={3} size="medium">
-        <Item label="Download PDF" span={3}>
+        <Item label="Download Excel" span={3}>
           <Button
             icon={<VerticalAlignBottomOutlined />}
-            onClick={() => downloadPDF("lien")}
+            onClick={() => downloadPDF(metadata.xlsxURL)}
           />
         </Item>
         <Item label="nbPagesParsed" span={2}>
-          f
+          {metadata.nbPagesParsed}
         </Item>
-        <Item label="nbPagesParsed">
-          f
+        <Item label="Vendor(s) Found" span={2}>
+          {Object.keys(dataSourceWithConsent).length + Object.keys(dataSourceWithoutConsent).length + Object.keys(dataSourceUnknownWithConsent).length + Object.keys(dataSourceUnknownWithoutConsent).length}
         </Item>
       </Descriptions>
       </Space>
