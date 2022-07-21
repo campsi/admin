@@ -1,4 +1,4 @@
-import { Descriptions, Button, Space, Table, Tag, Typography, Tabs } from "antd";
+import { Descriptions, Button, Space, Table, Tag, Typography } from "antd";
 import { VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { GlobalOutlined } from "@ant-design/icons";
 import { withAppContext } from "../../../App";
