@@ -129,6 +129,7 @@ class ScannerDetails extends Component {
       if(this.props.result.knownVendors.find(element => element.name === vendor.name && element.detectedAfterConsent)){
         return { key: vendor.name, ...vendor };
       }
+      return undefined;
     }).filter(dataSource => {
       return dataSource !== undefined;
     }),
@@ -136,6 +137,7 @@ class ScannerDetails extends Component {
       if(this.props.result.knownVendors.find(element => element.name === vendor.name && !element.detectedAfterConsent)){
         return { key: vendor.name, ...vendor };
       }
+      return undefined;
     }).filter(dataSource => {
       return dataSource !== undefined;
     }),
@@ -143,6 +145,7 @@ class ScannerDetails extends Component {
       if(this.props.result.unknownVendors.find(element => element.name === vendor.name && element.detectedAfterConsent)){
         return { key: vendor.name, ...vendor };
       }
+      return undefined;
     }).filter(dataSource => {
       return dataSource !== undefined;
     }),
@@ -150,6 +153,7 @@ class ScannerDetails extends Component {
       if(this.props.result.unknownVendors.find(element => element.name === vendor.name && !element.detectedAfterConsent)){
         return { key: vendor.name, ...vendor };
       }
+      return undefined;
     }).filter(dataSource => {
       return dataSource !== undefined;
     })
