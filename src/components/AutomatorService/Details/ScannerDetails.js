@@ -5,7 +5,7 @@ import { withAppContext } from "../../../App";
 import PropTypes from "prop-types";
 import { Component } from "react";
 import { downloadFile } from './GtmDetails';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 
 const { Title } = Typography;
@@ -123,8 +123,8 @@ class ScannerDetails extends Component {
     metadata: this.props?.result,
     dataSource: () => {
       let vendors = [];
-      this.props?.result.knownVendors.map(vendor => vendors.push(vendor));
-      this.props?.result.unknownVendors.map(vendor => vendors.push(vendor));
+      this.props?.result.knownVendors.map(vendor => vendors.push({isKnown: true,...vendor}));
+      this.props?.result.unknownVendors.map(vendor => vendors.push({isKnown: false,...vendor}));
       return vendors.map((vendor) => {
         return { key: vendor.name, ...vendor };
     })
@@ -204,18 +204,25 @@ class ScannerDetails extends Component {
       render: (value) => value? value: ""
     },
     {
-      title: "IsDetectedAfterConsent",
+      title: " After Consent",
       dataIndex: ["detectedAfterConsent"],
       sorter: (a, b) => (a.detectedAfterConsent === b.detectedAfterConsent)? 0 : a.detectedAfterConsent? -1 : 1,
       key: "detectedAfterConsent",
-      render: (value) => value? <CheckCircleOutlined style={{ color: "green"}} /> : <CloseCircleOutlined style={{ color: "red"}} />
+      render: (value) => value? <CheckOutlined style={{ color: "green"}} /> : <CloseOutlined style={{ color: "red"}} />
     },
     {
-      title: "IsExemptedOfConsent",
+      title: "Exempted of consent",
       dataIndex: ["consentExemption"],
       sorter: (a, b) => (a.consentExemption === b.consentExemption)? 0 : a.consentExemption? -1 : 1,
       key: "consentExemption",
-      render: (value) => value? <CheckCircleOutlined style={{ color: "green"}} /> : <CloseCircleOutlined style={{ color: "red"}}/>
+      render: (value) => value? <CheckOutlined /> : <CloseOutlined />
+    },
+    {
+      title: "Known",
+      dataIndex: ["isKnown"],
+      sorter: (a, b) => (a.isKnown === b.isKnown)? 0 : a.isKnown? -1 : 1,
+      key: "isKnown",
+      render: (value) => value? <CheckOutlined style={{ color: "green"}} /> : <CloseOutlined style={{ color: "red"}}/>
     },
   ];
 
@@ -243,7 +250,7 @@ class ScannerDetails extends Component {
           columns={this.getColumns()}
           dataSource={dataSource.call(this)}
           expandable={{
-            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} isKnown={vendor.detectedAfterConsent} />,
+            expandedRowRender: (vendor) => <ExpandedVendorRow vendor={vendor} isKnown={vendor.isKnown} />,
           }}
         />
       </Space>
