@@ -208,14 +208,14 @@ class ScannerDetails extends Component {
       dataIndex: ["detectedAfterConsent"],
       sorter: (a, b) => (a.detectedAfterConsent === b.detectedAfterConsent)? 0 : a.detectedAfterConsent? -1 : 1,
       key: "detectedAfterConsent",
-      render: (value) => value? <CheckCircleOutlined /> : <CloseCircleOutlined />
+      render: (value) => value? <CheckCircleOutlined style={{ color: "green"}} /> : <CloseCircleOutlined style={{ color: "red"}} />
     },
     {
       title: "IsExemptedOfConsent",
       dataIndex: ["consentExemption"],
       sorter: (a, b) => (a.consentExemption === b.consentExemption)? 0 : a.consentExemption? -1 : 1,
       key: "consentExemption",
-      render: (value) => value? <CheckCircleOutlined /> : <CloseCircleOutlined />
+      render: (value) => value? <CheckCircleOutlined style={{ color: "green"}} /> : <CloseCircleOutlined style={{ color: "red"}}/>
     },
   ];
 
