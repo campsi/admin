@@ -8,7 +8,7 @@ function downloadGtmJson(container) {
   downloadFile(JSON.stringify(container.result), 'GTMContainer.json', 'application/json');
 }
 
-export function downloadFile(content, fileName, contentType) {
+function downloadFile(content, fileName, contentType) {
   const a = document.createElement('a');
   const file = new Blob([content], { type: contentType });
   a.href = URL.createObjectURL(file);

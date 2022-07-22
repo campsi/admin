@@ -4,15 +4,11 @@ import { GlobalOutlined } from "@ant-design/icons";
 import { withAppContext } from "../../../App";
 import PropTypes from "prop-types";
 import { Component } from "react";
-import { downloadFile } from './GtmDetails';
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 
 const { Title } = Typography;
 const { Item } = Descriptions;
-function downloadPDF(result){
-  downloadFile(JSON.stringify(result), 'rapport.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-}
 
 /**
  *
@@ -240,10 +236,10 @@ class ScannerDetails extends Component {
             {Object.keys(dataSource.call(this)).length}
           </Item>
           <Item label="Download Excel" span={3}>
+          <a href={metadata.xlsxURL} download>
             <Button
-              icon={<VerticalAlignBottomOutlined />}
-              onClick={() => downloadPDF(metadata.xlsxURL)}
-            />
+              icon={<VerticalAlignBottomOutlined />} />
+            </a>
           </Item>
         </Descriptions>
         <Table
