@@ -113,10 +113,10 @@ function AutomatorJobForm({ onFinish }) {
               <InputNumber min={1} max={1000} />
             </Form.Item>
             <Form.Item
-              name={["actions", "scanner", "acceptCMP"]}
+              name={["actions", "scanner", "testCMP"]}
               initialValue={true}
               valuePropName="checked"
-              label="Accept CMP"
+              label="Test the CMP compliance"
             >
               <Switch />
             </Form.Item>
