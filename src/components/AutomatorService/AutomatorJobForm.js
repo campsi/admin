@@ -18,6 +18,7 @@ const { TabPane } = Tabs;
 
 function AutomatorJobForm({ onFinish }) {
   const [formValues, setFormValues] = useState({});
+  const [campaign, setCampaign] = useState({});
   const [form] = Form.useForm();
 
   function isActionActive(action) {
@@ -342,6 +343,43 @@ function AutomatorJobForm({ onFinish }) {
               label="Activate GTM Action"
             >
               <Switch />
+            </Form.Item>
+          </TabPane>
+          <TabPane tab={getActionTab("emailing")} key="emailing">
+            <Form.Item
+              name={["actions", "emailing", "active"]}
+              valuePropName="checked"
+              label="Activate Emailing Action"
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item
+              name={["actions", "emailing", "provider"]}
+              initialValue="lemlist"
+              label="Provider"
+              help="Chose your provider"
+            >
+              <Select>
+                <Select.Option value="lemlist">Lemlist</Select.Option>
+                <Select.Option value="hubspot">Hubspot</Select.Option>
+                <Select.Option value="sendinblue">SendInBlue</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name={["actions", "emailing", "campaign"]}
+              label="Campaign"
+              help="Chose your campaign"
+            >
+              <Select>
+                <Select.Option value="prod">Production</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name={["actions", "emailing", "recipient"]}
+              label="recipient"
+              help="Email of te recipient"
+            >
+              <Input />
             </Form.Item>
           </TabPane>
         </Tabs>

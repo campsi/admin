@@ -71,6 +71,8 @@ class AutomatorJob extends Component {
         return <ShowcaseDetails result={job.actions[action].result} />;
       case "gtm":
         return <GtmDetails result={job.actions[action].result} />;
+      case "emailing": 
+        return <></>;
       default:
         return <Empty />;
     }
