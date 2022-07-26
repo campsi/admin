@@ -11,7 +11,7 @@ import {
   Tabs,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import userAgents from "./userAgents";
 
 const { TabPane } = Tabs;
@@ -21,6 +21,10 @@ function AutomatorJobForm({ onFinish, api }) {
   const [campaign, setCampaign] = useState([]);
   const [form] = Form.useForm();
 
+
+  useEffect(() => {
+    fetchCampaign("lemlist");
+  }, []);
   function fetchCampaign(provider){
     api.client.get("/automator/emailing/campaigns?provider="+provider).then((response) => {
       setCampaign(response.data)
@@ -376,7 +380,9 @@ function AutomatorJobForm({ onFinish, api }) {
               help="Chose your campaign"
             >
               <Select>
+                {typeof campaign == "object" && ( <>
                 {campaign.map(c => <Select.Option value={c._id}>{c.name}</Select.Option>)}
+                </> )}
               </Select>
             </Form.Item>
             <Form.Item
