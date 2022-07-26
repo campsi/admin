@@ -16,11 +16,16 @@ import userAgents from "./userAgents";
 
 const { TabPane } = Tabs;
 
-function AutomatorJobForm({ onFinish }) {
+function AutomatorJobForm({ onFinish, api }) {
   const [formValues, setFormValues] = useState({});
-  const [campaign, setCampaign] = useState({});
+  const [campaign, setCampaign] = useState([]);
   const [form] = Form.useForm();
 
+  function fetchCampaign(provider){
+    api.client.get("/automator/emailing/campaigns?provider="+provider).then((response) => {
+      setCampaign(response.data)
+    });
+  }
   function isActionActive(action) {
     return formValues.actions?.[action]?.active;
   }
@@ -359,7 +364,7 @@ function AutomatorJobForm({ onFinish }) {
               label="Provider"
               help="Chose your provider"
             >
-              <Select>
+              <Select onChange={value => fetchCampaign(value)}>
                 <Select.Option value="lemlist">Lemlist</Select.Option>
                 <Select.Option value="hubspot">Hubspot</Select.Option>
                 <Select.Option value="sendinblue">SendInBlue</Select.Option>
@@ -371,7 +376,7 @@ function AutomatorJobForm({ onFinish }) {
               help="Chose your campaign"
             >
               <Select>
-                <Select.Option value="prod">Production</Select.Option>
+                {campaign.map(c => <Select.Option value={c._id}>{c.name}</Select.Option>)}
               </Select>
             </Form.Item>
             <Form.Item
