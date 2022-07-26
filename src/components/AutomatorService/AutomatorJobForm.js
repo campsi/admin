@@ -27,7 +27,11 @@ function AutomatorJobForm({ onFinish, api }) {
   }, []);
   function fetchCampaign(provider){
     api.client.get("/automator/emailing/campaigns?provider="+provider).then((response) => {
-      setCampaign(response.data)
+      if(typeof response.data === "object"){
+        setCampaign(response.data)
+      }else{
+        setCampaign([]);
+      }
     });
   }
   function isActionActive(action) {
