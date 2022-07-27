@@ -11,7 +11,7 @@ import {
   Tabs,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import userAgents from "./userAgents";
 
 const { TabPane } = Tabs;
@@ -19,20 +19,46 @@ const { TabPane } = Tabs;
 function AutomatorJobForm({ onFinish, api }) {
   const [formValues, setFormValues] = useState({});
   const [campaign, setCampaign] = useState([]);
+  const [lead, setLead] = useState({});
+  const [provider, setProvider] = useState("lemlist");
   const [form] = Form.useForm();
 
-
   useEffect(() => {
-    fetchCampaign("lemlist");
+    fetchCampaign();
   }, []);
-  function fetchCampaign(provider){
-    api.client.get("/automator/emailing/campaigns?provider="+provider).then((response) => {
-      if(typeof response.data === "object"){
-        setCampaign(response.data)
-      }else{
-        setCampaign([]);
+
+  function checkIfLeadIsInCampaign(currentCampaign) {
+    if (provider === "lemlist") {
+      if (lead?.campaignId === currentCampaign) {
+        // valid
+      } else {
+        // not valid
       }
-    });
+    }
+  }
+
+  function fetchLeadFromLemlist(email) {
+    api.client
+      .get(`/automator/emailing/lemlist/lead?email=${email}`)
+      .then((response) => {
+        setLead(response.data);
+        console.log(lead);
+      })
+      .catch((err) => {
+        setLead({});
+      });
+  }
+
+  function fetchCampaign() {
+    api.client
+      .get("/automator/emailing/campaigns?provider=" + provider)
+      .then((response) => {
+        if (typeof response.data === "object") {
+          setCampaign(response.data);
+        } else {
+          setCampaign([]);
+        }
+      });
   }
   function isActionActive(action) {
     return formValues.actions?.[action]?.active;
@@ -372,29 +398,45 @@ function AutomatorJobForm({ onFinish, api }) {
               label="Provider"
               help="Chose your provider"
             >
-              <Select onChange={value => fetchCampaign(value)}>
+              <Select
+                onChange={(value) => {
+                  setProvider(value);
+                  fetchCampaign();
+                }}
+              >
                 <Select.Option value="lemlist">Lemlist</Select.Option>
                 <Select.Option value="hubspot">Hubspot</Select.Option>
                 <Select.Option value="sendinblue">SendInBlue</Select.Option>
               </Select>
             </Form.Item>
             <Form.Item
+              name={["actions", "emailing", "recipient"]}
+              label="recipient"
+              help={
+                Object.keys(lead).length > 0 ? "Lead found" : "Lead not found"
+              }
+              validateStatus={
+                Object.keys(lead).length > 0 ? "success" : "error"
+              }
+            >
+              <Input
+                onChange={(event) => fetchLeadFromLemlist(event.target.value)}
+              />
+            </Form.Item>
+            <Form.Item
               name={["actions", "emailing", "campaign"]}
               label="Campaign"
               help="Chose your campaign"
             >
-              <Select>
-                {typeof campaign == "object" && ( <>
-                {campaign.map(c => <Select.Option value={c._id}>{c.name}</Select.Option>)}
-                </> )}
+              <Select onSelect={(id) => checkIfLeadIsInCampaign(id)}>
+                {typeof campaign == "object" && (
+                  <>
+                    {campaign.map((c) => (
+                      <Select.Option value={c._id}>{c.name}</Select.Option>
+                    ))}
+                  </>
+                )}
               </Select>
-            </Form.Item>
-            <Form.Item
-              name={["actions", "emailing", "recipient"]}
-              label="recipient"
-              help="Email of te recipient"
-            >
-              <Input />
             </Form.Item>
           </TabPane>
         </Tabs>
