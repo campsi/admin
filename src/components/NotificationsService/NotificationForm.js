@@ -146,8 +146,6 @@ class NotificationForm extends Component {
       return null;
     }
 
-    console.log(notification);
-
     return (
       <Layout style={{ padding: 30 }}>
         <Title>Notification form</Title>
