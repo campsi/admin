@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
-import { Badge, Alert } from "antd";
+import { Alert, Badge, Form } from "antd";
 import Ajv from "ajv";
 
 export default function JsonTextArea({ formData, schema, name, onChange }) {
@@ -8,7 +8,7 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
   const [isValid, setValid] = useState(true);
   const [schemaErrors, setSchemaErrors] = useState([]);
 
-  const ajv = new Ajv({allErrors: true});
+  const ajv = new Ajv({ allErrors: true });
   const validate = ajv.compile(schema);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
       const parsed = JSON.parse(code);
       setValid(validate(parsed));
       setSchemaErrors(Array.isArray(validate.errors) ? validate.errors : []);
-      if(isValid){
+      if (isValid) {
         onChange(parsed);
       }
     } catch (err) {
@@ -26,9 +26,17 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
   }, [code, onChange]);
 
   return (
-    <div>
-      <label>{name} <Badge dot status={isValid ? "success" : "error"} /></label>
-
+    <Form.Item
+      label={
+        <span>
+          {schema.title || name}
+          <Badge
+            status={isValid ? "success" : "error"}
+            style={{ marginLeft: 8 }}
+          />
+        </span>
+      }
+    >
       <CodeEditor
         value={code}
         language="json"
@@ -47,7 +55,7 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
           <label>Errors</label>
           {schemaErrors.map((err) => (
             <Alert
-              style={{fontSize: 12, marginBottom: -1}}
+              style={{ fontSize: 12, marginBottom: -1 }}
               key={err}
               type="error"
               message={
@@ -61,6 +69,6 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
           ))}
         </div>
       )}
-    </div>
+    </Form.Item>
   );
 }
