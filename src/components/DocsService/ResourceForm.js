@@ -173,15 +173,13 @@ class ResourceForm extends Component {
       redirectTo,
     } = this.state;
 
-
-
     if (!doc) {
       return <Empty description="No document" />;
     }
 
     return (
       <Layout style={{ padding: 30 }}>
-        {redirectTo && <Navigate to={redirectTo} replace />}
+        {redirectTo && <Navigate to={redirectTo} />}
         <Title>Resource form</Title>
         <Space direction="vertical">
           <Card title="Document details">
