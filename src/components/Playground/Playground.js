@@ -2,12 +2,29 @@ import Form from "@rjsf/antd";
 import { Card } from "antd";
 import LocalizedText from "../LocalizedText/LocalizedText";
 import MatchString from "../MatchString/MatchString";
+import JsonTextArea from "../JsonTextArea/JsonTextArea";
 
 const schema = {
   type: "object",
   properties: {
     name: { type: "string" },
     child: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        childName: {
+          type: "string",
+        },
+        active: {
+          type: "boolean",
+        },
+        description: {
+          type: "string",
+        },
+      },
+    },
+
+    json: {
       type: "object",
       additionalProperties: false,
       properties: {
@@ -32,7 +49,7 @@ const schema = {
         endsWith: { type: "string", title: "Ends with" },
         contains: { type: "string", title: "Contains" },
         regex: { type: "string", title: "Match" },
-      }
+      },
     },
     title: {
       isLocalizedString: true,
@@ -63,18 +80,29 @@ const uiSchema = {
       "ui:widget": "textarea",
     },
   },
+  json: {
+    "ui:field": JsonTextArea,
+  },
   match: {
-    "ui:field": MatchString
+    "ui:field": MatchString,
   },
   title: {
     "ui:field": LocalizedText,
   },
 };
 
+const formData = {
+  json: {
+    childName: "Field 242A",
+    active: true,
+    description: "Child of field 123C",
+  },
+};
+
 function Playground() {
   return (
     <Card title="Playground" style={{ margin: 30 }}>
-      <Form schema={schema} uiSchema={uiSchema} />
+      <Form schema={schema} uiSchema={uiSchema} formData={formData} />
     </Card>
   );
 }
