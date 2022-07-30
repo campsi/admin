@@ -178,10 +178,12 @@ class ResourceForm extends Component {
       return <Empty description="No document" />;
     }
 
+    console.info(redirectTo, window.location.href, redirectTo !== window.location.href);
+
     return (
       <Layout style={{ padding: 30 }}>
-        {redirectTo && window.location.href !== redirectTo && (
-          <Navigate to={redirectTo} />
+        {redirectTo && window.location.pathname !== redirectTo && (
+          <Navigate to={redirectTo} replace />
         )}
         <Title>Resource form</Title>
         <Space direction="vertical">
