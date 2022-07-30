@@ -7,7 +7,6 @@ import {
   Input,
   Progress,
   Badge,
-  Space,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import Papa from "papaparse";
@@ -44,7 +43,10 @@ export default function BulkJobCreationForm({ api, services, form }) {
       let status = "default";
       let error;
       try {
-        await api.client.post(`/v1/automator/jobs:from-template`, task.payload);
+        await api.client.post(
+          `/v1/automator/template/run/${task.payload.jobTemplateId}`,
+          task.payload.variables
+        );
         status = "success";
       } catch (err) {
         status = "error";
@@ -156,10 +158,16 @@ export default function BulkJobCreationForm({ api, services, form }) {
           }}
           renderItem={(task, index) => (
             <List.Item>
-              <Space direction="horizontal">
-                <Badge count={index + 1} status={task.status} />
-                <code>{JSON.stringify(task.payload.variables)}</code>
-              </Space>
+              <Badge count={index + 1} status={task.status} />
+              <Input.TextArea
+                rows={2}
+                style={{
+                  width: "100%",
+                  fontSize: 12,
+                  fontFamily: "monospace",
+                }}
+                value={JSON.stringify(task.payload.variables)}
+              />
             </List.Item>
           )}
         />
