@@ -44,7 +44,7 @@ export default function BulkJobCreationForm({ api, services, form }) {
       let error;
       try {
         await api.client.post(
-          `/v1/automator/template/run/${task.payload.jobTemplateId}`,
+          `/automator/template/run/${task.payload.jobTemplateId}`,
           task.payload.variables
         );
         status = "success";
