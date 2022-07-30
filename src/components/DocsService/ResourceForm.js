@@ -13,7 +13,8 @@ import {
   Space,
   Table,
   Typography,
-  Modal, Empty,
+  Modal,
+  Empty,
 } from "antd";
 import { generateRelationField } from "../RelationField/RelationField";
 import { cleanLocalizedValue } from "../LocalizedText/LocalizedText";
@@ -179,7 +180,9 @@ class ResourceForm extends Component {
 
     return (
       <Layout style={{ padding: 30 }}>
-        {redirectTo && <Navigate to={redirectTo} />}
+        {redirectTo && window.location.href !== redirectTo && (
+          <Navigate to={redirectTo} />
+        )}
         <Title>Resource form</Title>
         <Space direction="vertical">
           <Card title="Document details">
