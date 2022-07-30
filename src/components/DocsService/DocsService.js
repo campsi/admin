@@ -6,6 +6,7 @@ import MatchString from "../MatchString/MatchString";
 import LocalizedText from "../LocalizedText/LocalizedText";
 import Asset from "../Asset/Asset";
 import ClearbitSync from "../ClearbitSync/ClearbitSync";
+import JsonTextArea from "../JsonTextArea/JsonTextArea";
 
 function DocsService(props) {
   useParams();
@@ -18,7 +19,8 @@ function DocsService(props) {
           'LocalizedString': LocalizedText,
           'MatchString': MatchString,
           'Asset': Asset,
-          'ClearbitSync': ClearbitSync
+          'ClearbitSync': ClearbitSync,
+          'JsonTextArea': JsonTextArea
         }} />}
       />
       <Route
