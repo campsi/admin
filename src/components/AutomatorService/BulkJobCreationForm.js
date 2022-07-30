@@ -87,7 +87,7 @@ export default function BulkJobCreationForm({ api, services, form }) {
   const JobTemplateField = useMemo(
     () =>
       generateRelationField({
-        resource: "jobs",
+        resource: "automator-job-template",
         service: "templates",
         labelIndex: "title",
       }),
