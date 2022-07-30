@@ -8,7 +8,7 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
   const [isValid, setValid] = useState(true);
   const [schemaErrors, setSchemaErrors] = useState([]);
 
-  const ajv = new Ajv({allErrors: true});
+  const ajv = new Ajv({ allErrors: true });
   const validate = ajv.compile(schema);
 
   useEffect(() => {
@@ -16,18 +16,18 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
       const parsed = JSON.parse(code);
       setValid(validate(parsed));
       setSchemaErrors(Array.isArray(validate.errors) ? validate.errors : []);
-      if(isValid){
-        onChange(parsed);
-      }
+      onChange(parsed);
     } catch (err) {
       setValid(false);
       setSchemaErrors([{ message: "JSON is not valid" }]);
     }
-  }, [code, onChange, isValid, validate]);
+  }, [code, onChange, validate]);
 
   return (
     <div>
-      <label>{name} <Badge dot status={isValid ? "success" : "error"} /></label>
+      <label>
+        {name} <Badge dot status={isValid ? "success" : "error"} />
+      </label>
 
       <CodeEditor
         value={code}
@@ -47,7 +47,7 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
           <label>Errors</label>
           {schemaErrors.map((err) => (
             <Alert
-              style={{fontSize: 12, marginBottom: -1}}
+              style={{ fontSize: 12, marginBottom: -1 }}
               key={err}
               type="error"
               message={
