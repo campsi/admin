@@ -23,7 +23,7 @@ export default function JsonTextArea({ formData, schema, name, onChange }) {
       setValid(false);
       setSchemaErrors([{ message: "JSON is not valid" }]);
     }
-  }, [code, onChange]);
+  }, [code, onChange, isValid, validate]);
 
   return (
     <div>
