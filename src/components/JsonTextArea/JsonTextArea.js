@@ -1,15 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import { Badge, Alert } from "antd";
 import Ajv from "ajv";
+
+const ajv = new Ajv({ allErrors: true });
 
 export default function JsonTextArea({ formData, schema, name, onChange }) {
   const [code, setCode] = useState(JSON.stringify(formData, null, 2));
   const [isValid, setValid] = useState(true);
   const [schemaErrors, setSchemaErrors] = useState([]);
 
-  const ajv = new Ajv({ allErrors: true });
-  const validate = ajv.compile(schema);
+  const validate = useMemo(() => ajv.compile(schema), [schema]);
 
   useEffect(() => {
     try {
