@@ -1,7 +1,6 @@
 import {
-  Badge,
   Button,
-  Card,
+  Card, Checkbox, Empty,
   Form,
   Input,
   InputNumber,
@@ -11,55 +10,16 @@ import {
   Tabs,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import userAgents from "./userAgents";
+import EmailingForm from "./Forms/EmailingForm";
 
 const { TabPane } = Tabs;
 
 function AutomatorJobForm({ onFinish, api }) {
   const [formValues, setFormValues] = useState({});
-  const [campaign, setCampaign] = useState([]);
-  const [lead, setLead] = useState({});
-  const [provider, setProvider] = useState("lemlist");
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    fetchCampaign();
-  }, []);
-
-  function checkIfLeadIsInCampaign(currentCampaign) {
-    if (provider === "lemlist") {
-      if (lead?.campaignId === currentCampaign) {
-        // valid
-      } else {
-        // not valid
-      }
-    }
-  }
-
-  function fetchLeadFromLemlist(email) {
-    api.client
-      .get(`/automator/emailing/lemlist/lead?email=${email}`)
-      .then((response) => {
-        setLead(response.data);
-        console.log(lead);
-      })
-      .catch((err) => {
-        setLead({});
-      });
-  }
-
-  function fetchCampaign() {
-    api.client
-      .get("/automator/emailing/campaigns?provider=" + provider)
-      .then((response) => {
-        if (typeof response.data === "object") {
-          setCampaign(response.data);
-        } else {
-          setCampaign([]);
-        }
-      });
-  }
   function isActionActive(action) {
     return formValues.actions?.[action]?.active;
   }
@@ -74,13 +34,14 @@ function AutomatorJobForm({ onFinish, api }) {
   function getActionTab(action) {
     return (
       <>
-        {isActionActive(action) && <Badge dot status={"success"} />}
+        <Form.Item name={["actions", action, "active"]} valuePropName="checked" noStyle>
+          <Checkbox />
+        </Form.Item>
+        &nbsp;
         {action}
       </>
     );
   }
-
-  const hasProjectId = form.getFieldValue(["params", "projectId"]);
 
   return (
     <Form
@@ -132,13 +93,6 @@ function AutomatorJobForm({ onFinish, api }) {
         <Tabs type="card">
           <TabPane tab={getActionTab("scanner")} key="scanner">
             <Form.Item
-              name={["actions", "scanner", "active"]}
-              valuePropName="checked"
-              label="Activate Scanner Action"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
               name={["actions", "scanner", "maxTabs"]}
               label="Max Tabs"
               initialValue={4}
@@ -170,22 +124,9 @@ function AutomatorJobForm({ onFinish, api }) {
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
-            <Form.Item
-              name={["actions", "stylesheet", "active"]}
-              valuePropName="checked"
-              label="Activate Stylesheet Action"
-            >
-              <Switch />
-            </Form.Item>
+            <Empty description="There are no option available for this action"/>
           </TabPane>
           <TabPane tab={getActionTab("provisioning")} key="provisioning">
-            <Form.Item
-              name={["actions", "provisioning", "active"]}
-              valuePropName="checked"
-              label="Activate Provisioning Action"
-            >
-              <Switch />
-            </Form.Item>
             <Form.Item
               name={["actions", "provisioning", "database"]}
               initialValue="test"
@@ -200,13 +141,6 @@ function AutomatorJobForm({ onFinish, api }) {
             <Form.Item
               name={["actions", "provisioning", "name"]}
               label="Project Name"
-              required={!hasProjectId && isActionActive("provisioning")}
-              rules={[
-                {
-                  required: !hasProjectId && isActionActive("provisioning"),
-                  message: "A project name is required only if you create one",
-                },
-              ]}
             >
               <Input />
             </Form.Item>
@@ -241,13 +175,6 @@ function AutomatorJobForm({ onFinish, api }) {
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("showcase")} key="showcase">
-            <Form.Item
-              name={["actions", "showcase", "active"]}
-              label="Activate Showcase Action"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
             <Form.Item
               name={["actions", "showcase", "publishProject"]}
               initialValue={true}
@@ -376,68 +303,10 @@ function AutomatorJobForm({ onFinish, api }) {
             </Form.List>
           </TabPane>
           <TabPane tab={getActionTab("gtm")} key="gtm">
-            <Form.Item
-              name={["actions", "gtm", "active"]}
-              valuePropName="checked"
-              label="Activate GTM Action"
-            >
-              <Switch />
-            </Form.Item>
+            <Empty description="There are no option available for this action"/>
           </TabPane>
           <TabPane tab={getActionTab("emailing")} key="emailing">
-            <Form.Item
-              name={["actions", "emailing", "active"]}
-              valuePropName="checked"
-              label="Activate Emailing Action"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
-              name={["actions", "emailing", "provider"]}
-              initialValue="lemlist"
-              label="Provider"
-              help="Chose your provider"
-            >
-              <Select
-                onChange={(value) => {
-                  setProvider(value);
-                  fetchCampaign();
-                }}
-              >
-                <Select.Option value="lemlist">Lemlist</Select.Option>
-                <Select.Option value="hubspot">Hubspot</Select.Option>
-                <Select.Option value="sendinblue">SendInBlue</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name={["actions", "emailing", "recipient"]}
-              label="recipient"
-              help={
-                Object.keys(lead).length > 0 ? "Lead found" : "Lead not found"
-              }
-              validateStatus={
-                Object.keys(lead).length > 0 ? "success" : "error"
-              }
-            >
-              <Input
-                onChange={(event) => fetchLeadFromLemlist(event.target.value)}
-              />
-            </Form.Item>
-            <Form.Item
-              name={["actions", "emailing", "campaign"]}
-              label="Campaign"
-              help="Chose your campaign"
-            >
-              <Select onSelect={(id) => checkIfLeadIsInCampaign(id)}>
-                {typeof campaign == "object" && (
-                  <>
-                    {campaign.map((c) => (
-                      <Select.Option value={c._id}>{c.name}</Select.Option>
-                    ))}
-                  </>
-                )}
-              </Select>
-            </Form.Item>
+            <EmailingForm api={api} />
           </TabPane>
         </Tabs>
       </Card>
