@@ -247,7 +247,7 @@ class AutomatorService extends Component {
               }}
             />
           </Card>
-          <AutomatorJobForm onFinish={(job) => this.startJob(job)} />
+          <AutomatorJobForm onFinish={(job) => this.startJob(job)} api={this.props.api} />
         </Space>
       </Layout.Content>
     );

@@ -7,6 +7,8 @@
     "@cospired/i18n-iso-languages": "^4.0.0",
     "@rjsf/antd": "^4.1.1",
     "@rjsf/core": "^4.1.1",
+    "@uiw/react-textarea-code-editor": "^2.0.3",
+    "ajv": "6",
     "antd": "^4.19.5",
     "axios": "^0.26.1",
     "dayjs": "^1.11.1",
