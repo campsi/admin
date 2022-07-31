@@ -8,7 +8,7 @@ export default function EmailingForm({ api }) {
 
   useEffect(() => {
     api.client
-      .get(`/automator/emailing/campaigns?provider=${provider}`)
+      .get(`/automator/emailing/${provider}/campaigns`)
       .then((response) => setCampaigns(response.data));
   }, [provider, api.client]);
 
@@ -39,6 +39,7 @@ export default function EmailingForm({ api }) {
           }}
         >
           <Select.Option value="lemlist">Lemlist</Select.Option>
+          <Select.Option value="sendgrid">Sendgrid</Select.Option>
           <Select.Option value="hubspot" disabled>
             Hubspot
           </Select.Option>
