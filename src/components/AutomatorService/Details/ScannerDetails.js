@@ -142,24 +142,31 @@ class ScannerDetails extends Component {
   getColumns = () => [
     {
       title: "Technical name",
-      dataIndex: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
       key: "name",
+      render: (vendor) => {
+        if(vendor.id){
+          return <a href={`/services/vendors/resources/solutions/${vendor.id}`}>
+            {vendor.name}
+          </a>
+        }
+        return vendor.name;
+      }
     },
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
       render: (value) => {
-        return value.$lang.en ? value.$lang.en: ""
+        return value ? value.$lang.en : ""
       }
     },
     {
       title: "Categories",
-      dataIndex: ["categories"],
+      dataIndex: "categories",
       key: "Categories",
       render: (categories) => {
         if(!categories){
+          console.log("lull");
           return "";
         }
         return categories.map((category) => {
