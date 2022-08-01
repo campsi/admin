@@ -30,6 +30,7 @@ const { Item } = Descriptions;
  *         },
  *
  * @param vendor
+ * @param isKnown
  * @returns {JSX.Element}
  * @constructor
  */
@@ -141,30 +142,41 @@ class ScannerDetails extends Component {
   getColumns = () => [
     {
       title: "Technical name",
-      dataIndex: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
       key: "name",
+      render: (vendor) => {
+        if(vendor.id){
+          return <a href={`/services/vendors/resources/solutions/${vendor.id}`}>
+            {vendor.name}
+          </a>
+        }
+        return vendor.name;
+      }
     },
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      render: (value) => value? value: ""
+      render: (value) => {
+        return value ? value.$lang.en : ""
+      }
     },
     {
       title: "Categories",
-      dataIndex: "categoryIds",
+      dataIndex: "categories",
       key: "Categories",
-      render: (categoryIds) => {
-        if(!categoryIds){
+      render: (categories) => {
+        if(!categories){
+          console.log("lull");
           return "";
         }
-        categoryIds.map((id) => (
-          <Tag key={id}>
-            {this.state.categories.filter((c) => c.id === id)[0]?.data.name ||
-              id}
-          </Tag>
-        ))},
+        return categories.map((category) => {
+          return(
+            <Tag key={category.id}>
+              {this.state.categories.filter((c) => c.id === category.id)[0]?.data.name ||
+                category.id}
+            </Tag>
+          );
+        })},
     },
     {
       title: "Policy URL",
@@ -227,8 +239,8 @@ class ScannerDetails extends Component {
   render() {
     const { dataSource, metadata } = this.state;
     return (
-      <Space size={"large"} direction={"vertical"}>
-        <Descriptions bordered column={3} size="medium">
+      <Space size={"middle"} direction={"vertical"} style={{ width: "100%" }}>
+        <Descriptions bordered column={3} size="large">
           <Item label="nbPagesParsed" span={2}>
             {metadata.nbPagesParsed}
           </Item>
