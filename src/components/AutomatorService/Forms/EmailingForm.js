@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 export default function EmailingForm({ api }) {
   const [campaigns, setCampaigns] = useState([]);
   const [lead, setLead] = useState(undefined);
-  const [provider, setProvider] = useState("lemlist");
+  const [provider, setProvider] = useState("");
 
   useEffect(() => {
     api.client
@@ -13,6 +13,10 @@ export default function EmailingForm({ api }) {
   }, [provider, api.client]);
 
   function fetchLeadFromProvider(email) {
+    if(!email){
+      return;
+    }
+
     api.client
       .get(`/automator/emailing/${provider}/lead?email=${email}`)
       .then((response) => setLead(response.data))
@@ -29,7 +33,6 @@ export default function EmailingForm({ api }) {
     <>
       <Form.Item
         name={["actions", "emailing", "provider"]}
-        initialValue="lemlist"
         label="Provider"
         help="Choose your provider"
       >
@@ -58,7 +61,7 @@ export default function EmailingForm({ api }) {
       <Form.Item name={["actions", "emailing", "campaign"]} label="Campaign">
         <Select>
           {campaigns.map((c) => (
-            <Select.Option value={c._id} key={c._id}>
+            <Select.Option value={c.id} key={c.id}>
               {c.name}
             </Select.Option>
           ))}
