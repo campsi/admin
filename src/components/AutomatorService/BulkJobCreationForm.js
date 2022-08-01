@@ -7,6 +7,7 @@ import {
   Input,
   Progress,
   Badge,
+  Select,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import Papa from "papaparse";
@@ -45,7 +46,7 @@ export default function BulkJobCreationForm({ api, services, form }) {
       try {
         await api.client.post(
           `/automator/jobs/${task.payload.jobTemplateId}`,
-          task.payload.variables
+          task.payload
         );
         status = "success";
       } catch (err) {
@@ -97,14 +98,16 @@ export default function BulkJobCreationForm({ api, services, form }) {
   /**
    * Takes a CSV row, and transform it into a task object used to
    * update the component state (progress, errors, etc.)
-   * @param row
+   * @param {string[]} row
+   * @param {string[]} tags
    * @returns {{payload: {variables: {}, jobTemplateId}, status: string}}
    */
-  function createTask(row) {
+  function createTask(row, tags) {
     return {
       status: "default",
       payload: {
         jobTemplateId: jobTemplate.id,
+        tags,
         variables: jobTemplate.data.variables.reduce(
           (variablesMap, variable, index) => {
             return {
@@ -132,7 +135,8 @@ export default function BulkJobCreationForm({ api, services, form }) {
     }
 
     Papa.parse(csv, {
-      complete: (result) => setTasks(result.data.map(createTask)),
+      complete: (result) =>
+        setTasks(result.data.map((row) => createTask(row, formData.tags))),
     });
   }
 
@@ -179,6 +183,9 @@ export default function BulkJobCreationForm({ api, services, form }) {
   return (
     <>
       <Form form={form} onFinish={handleFinish}>
+        <Form.Item name="tags" label="Tags">
+          <Select mode="tags" />
+        </Form.Item>
         <JobTemplateField
           api={api}
           formData={jobTemplate.id}
