@@ -66,6 +66,12 @@ export default class JsonTextArea extends Component {
           placeholder={schema["ui:placeholder"]}
           onChange={(e) => this.setState({ code: e.target.value })}
           padding={15}
+          style={{
+            fontSize: 12,
+            backgroundColor: "#f5f5f5",
+            fontFamily:
+              "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace"
+          }}
         />
         {schemaErrors.length > 0 && (
           <div>

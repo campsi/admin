@@ -3,29 +3,33 @@ import { useEffect, useState } from "react";
 
 export default function EmailingForm({ api }) {
   const [campaigns, setCampaigns] = useState([]);
-  const [lead, setLead] = useState(undefined);
+  const [emailCheck, setEmailCheck] = useState(undefined);
   const [provider, setProvider] = useState("");
 
   useEffect(() => {
+    if(!provider){
+      setCampaigns([]);
+      return;
+    }
     api.client
       .get(`/automator/emailing/${provider}/campaigns`)
       .then((response) => setCampaigns(response.data));
   }, [provider, api.client]);
 
-  function fetchLeadFromProvider(email) {
+  function checkEmail(email) {
     if(!email){
       return;
     }
 
     api.client
-      .get(`/automator/emailing/${provider}/lead?email=${email}`)
-      .then((response) => setLead(response.data))
+      .get(`/automator/emailing/${provider}/email?email=${email}`)
+      .then((response) => setEmailCheck(response.data))
       .catch((err) => {
         console.error(
           "Something wrong happened when fetching lead from provider",
           err
         );
-        setLead(null);
+        setEmailCheck(null);
       });
   }
 
@@ -54,9 +58,9 @@ export default function EmailingForm({ api }) {
       <Form.Item
         name={["actions", "emailing", "recipient"]}
         label="Recipient"
-        help={lead ? "Lead found" : "Lead not found"}
+        help={emailCheck ? `Email OK ${emailCheck}` : "Email KO"}
       >
-        <Input onBlur={(event) => fetchLeadFromProvider(event.target.value)} />
+        <Input onBlur={(event) => checkEmail(event.target.value)} />
       </Form.Item>
       <Form.Item name={["actions", "emailing", "campaign"]} label="Campaign">
         <Select>
