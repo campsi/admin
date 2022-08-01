@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 export default function EmailingForm({ api }) {
   const [campaigns, setCampaigns] = useState([]);
   const [emailCheck, setEmailCheck] = useState(undefined);
+  const [selectedCampaign, setSelectedCampaign] = useState(undefined);
   const [provider, setProvider] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
-    if(!provider){
+    if (!provider) {
       setCampaigns([]);
       return;
     }
@@ -16,13 +18,15 @@ export default function EmailingForm({ api }) {
       .then((response) => setCampaigns(response.data));
   }, [provider, api.client]);
 
-  function checkEmail(email) {
-    if(!email){
+  useEffect(() => {
+    if (!email) {
       return;
     }
 
     api.client
-      .get(`/automator/emailing/${provider}/email?email=${email}`)
+      .get(
+        `/automator/emailing/${provider}/email?email=${email}&campaign=${selectedCampaign}`
+      )
       .then((response) => setEmailCheck(response.data))
       .catch((err) => {
         console.error(
@@ -31,7 +35,7 @@ export default function EmailingForm({ api }) {
         );
         setEmailCheck(null);
       });
-  }
+  }, [api.client, provider, selectedCampaign, email]);
 
   return (
     <>
@@ -60,10 +64,10 @@ export default function EmailingForm({ api }) {
         label="Recipient"
         help={emailCheck ? `Email OK ${emailCheck}` : "Email KO"}
       >
-        <Input onBlur={(event) => checkEmail(event.target.value)} />
+        <Input onBlur={(event) => setEmail(event.target.value)} />
       </Form.Item>
       <Form.Item name={["actions", "emailing", "campaign"]} label="Campaign">
-        <Select>
+        <Select onChange={(value) => setSelectedCampaign(value)}>
           {campaigns.map((c) => (
             <Select.Option value={c.id} key={c.id}>
               {c.name}
