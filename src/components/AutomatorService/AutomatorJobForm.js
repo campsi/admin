@@ -1,6 +1,8 @@
 import {
   Button,
-  Card, Checkbox, Empty,
+  Card,
+  Checkbox,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -13,6 +15,7 @@ import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import userAgents from "./userAgents";
 import EmailingForm from "./Forms/EmailingForm";
+import copyText from "../../utils/copyText";
 
 const { TabPane } = Tabs;
 
@@ -34,7 +37,11 @@ function AutomatorJobForm({ onFinish, api }) {
   function getActionTab(action) {
     return (
       <>
-        <Form.Item name={["actions", action, "active"]} valuePropName="checked" noStyle>
+        <Form.Item
+          name={["actions", action, "active"]}
+          valuePropName="checked"
+          noStyle
+        >
           <Checkbox />
         </Form.Item>
         &nbsp;
@@ -59,6 +66,13 @@ function AutomatorJobForm({ onFinish, api }) {
         actions={[
           <Button type="primary" htmlType="submit">
             Start Job
+          </Button>,
+          <Button
+            type="default"
+            htmlType="button"
+            onClick={() => copyText(JSON.stringify(formValues))}
+          >
+            Copy JSON
           </Button>,
         ]}
       >
@@ -124,7 +138,7 @@ function AutomatorJobForm({ onFinish, api }) {
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
-            <Empty description="There are no option available for this action"/>
+            <Empty description="There are no option available for this action" />
           </TabPane>
           <TabPane tab={getActionTab("provisioning")} key="provisioning">
             <Form.Item
@@ -303,7 +317,7 @@ function AutomatorJobForm({ onFinish, api }) {
             </Form.List>
           </TabPane>
           <TabPane tab={getActionTab("gtm")} key="gtm">
-            <Empty description="There are no option available for this action"/>
+            <Empty description="There are no option available for this action" />
           </TabPane>
           <TabPane tab={getActionTab("emailing")} key="emailing">
             <EmailingForm api={api} />
