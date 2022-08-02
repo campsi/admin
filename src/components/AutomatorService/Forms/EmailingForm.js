@@ -3,33 +3,44 @@ import { useEffect, useState } from "react";
 
 export default function EmailingForm({ api }) {
   const [campaigns, setCampaigns] = useState([]);
-  const [lead, setLead] = useState(undefined);
-  const [provider, setProvider] = useState("lemlist");
+  const [emailCheck, setEmailCheck] = useState(undefined);
+  const [selectedCampaign, setSelectedCampaign] = useState(undefined);
+  const [provider, setProvider] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
+    if (!provider) {
+      setCampaigns([]);
+      return;
+    }
     api.client
-      .get(`/automator/emailing/campaigns?provider=${provider}`)
+      .get(`/automator/emailing/${provider}/campaigns`)
       .then((response) => setCampaigns(response.data));
   }, [provider, api.client]);
 
-  function fetchLeadFromProvider(email) {
+  useEffect(() => {
+    if (!email) {
+      return;
+    }
+
     api.client
-      .get(`/automator/emailing/${provider}/lead?email=${email}`)
-      .then((response) => setLead(response.data))
+      .get(
+        `/automator/emailing/${provider}/email?email=${email}&campaign=${selectedCampaign}`
+      )
+      .then((response) => setEmailCheck(response.data))
       .catch((err) => {
         console.error(
           "Something wrong happened when fetching lead from provider",
           err
         );
-        setLead(null);
+        setEmailCheck(null);
       });
-  }
+  }, [api.client, provider, selectedCampaign, email]);
 
   return (
     <>
       <Form.Item
         name={["actions", "emailing", "provider"]}
-        initialValue="lemlist"
         label="Provider"
         help="Choose your provider"
       >
@@ -39,6 +50,7 @@ export default function EmailingForm({ api }) {
           }}
         >
           <Select.Option value="lemlist">Lemlist</Select.Option>
+          <Select.Option value="sendgrid">Sendgrid</Select.Option>
           <Select.Option value="hubspot" disabled>
             Hubspot
           </Select.Option>
@@ -50,14 +62,14 @@ export default function EmailingForm({ api }) {
       <Form.Item
         name={["actions", "emailing", "recipient"]}
         label="Recipient"
-        help={lead ? "Lead found" : "Lead not found"}
+        help={emailCheck ? `Email OK ${emailCheck}` : "Email KO"}
       >
-        <Input onBlur={(event) => fetchLeadFromProvider(event.target.value)} />
+        <Input onBlur={(event) => setEmail(event.target.value)} />
       </Form.Item>
       <Form.Item name={["actions", "emailing", "campaign"]} label="Campaign">
-        <Select>
+        <Select onChange={(value) => setSelectedCampaign(value)}>
           {campaigns.map((c) => (
-            <Select.Option value={c._id} key={c._id}>
+            <Select.Option value={c.id} key={c.id}>
               {c.name}
             </Select.Option>
           ))}

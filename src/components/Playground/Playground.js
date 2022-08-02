@@ -102,7 +102,12 @@ const formData = {
 function Playground() {
   return (
     <Card title="Playground" style={{ margin: 30 }}>
-      <Form schema={schema} uiSchema={uiSchema} formData={formData} />
+      <Form
+        schema={schema}
+        uiSchema={uiSchema}
+        formData={formData}
+        onChange={(data) => console.info(data)}
+      />
     </Card>
   );
 }

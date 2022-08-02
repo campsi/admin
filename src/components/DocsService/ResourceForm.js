@@ -177,9 +177,7 @@ class ResourceForm extends Component {
     if (!doc) {
       return <Empty description="No document" />;
     }
-
-    console.info(redirectTo, window.location.href, redirectTo !== window.location.href);
-
+    
     return (
       <Layout style={{ padding: 30 }}>
         {redirectTo && window.location.pathname !== redirectTo && (

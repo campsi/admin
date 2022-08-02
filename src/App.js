@@ -28,6 +28,8 @@ export function withAppContext(Component) {
   return WrappedComponent;
 }
 
+
+
 withAppContext.propTypes = {
   services: PropTypes.object,
   authenticated: PropTypes.bool,

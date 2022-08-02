@@ -1,5 +1,15 @@
 import { Component } from "react";
-import { Typography, Layout, Table, Tag, Card, Space, Button } from "antd";
+import {
+  Typography,
+  Layout,
+  Table,
+  Tag,
+  Card,
+  Space,
+  Button,
+  Modal,
+  Form,
+} from "antd";
 import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
 import { Link, Route, Routes } from "react-router-dom";
@@ -12,7 +22,18 @@ import {
 } from "@ant-design/icons";
 import AutomatorJobForm from "./AutomatorJobForm";
 import actions from "./AutomatorJobActions";
+import BulkJobCreationForm from "./BulkJobCreationForm";
 const { Title } = Typography;
+
+function BulkJobCreationModal({api, services, ...props}) {
+  const [form] = Form.useForm();
+
+  return (
+    <Modal {...props} onOk={() => form.submit()} title="Create Jobs in bulk">
+      <BulkJobCreationForm api={api} services={services} form={form} />
+    </Modal>
+  );
+}
 
 /**
  * Nota: this is an Axeptio only service. It will need to be moved
@@ -21,6 +42,7 @@ const { Title } = Typography;
  */
 class AutomatorService extends Component {
   state = {
+    bulkJobCreationModalOpen: false,
     activeActions: [],
     jobs: [],
     isFetching: false,
@@ -127,10 +149,10 @@ class AutomatorService extends Component {
       jobsDeleting: [...this.state.jobsDeleting, id],
     });
     await api.client.delete(`/${service.name}/jobs/${id}`);
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     await this.setStateAsync({
       jobsDeleting: this.state.jobsDeleting.filter((jobId) => jobId !== id),
-      jobs: this.state.jobs.filter(job => job._id !== id),
+      jobs: this.state.jobs.filter((job) => job._id !== id),
     });
 
     if (this.state.jobsDeleting.length === 0) {
@@ -196,14 +218,33 @@ class AutomatorService extends Component {
     }
   }
   render() {
-    const { service } = this.props;
-    const { jobs, columns, pollingStart, isFetching, jobsDeleting } =
-      this.state;
+    const { services, service, api } = this.props;
+    const {
+      jobs,
+      columns,
+      pollingStart,
+      isFetching,
+      jobsDeleting,
+      bulkJobCreationModalOpen,
+    } = this.state;
 
     return (
       <Layout.Content style={{ padding: 30, width: "100%" }}>
         <Title>Automator Service</Title>
-        <Space direction="vertical" style={{width: '100%'}}>
+        <Button
+          onClick={() => this.setState({ bulkJobCreationModalOpen: true })}
+        >
+          Bulk creation
+        </Button>
+        <BulkJobCreationModal
+          visible={bulkJobCreationModalOpen}
+          api={api}
+          services={services}
+          onCancel={() => {
+            this.setState({ bulkJobCreationModalOpen: false });
+          }}
+        />
+        <Space direction="vertical" style={{ width: "100%" }}>
           <Routes>
             <Route
               path={`jobs/:id`}
@@ -231,7 +272,7 @@ class AutomatorService extends Component {
               dataSource={jobs.map((j) => {
                 return { ...j, isBeingDeleted: jobsDeleting.includes(j._id) };
               })}
-              rowClassName={value => value.isBeingDeleted ? 'fade' : ''}
+              rowClassName={(value) => (value.isBeingDeleted ? "fade" : "")}
               columns={columns}
               pagination={{
                 pageSize: this.state.perPage,
@@ -247,7 +288,10 @@ class AutomatorService extends Component {
               }}
             />
           </Card>
-          <AutomatorJobForm onFinish={(job) => this.startJob(job)} api={this.props.api} />
+          <AutomatorJobForm
+            onFinish={(job) => this.startJob(job)}
+            api={this.props.api}
+          />
         </Space>
       </Layout.Content>
     );
