@@ -1,7 +1,8 @@
 import {
-  Badge,
   Button,
   Card,
+  Checkbox,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -13,10 +14,12 @@ import {
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import userAgents from "./userAgents";
+import EmailingForm from "./Forms/EmailingForm";
+import copyText from "../../utils/copyText";
 
 const { TabPane } = Tabs;
 
-function AutomatorJobForm({ onFinish }) {
+function AutomatorJobForm({ onFinish, api }) {
   const [formValues, setFormValues] = useState({});
   const [form] = Form.useForm();
 
@@ -34,13 +37,18 @@ function AutomatorJobForm({ onFinish }) {
   function getActionTab(action) {
     return (
       <>
-        {isActionActive(action) && <Badge dot status={"success"} />}
+        <Form.Item
+          name={["actions", action, "active"]}
+          valuePropName="checked"
+          noStyle
+        >
+          <Checkbox />
+        </Form.Item>
+        &nbsp;
         {action}
       </>
     );
   }
-
-  const hasProjectId = form.getFieldValue(["params", "projectId"]);
 
   return (
     <Form
@@ -58,6 +66,13 @@ function AutomatorJobForm({ onFinish }) {
         actions={[
           <Button type="primary" htmlType="submit">
             Start Job
+          </Button>,
+          <Button
+            type="default"
+            htmlType="button"
+            onClick={() => copyText(JSON.stringify(formValues))}
+          >
+            Copy JSON
           </Button>,
         ]}
       >
@@ -92,13 +107,6 @@ function AutomatorJobForm({ onFinish }) {
         <Tabs type="card">
           <TabPane tab={getActionTab("scanner")} key="scanner">
             <Form.Item
-              name={["actions", "scanner", "active"]}
-              valuePropName="checked"
-              label="Activate Scanner Action"
-            >
-              <Switch />
-            </Form.Item>
-            <Form.Item
               name={["actions", "scanner", "maxTabs"]}
               label="Max Tabs"
               initialValue={4}
@@ -130,22 +138,9 @@ function AutomatorJobForm({ onFinish }) {
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
-            <Form.Item
-              name={["actions", "stylesheet", "active"]}
-              valuePropName="checked"
-              label="Activate Stylesheet Action"
-            >
-              <Switch />
-            </Form.Item>
+            <Empty description="There are no option available for this action" />
           </TabPane>
           <TabPane tab={getActionTab("provisioning")} key="provisioning">
-            <Form.Item
-              name={["actions", "provisioning", "active"]}
-              valuePropName="checked"
-              label="Activate Provisioning Action"
-            >
-              <Switch />
-            </Form.Item>
             <Form.Item
               name={["actions", "provisioning", "database"]}
               initialValue="test"
@@ -160,13 +155,6 @@ function AutomatorJobForm({ onFinish }) {
             <Form.Item
               name={["actions", "provisioning", "name"]}
               label="Project Name"
-              required={!hasProjectId && isActionActive("provisioning")}
-              rules={[
-                {
-                  required: !hasProjectId && isActionActive("provisioning"),
-                  message: "A project name is required only if you create one",
-                },
-              ]}
             >
               <Input />
             </Form.Item>
@@ -201,13 +189,6 @@ function AutomatorJobForm({ onFinish }) {
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("showcase")} key="showcase">
-            <Form.Item
-              name={["actions", "showcase", "active"]}
-              label="Activate Showcase Action"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
             <Form.Item
               name={["actions", "showcase", "publishProject"]}
               initialValue={true}
@@ -336,13 +317,10 @@ function AutomatorJobForm({ onFinish }) {
             </Form.List>
           </TabPane>
           <TabPane tab={getActionTab("gtm")} key="gtm">
-            <Form.Item
-              name={["actions", "gtm", "active"]}
-              valuePropName="checked"
-              label="Activate GTM Action"
-            >
-              <Switch />
-            </Form.Item>
+            <Empty description="There are no option available for this action" />
+          </TabPane>
+          <TabPane tab={getActionTab("emailing")} key="emailing">
+            <EmailingForm api={api} />
           </TabPane>
         </Tabs>
       </Card>

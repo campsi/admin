@@ -4,6 +4,10 @@ import { Divider, Form, Input, Select, Space, Typography } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 /**
  *
+ * @todo implement pagination
+ * @todo disable item creation with a schema property
+ * @todo implement server-side filtering
+ *
  * @param {object} properties
  * @param {string} properties.resource
  * @param {string} properties.service
@@ -68,19 +72,28 @@ function generateRelationField(properties) {
     }
 
     render() {
-      const { formData, onChange, schema, services } = this.props;
+      const {
+        formData,
+        onChange,
+        schema,
+        services,
+        formItemProps
+      } = this.props;
       const relSchema = services[service].resources[resource].schema;
-      const requiredProperties = relSchema.required?.map((propertyName) => {
-        return { name: propertyName, ...relSchema.properties[propertyName] };
-      });
+      const requiredProperties =
+        relSchema.required?.map((propertyName) => {
+          return { name: propertyName, ...relSchema.properties[propertyName] };
+        }) || [];
       const { items, isCreatingNewItem, newItemData } = this.state;
       return (
-        <Form.Item label={schema.title}>
+        <Form.Item label={schema.title} {...formItemProps}>
           <Select
             showSearch
             value={formData}
             optionFilterProp="children"
-            onChange={onChange}
+            onChange={(value) =>
+              onChange(value, items.filter((item) => value === item.id)[0])
+            }
             filterOption={(input, option) => {
               // implement querying
               return String(option.label)

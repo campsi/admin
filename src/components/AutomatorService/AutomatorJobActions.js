@@ -20,6 +20,10 @@ const actionsMap = {
     name: "gtm",
     title: "GTM",
   },
+  emailing: {
+    name: "emailing",
+    title: "Emailing",
+  },
 };
 
 export const actionNames = {
@@ -28,6 +32,7 @@ export const actionNames = {
   provisioning: "provisioning",
   showcase: "showcase",
   gtm: "gtm",
+  emailing: "emailing"
 };
 
 export default actionsMap;

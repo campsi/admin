@@ -1,6 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {withAppContext} from "../../App";
+import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import Form from "@rjsf/antd";
 import {
@@ -13,21 +13,22 @@ import {
   Space,
   Table,
   Typography,
-  Modal
+  Modal,
+  Empty,
 } from "antd";
-import {generateRelationField} from "../RelationField/RelationField";
-import {cleanLocalizedValue} from "../LocalizedText/LocalizedText";
-import {Navigate} from "react-router-dom";
-import {ExclamationCircleOutlined} from "@ant-design/icons";
+import { generateRelationField } from "../RelationField/RelationField";
+import { cleanLocalizedValue } from "../LocalizedText/LocalizedText";
+import { Navigate } from "react-router-dom";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const { confirm } = Modal;
-const {Title} = Typography;
+const { Title } = Typography;
 
 class ResourceForm extends Component {
   state = {
     selectedState: undefined,
     users: [],
-    mode: "edit",
+    doc: {},
   };
 
   formRef = React.createRef();
@@ -43,27 +44,24 @@ class ResourceForm extends Component {
     },
   ];
 
-
   setStateAsync(state) {
     return new Promise((resolve) => this.setState(state, () => resolve()));
   }
-
 
   async componentDidMount() {
     if (this.props.params.id !== "new") {
       await this.fetchData();
     } else {
       this.setState({
-        mode: "create",
         doc: {},
       });
     }
   }
 
   async fetchData() {
-    const {api, service, params} = this.props;
-    const {resourceName, id} = params;
-    await this.setStateAsync({isFetching: true})
+    const { api, service, params } = this.props;
+    const { resourceName, id } = params;
+    await this.setStateAsync({ isFetching: true });
     const response = await api.client.get(
       `${service.name}/${resourceName}/${id}`
     );
@@ -74,76 +72,68 @@ class ResourceForm extends Component {
   }
 
   async fetchUsers() {
-    const {api, service, params} = this.props;
-    const {resourceName, id} = params;
-    await this.setStateAsync({isFetchingUsers: true})
+    const { api, service, params } = this.props;
+    const { resourceName, id } = params;
+    await this.setStateAsync({ isFetchingUsers: true });
     const response = await api.client.get(
       `${service.name}/${resourceName}/${id}/users`
     );
     this.setState({
       users: response.data.map((u) => {
-        return {...u, key: u._id};
+        return { ...u, key: u._id };
       }),
     });
   }
 
-  async patchDocument(patch) {
-  }
-
   async deleteDocument() {
-    const {api, service, params} = this.props;
-    const {resourceName, id} = params;
+    const { api, service, params } = this.props;
+    const { resourceName, id } = params;
     const response = await api.client.delete(
       `${service.name}/${resourceName}/${id}`
     );
     if (response.status === 200) {
       this.setState({
-        redirectTo: `/services/${service.name}/resources/${resourceName}`
-      })
+        redirectTo: `/services/${service.name}/resources/${resourceName}`,
+      });
     }
   }
 
   updateDocument(newValue) {
-    const {api, service, params} = this.props;
-    const {mode} = this.state;
-    const {resourceName, id} = params;
+    const { api, service, params } = this.props;
+    const { doc } = this.state;
+    const { resourceName } = params;
 
     return new Promise(async (resolve, reject) => {
       try {
-        const method = mode === "create" ? "post" : "put";
-        const url =
-          mode === "create"
-            ? `${service.name}/${resourceName}/`
-            : `${service.name}/${resourceName}/${id}`;
+        const method = doc.id ? "put" : "post";
+        const url = doc.id
+          ? `${service.name}/${resourceName}/${doc.id}`
+          : `${service.name}/${resourceName}`;
 
         const response = await api.client[method](
           url,
           cleanLocalizedValue(newValue)
         );
-        notification.success({message: "Document saved"});
-        const newSate =
-          mode === 'create'
-            ? {
-              doc: response.data,
-              redirectTo: `/services/${service.name}/resources/${resourceName}/${response.data.id}`
-            }
-            : {
-              doc: response.data
-            };
-       this.setState(
-         newSate,
+        notification.success({ message: "Document saved" });
+        this.setState(
+          {
+            doc: response.data,
+            redirectTo: doc.id
+              ? null // existing doc, no redirect
+              : `/services/${service.name}/resources/${resourceName}/${response.data.id}`,
+          },
           resolve
         );
       } catch (error) {
-        notification.error({message: error.message});
+        notification.error({ message: error.message });
         reject(error);
       }
     });
   }
 
   getUISchema() {
-    const {service, params, customWidgets} = this.props;
-    const {resourceName} = params;
+    const { service, params, customWidgets } = this.props;
+    const { resourceName } = params;
     const resource = service.resources[resourceName];
     const result = {};
     const parseSchema = (schema, uiSchema) => {
@@ -172,8 +162,8 @@ class ResourceForm extends Component {
   }
 
   render() {
-    const {service, params} = this.props;
-    const {resourceName} = params;
+    const { service, params } = this.props;
+    const { resourceName } = params;
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
 
@@ -181,19 +171,18 @@ class ResourceForm extends Component {
       doc,
       selectedState = resourceClass.defaultState,
       users,
-      redirectTo
+      redirectTo,
     } = this.state;
 
-    if(redirectTo){
-      return <Navigate to={redirectTo} />
-    }
-
     if (!doc) {
-      return null;
+      return <Empty description="No document" />;
     }
-
+    
     return (
-      <Layout style={{padding: 30}}>
+      <Layout style={{ padding: 30 }}>
+        {redirectTo && window.location.pathname !== redirectTo && (
+          <Navigate to={redirectTo} replace />
+        )}
         <Title>Resource form</Title>
         <Space direction="vertical">
           <Card title="Document details">
@@ -224,7 +213,7 @@ class ResourceForm extends Component {
               <Radio.Group
                 value={selectedState}
                 onChange={(event) => {
-                  this.setState({selectedState: event.target.value});
+                  this.setState({ selectedState: event.target.value });
                 }}
               >
                 {Object.keys(resourceClass.states).map((state) => {
@@ -237,17 +226,21 @@ class ResourceForm extends Component {
               </Radio.Group>
             }
             actions={[
-              <Button danger onClick={() => {
-                confirm({
-                  title: 'Do you Want to delete this document?',
-                  icon: <ExclamationCircleOutlined />,
-                  content: 'The operation is definitive and irreversible',
-                  onOk: async() => {
-                    await this.deleteDocument()
-                  }
-                });
-
-              }}>Delete Document</Button>,
+              <Button
+                danger
+                onClick={() => {
+                  confirm({
+                    title: "Do you Want to delete this document?",
+                    icon: <ExclamationCircleOutlined />,
+                    content: "The operation is definitive and irreversible",
+                    onOk: async () => {
+                      await this.deleteDocument();
+                    },
+                  });
+                }}
+              >
+                Delete Document
+              </Button>,
               <Button onClick={() => this.fetchData()}>Reload Document</Button>,
               <Button
                 type={"primary"}
@@ -272,21 +265,21 @@ class ResourceForm extends Component {
               formContext={{
                 id: doc.id,
                 createdAt: doc.createdAt,
-                createdBy: doc.createdBy
+                createdBy: doc.createdBy,
               }}
               uiSchema={this.getUISchema()}
               ref={(ref) => {
                 this.formRef = ref;
               }}
               liveValidate
-              onSubmit={({formData}) => this.updateDocument(formData)}
+              onSubmit={({ formData }) => this.updateDocument(formData)}
             />
           </Card>
           <Card
             title="Users"
             actions={[<Button onClick={() => this.fetchUsers()}>Fetch</Button>]}
           >
-            <Table dataSource={users} columns={this.usersColumns}/>
+            <Table dataSource={users} columns={this.usersColumns} />
           </Card>
         </Space>
       </Layout>
