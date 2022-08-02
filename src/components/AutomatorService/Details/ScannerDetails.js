@@ -157,7 +157,7 @@ class ScannerDetails extends Component {
       dataIndex: "title",
       key: "title",
       render: (value) => {
-        return value ? value?.$lang.en ?? value : ""
+        return value ? value.$lang?.en ?? value : ""
       }
     },
     {
