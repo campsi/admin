@@ -197,6 +197,10 @@ function AutomatorJobForm({ onFinish, api }) {
             >
               <Select mode="tags" />
             </Form.Item>
+            <Form.Item
+              name={["actions", "provisioning", "metadata", "origin"]}
+              initialValue={"campsi-admin/automator"}
+            />
           </TabPane>
           <TabPane tab={getActionTab("showcase")} key="showcase">
             <Form.Item
