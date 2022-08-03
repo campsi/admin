@@ -25,7 +25,7 @@ import actions from "./AutomatorJobActions";
 import BulkJobCreationForm from "./BulkJobCreationForm";
 const { Title } = Typography;
 
-function BulkJobCreationModal({api, services, ...props}) {
+function BulkJobCreationModal({ api, services, ...props }) {
   const [form] = Form.useForm();
 
   return (
@@ -134,9 +134,31 @@ class AutomatorService extends Component {
     });
   }
 
+  formatJobValues(job) {
+    let updatedValues = {
+      params: job.params,
+      actions: {},
+      projectId: job.projectId,
+    };
+    if (updatedValues.projectId) {
+      if (!new RegExp("^[a-f\\d]{24}$").test(updatedValues.projectId)) {
+        delete updatedValues.projectId;
+      }
+    } else {
+      delete updatedValues.projectId;
+    }
+    for (const [actionName, value] of Object.entries(job.actions)) {
+      if (value.active) {
+        updatedValues.actions[actionName] = value;
+      }
+    }
+
+    return updatedValues;
+  }
+
   async startJob(job) {
     const { api, service } = this.props;
-    await api.client.post(`/${service.name}/jobs`, job);
+    await api.client.post(`/${service.name}/jobs`, this.formatJobValues(job));
     await this.fetchData();
   }
 
