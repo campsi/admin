@@ -50,16 +50,6 @@ function AutomatorJobForm({ onFinish, api }) {
     );
   }
 
-  function formatFormValues(allValues) {
-    let updatedValues = { params: allValues.params, actions: {} };
-    for (const [actionName, value] of Object.entries(allValues.actions)) {
-      if (value.active) {
-        updatedValues.actions[actionName] = value;
-      }
-    }
-    return updatedValues;
-  }
-
   return (
     <Form
       labelAlign="right"
@@ -68,7 +58,7 @@ function AutomatorJobForm({ onFinish, api }) {
       form={form}
       onFinish={onFinish}
       onValuesChange={(valuesChanges, allValues) => {
-        setFormValues(formatFormValues(allValues));
+        setFormValues(allValues);
       }}
     >
       <Card
