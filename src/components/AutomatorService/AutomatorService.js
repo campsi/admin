@@ -135,13 +135,17 @@ class AutomatorService extends Component {
   }
 
   formatJobValues(job) {
-    let updatedValues = { params: job.params, actions: {} };
-    if (updatedValues.params.projectId) {
-      if (!/^[a-f\\d]{24}$/.test(updatedValues.params.projectId)) {
-        delete updatedValues.params.projectId;
+    let updatedValues = {
+      params: job.params,
+      actions: {},
+      projectId: job.projectId,
+    };
+    if (updatedValues.projectId) {
+      if (!new RegExp("^[a-f\\d]{24}$").test(updatedValues.projectId)) {
+        delete updatedValues.projectId;
       }
     } else {
-      delete updatedValues.params.projectId;
+      delete updatedValues.projectId;
     }
     for (const [actionName, value] of Object.entries(job.actions)) {
       if (value.active) {
