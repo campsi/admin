@@ -140,19 +140,14 @@ class AutomatorService extends Component {
       actions: {},
       projectId: job.projectId,
     };
-    if (updatedValues.projectId) {
       if (!new RegExp("^[a-f\\d]{24}$").test(updatedValues.projectId)) {
         delete updatedValues.projectId;
       }
-    } else {
-      delete updatedValues.projectId;
-    }
     for (const [actionName, value] of Object.entries(job.actions)) {
       if (value.active) {
         updatedValues.actions[actionName] = value;
       }
     }
-
     return updatedValues;
   }
 
