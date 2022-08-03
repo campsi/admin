@@ -137,10 +137,7 @@ class AutomatorService extends Component {
   formatJobValues(job) {
     let updatedValues = { params: job.params, actions: {} };
     if (updatedValues.params.projectId) {
-      const result = /^[a-f\\d]{24}$/.test(updatedValues.params.projectId);
-      console.log("result");
-      console.log(result);
-      if (!result) {
+      if (!/^[a-f\\d]{24}$/.test(updatedValues.params.projectId)) {
         delete updatedValues.params.projectId;
       }
     } else {
