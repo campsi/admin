@@ -75,7 +75,7 @@ class AutomatorService extends Component {
           return (
             <div>
               {actionNames.map((action) => {
-                if (!value[action]) {
+                if (!value || !value[action]) {
                   return null;
                 }
                 let color = "default";
