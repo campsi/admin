@@ -13,7 +13,6 @@ import {
   Button,
   Select,
   Input,
-  Tag,
 } from "antd";
 const { Title } = Typography;
 const { Option } = Select;
@@ -33,7 +32,7 @@ function renderStringInCell(string) {
   return str;
 }
 
-function getColumnRender(property, language, categories) {
+function getColumnRender(property, language) {
   return (value, row) => {
     if (property["ui:relation"]) {
       const { service, resource, labelIndex, embeddedIndex } =
@@ -76,23 +75,11 @@ function getColumnRender(property, language, categories) {
         const length = Array.from(value || []).length;
         switch (length) {
           case 0:
-            return <Tag>Empty</Tag>;
+            return "Empty";
           case 1:
-            return (
-              <Tag key={value.toString()}>
-                {categories.filter((c) => c.id === value.toString())[0]?.data
-                  ?.name || "1 item"}
-              </Tag>
-            );
+            return "1 item";
           default:
-            return value.map((category) => {
-              return (
-                <Tag key={category}>
-                  {categories.filter((c) => c.id === category.toString())[0]
-                    ?.data?.name || `${length} items`}
-                </Tag>
-              );
-            });
+            return `${length} items`;
         }
       case "string":
         return renderStringInCell(value);
@@ -124,19 +111,9 @@ class ResourceListing extends Component {
     language: "en",
     visibleProperties: [],
     filters: {},
-    categories: [],
   };
 
-  fetchCategories() {
-    this.props.api.client.get("/vendors/categories").then((response) => {
-      this.setState({
-        categories: response.data,
-      });
-    });
-  }
-
   async componentDidMount() {
-    this.fetchCategories();
     await this.updateVisibleProperties();
     await this.fetchData();
   }
@@ -325,7 +302,7 @@ class ResourceListing extends Component {
           <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
         ),
         sorter: true,
-        render: getColumnRender(property, language, this.state.categories),
+        render: getColumnRender(property, language),
       });
     });
 
@@ -368,13 +345,10 @@ class ResourceListing extends Component {
                 total: this.state.totalCount,
                 pageSizeOptions: [25, 50, 100, 200],
                 onChange: (page, pageSize) => {
-                  this.setState(
-                    {
-                      perPage: pageSize,
-                      page,
-                    },
-                    this.handleTableChange
-                  );
+                  this.setState({
+                    perPage: pageSize,
+                    page,
+                  }, this.handleTableChange);
                 },
               }}
             />
