@@ -85,7 +85,7 @@ function AutomatorJobForm({ onFinish, api }) {
           <Input />
         </Form.Item>
         <Form.Item
-          name={["params", "projectId"]}
+          name={["projectId"]}
           label="Project ID"
           required={isNecessaryToUseProjectId()}
           rules={[{ required: isNecessaryToUseProjectId() }]}
