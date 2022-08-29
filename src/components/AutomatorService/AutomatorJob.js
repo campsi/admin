@@ -71,7 +71,7 @@ class AutomatorJob extends Component {
         return <ShowcaseDetails result={job.actions[action].result} />;
       case "gtm":
         return <GtmDetails result={job.actions[action].result} />;
-      case "emailing": 
+      case "emailing":
         return <></>;
       default:
         return <Empty />;
@@ -94,7 +94,7 @@ class AutomatorJob extends Component {
       if (!job.actions?.[action]?.result) {
         return action;
       }
-      if (job.actions[action].result?.error) {
+      if (job.actions[action]?.result?.error) {
         return (
           <>
             <WarningOutlined /> {action}
