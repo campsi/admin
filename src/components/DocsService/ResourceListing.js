@@ -17,17 +17,23 @@ import {
 const { Title } = Typography;
 const { Option } = Select;
 
-function renderStringInCell(string) {
+function renderStringInCell(property, string) {
   if (!string) {
     return "";
   }
   let str = String(string);
-  if (str.indexOf("http") === 0) {
-    return (
+  if(property.enum) {
+
+  }
+  if (str.indexOf("http") === 0 && !property.enum) {
+   /* return (
       <a href={string} target="_blank" rel="noreferrer">
         {str}
       </a>
-    );
+    );*/
+    str = (<a href={string} target="_blank" rel="noreferrer">
+      {str}
+    </a>);
   }
   return str;
 }
@@ -82,7 +88,7 @@ function getColumnRender(property, language) {
             return `${length} items`;
         }
       case "string":
-        return renderStringInCell(value);
+        return renderStringInCell(property, value);
       case "number":
       default:
         return value;
@@ -162,6 +168,7 @@ class ResourceListing extends Component {
   }
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.params.resourceName !== this.props.params.resourceName) {
+      console.log('diff')
       await this.updateVisibleProperties();
       await this.fetchData();
     }
@@ -363,12 +370,9 @@ class ResourceListing extends Component {
       const { service } = this.props;
       const { resourceName } = this.props.params;
       const resource = service.resources[resourceName];
-      if (!resource.schema["ui:defaultColumns"]) {
-        return resolve();
-      }
       this.setState(
         {
-          visibleProperties: resource.schema["ui:defaultColumns"],
+          visibleProperties: !resource.schema["ui:defaultColumns"] ? [] : resource.schema["ui:defaultColumns"],
         },
         () => resolve()
       );
