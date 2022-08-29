@@ -17,95 +17,6 @@ import {
 const { Title } = Typography;
 const { Option } = Select;
 
-function renderStringInCell(property, string) {
-  if (!string) {
-    return "";
-  }
-  let str = String(string);
-  if(property.enum) {
-
-  }
-  if (str.indexOf("http") === 0 && !property.enum) {
-   /* return (
-      <a href={string} target="_blank" rel="noreferrer">
-        {str}
-      </a>
-    );*/
-    str = (<a href={string} target="_blank" rel="noreferrer">
-      {str}
-    </a>);
-  }
-  return str;
-}
-
-function getColumnRender(property, language) {
-  return (value, row) => {
-    if (property["ui:relation"]) {
-      const { service, resource, labelIndex, embeddedIndex } =
-        property["ui:relation"];
-      if (!value) {
-        return "";
-      }
-      return (
-        <Link to={`/services/${service}/resources/${resource}/${value}`}>
-          {row[embeddedIndex]?.[labelIndex] || value}
-        </Link>
-      );
-    }
-
-    let type = property.type;
-    if (!property.type && Array.isArray(property.oneOf)) {
-      type = typeof value;
-    }
-    switch (type) {
-      case "boolean":
-        return value ? <CheckOutlined /> : null;
-      case "object":
-        if (value?.$lang) {
-          return renderStringInCell(value.$lang[language]);
-        }
-        if (value?.url && value?.detectedMimeType) {
-          if (value.detectedMimeType.includes("image")) {
-            return (
-              <img
-                src={value?.url}
-                style={{ maxHeight: 30, maxWidth: 50 }}
-                alt={value?.originalName}
-              />
-            );
-          }
-          return <FileOutlined title={value.originalName} />;
-        }
-        return JSON.stringify(value);
-      case "array":
-        const length = Array.from(value || []).length;
-        switch (length) {
-          case 0:
-            return "Empty";
-          case 1:
-            return "1 item";
-          default:
-            return `${length} items`;
-        }
-      case "string":
-        return renderStringInCell(property, value);
-      case "number":
-      default:
-        return value;
-    }
-  };
-}
-
-function renderPropertyOptions(properties) {
-  return properties.map((p) => {
-    return (
-      <Option value={p.name} key={`option_${p.name}`}>
-        {p.title}
-      </Option>
-    );
-  });
-}
-
 class ResourceListing extends Component {
   state = {
     perPage: 25,
@@ -121,6 +32,17 @@ class ResourceListing extends Component {
 
   async componentDidMount() {
     await this.updateVisibleProperties();
+    await this.fetchData();
+  }
+
+  async quickUpdate(id, propertyName, value) {
+    const { api, service, params } = this.props;
+    const { resourceName } = params;
+
+    await api.client.patch(`${service.name}/${resourceName}/${id}`, {
+      [propertyName]: value,
+    });
+
     await this.fetchData();
   }
 
@@ -168,7 +90,6 @@ class ResourceListing extends Component {
   }
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.params.resourceName !== this.props.params.resourceName) {
-      console.log('diff')
       await this.updateVisibleProperties();
       await this.fetchData();
     }
@@ -248,6 +169,120 @@ class ResourceListing extends Component {
     await this.fetchData(filters, sorter);
   };
 
+  async updateVisibleProperties() {
+    return new Promise((resolve) => {
+      const { service } = this.props;
+      const { resourceName } = this.props.params;
+      const resource = service.resources[resourceName];
+      this.setState(
+        {
+          visibleProperties: resource.schema["ui:defaultColumns"] ?? [],
+        },
+        () => resolve()
+      );
+    });
+  }
+
+  renderPropertyOptions(properties) {
+    return properties.map((p) => {
+      return (
+        <Option value={p.name} key={`option_${p.name}`}>
+          {p.title}
+        </Option>
+      );
+    });
+  }
+
+  getColumnRender(property, language) {
+    return (value, row) => {
+      if (property["ui:relation"]) {
+        const { service, resource, labelIndex, embeddedIndex } =
+          property["ui:relation"];
+        if (!value) {
+          return "";
+        }
+        return (
+          <Link to={`/services/${service}/resources/${resource}/${value}`}>
+            {row[embeddedIndex]?.[labelIndex] || value}
+          </Link>
+        );
+      }
+
+      let type = property.type;
+      if (!property.type && Array.isArray(property.oneOf)) {
+        type = typeof value;
+      }
+      switch (type) {
+        case "boolean":
+          return value ? <CheckOutlined /> : null;
+        case "object":
+          if (value?.$lang) {
+            return this.renderStringInCell(value.$lang[language]);
+          }
+          if (value?.url && value?.detectedMimeType) {
+            if (value.detectedMimeType.includes("image")) {
+              return (
+                <img
+                  src={value?.url}
+                  style={{ maxHeight: 30, maxWidth: 50 }}
+                  alt={value?.originalName}
+                />
+              );
+            }
+            return <FileOutlined title={value.originalName} />;
+          }
+          return JSON.stringify(value);
+        case "array":
+          const length = Array.from(value || []).length;
+          switch (length) {
+            case 0:
+              return "Empty";
+            case 1:
+              return "1 item";
+            default:
+              return `${length} items`;
+          }
+        case "string":
+          return this.renderStringInCell(property, value, row);
+        case "number":
+        default:
+          return value;
+      }
+    };
+  }
+
+  renderStringInCell(property, string, row) {
+    let str = String(string || "");
+    if (str.indexOf("http") === 0 && !property.enum) {
+      return (
+        <a href={string} target="_blank" rel="noreferrer">
+          {str}
+        </a>
+      );
+    }
+    if (property.enum?.length > 0) {
+      return (
+        <Select
+          showSearch
+          placeholder={property.name}
+          value={string}
+          onChange={async (value) => {
+            await this.quickUpdate(row.id, property.name, value);
+          }}
+        >
+          {property.enum.map((option) => {
+            return (
+              <Option key={option} value={option} selected={option === string}>
+                {option}
+              </Option>
+            );
+          })}
+        </Select>
+      );
+    }
+    return str;
+  }
+
   render() {
     const { service } = this.props;
     const { resourceName } = this.props.params;
@@ -309,7 +344,7 @@ class ResourceListing extends Component {
           <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
         ),
         sorter: true,
-        render: getColumnRender(property, language),
+        render: this.getColumnRender(property, language),
       });
     });
 
@@ -334,7 +369,7 @@ class ResourceListing extends Component {
                   this.setState({ visibleProperties: selection });
                 }}
               >
-                {renderPropertyOptions(allProperties)}
+                {this.renderPropertyOptions(allProperties)}
               </Select>
             </Space>
           </Card>
@@ -352,10 +387,13 @@ class ResourceListing extends Component {
                 total: this.state.totalCount,
                 pageSizeOptions: [25, 50, 100, 200],
                 onChange: (page, pageSize) => {
-                  this.setState({
-                    perPage: pageSize,
-                    page,
-                  }, this.handleTableChange);
+                  this.setState(
+                    {
+                      perPage: pageSize,
+                      page,
+                    },
+                    this.handleTableChange
+                  );
                 },
               }}
             />
@@ -363,20 +401,6 @@ class ResourceListing extends Component {
         </Space>
       </Layout.Content>
     );
-  }
-
-  async updateVisibleProperties() {
-    return new Promise((resolve) => {
-      const { service } = this.props;
-      const { resourceName } = this.props.params;
-      const resource = service.resources[resourceName];
-      this.setState(
-        {
-          visibleProperties: !resource.schema["ui:defaultColumns"] ? [] : resource.schema["ui:defaultColumns"],
-        },
-        () => resolve()
-      );
-    });
   }
 }
 export default withAppContext(withParams(ResourceListing));
