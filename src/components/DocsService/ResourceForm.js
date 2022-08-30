@@ -147,10 +147,19 @@ class ResourceForm extends Component {
         uiSchema.items = {};
         parseSchema(schema.items, uiSchema.items);
       } else if (schema.properties) {
-        Object.keys(schema.properties).forEach((propertyName) => {
-          uiSchema[propertyName] = {};
-          parseSchema(schema.properties[propertyName], uiSchema[propertyName]);
-        });
+        Object.entries(schema.properties).forEach(
+          ([propertyName, propertySchema]) => {
+            console.log("schema.property", { propertyName, propertySchema });
+
+            uiSchema[propertyName] = propertySchema.virtual
+              ? { "ui:readonly": true }
+              : {};
+            parseSchema(
+              schema.properties[propertyName],
+              uiSchema[propertyName]
+            );
+          }
+        );
       }
     };
     parseSchema(resource.schema, result);
@@ -177,7 +186,7 @@ class ResourceForm extends Component {
     if (!doc) {
       return <Empty description="No document" />;
     }
-    
+
     return (
       <Layout style={{ padding: 30 }}>
         {redirectTo && window.location.pathname !== redirectTo && (
