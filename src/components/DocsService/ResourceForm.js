@@ -149,8 +149,6 @@ class ResourceForm extends Component {
       } else if (schema.properties) {
         Object.entries(schema.properties).forEach(
           ([propertyName, propertySchema]) => {
-            console.log("schema.property", { propertyName, propertySchema });
-
             uiSchema[propertyName] = propertySchema.virtual
               ? { "ui:readonly": true }
               : {};
