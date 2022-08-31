@@ -253,10 +253,13 @@ class ResourceListing extends Component {
 
   renderStringInCell(property, string, row) {
     let str = String(string || "");
-    if (str.indexOf("http") === 0 && !property.enum) {
+    if (
+      (str.indexOf("http") === 0 || property.format === "hostname") &&
+      !property.enum
+    ) {
       return (
         <a href={string} target="_blank" rel="noreferrer">
-          {str}
+          {str.indexOf("http") === 0 ? str : `https://${str}`}
         </a>
       );
     }
