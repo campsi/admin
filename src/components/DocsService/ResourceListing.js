@@ -258,7 +258,11 @@ class ResourceListing extends Component {
       !property.enum
     ) {
       return (
-        <a href={string} target="_blank" rel="noreferrer">
+        <a
+          href={str.indexOf("http") === 0 ? str : `https://${str}`}
+          target="_blank"
+          rel="noreferrer"
+        >
           {str.indexOf("http") === 0 ? str : `https://${str}`}
         </a>
       );
