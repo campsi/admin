@@ -28,6 +28,8 @@ export function withAppContext(Component) {
   return WrappedComponent;
 }
 
+
+
 withAppContext.propTypes = {
   services: PropTypes.object,
   authenticated: PropTypes.bool,
@@ -74,8 +76,8 @@ class App extends Component {
   async componentDidMount() {
     await this.fetchData();
     const params = new URLSearchParams(window.location.search);
-    if (params.get("access_token")) {
-      this.state.setAccessToken(params.get("access_token"));
+    if(params.get('access_token')){
+       this.state.setAccessToken(params.get('access_token'));
     }
   }
 
@@ -97,7 +99,7 @@ class App extends Component {
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           {services && (
-            <Layout hasSider style={{ minHeight: "100vh" }}>
+            <Layout hasSider style={{ minHeight: "100vh"}}>
               <AdminMenu services={services} />
               <Layout>
                 <Routes>
