@@ -90,9 +90,9 @@ class AutomatorService extends Component {
                   color = "green";
                 } else if (value[action].preview) {
                   // value[action].approval.approved can be undefine
-                  if(value[action].approval?.approved === false){
-                    color = "lightgrey"
-                  } else if(!value[action].approval?.approved) {
+                  if (value[action].approval?.approved === false) {
+                    color = "lightgrey";
+                  } else if (!value[action].approval?.approved) {
                     color = "blue";
                   }
                 }
@@ -148,16 +148,17 @@ class AutomatorService extends Component {
       actions: {},
       projectId: job.projectId,
     };
-      if (!new RegExp("^[a-f\\d]{24}$").test(updatedValues.projectId)) {
-        delete updatedValues.projectId;
-      }
+    if (!new RegExp("^[a-f\\d]{24}$").test(updatedValues.projectId)) {
+      delete updatedValues.projectId;
+    }
     for (const [actionName, value] of Object.entries(job.actions)) {
       if (value.active) {
         updatedValues.actions[actionName] = value;
-        if(value.approval.email){
-          updatedValues.actions[actionName].approval.email = this.props.api.clientEmail
+        if (value.approval.email) {
+          updatedValues.actions[actionName].approval.email =
+            this.props.api.clientEmail;
         } else {
-          delete updatedValues.actions[actionName].approval
+          delete updatedValues.actions[actionName].approval;
         }
       }
     }
@@ -248,7 +249,7 @@ class AutomatorService extends Component {
     }
   }
 
-  render(){
+  render() {
     const { services, service, api } = this.props;
     const {
       jobs,
@@ -279,7 +280,14 @@ class AutomatorService extends Component {
           <Routes>
             <Route
               path={`jobs/:id`}
-              element={<AutomatorJob onFetching={() => {this.fetchData()}} service={service} />}
+              element={
+                <AutomatorJob
+                  onFetching={() => {
+                    this.fetchData();
+                  }}
+                  service={service}
+                />
+              }
             />
           </Routes>
           <Card
