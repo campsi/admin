@@ -48,6 +48,16 @@ class AutomatorJob extends Component {
 
   renderActionPanel(action) {
     const { job } = this.state;
+    if (job.actions?.[action]?.result?.error) {
+      return (
+        <TextArea
+          readOnly
+          rows={6}
+          style={{ width: "100%", fontFamily: "Monaco, monospace" }}
+          defaultValue={JSON.stringify(job.actions[action].result.error, null, 2)}
+        />
+      );
+    }
     if (job.actions?.[action]?.preview && job.actions?.[action]?.approval.approved === undefined) {
       return (
         <Card
@@ -84,16 +94,6 @@ class AutomatorJob extends Component {
     if (!job.actions?.[action]?.result) {
       return <Empty />;
     }
-    if (job.actions[action].result.error) {
-      return (
-        <TextArea
-          readOnly
-          rows={6}
-          style={{ width: "100%", fontFamily: "Monaco, monospace" }}
-          defaultValue={JSON.stringify(job.actions[action].result.error, null, 2)}
-        />
-      );
-    }
     return this.actionDetails(job, action);
   }
 
@@ -105,6 +105,7 @@ class AutomatorJob extends Component {
       `/automator/jobs/${job._id}?push=true`,
       job, {timeout : 10000}
     ).then(()=>{this.props.onFetching();});
+    this.setState({ job });
   }
   disprovesAction(job,action){
     job.actions[action].approval.approved = false
@@ -114,6 +115,7 @@ class AutomatorJob extends Component {
       `/automator/jobs/${job._id}`,
       job,{timeout : 10000}
     ).then(()=>{this.props.onFetching();});
+    this.setState({ job });
   }
 
   actionDetails(job, action){
@@ -148,37 +150,41 @@ class AutomatorJob extends Component {
     }
 
     function getTab(action) {
-      if (job.actions?.[action]?.preview) {
-        if(job.actions?.[action]?.approval?.approved){
-          return (
-            <>
-               <LikeOutlined /> {action}
-            </>
-          );
-        }
-        // don't use ! because job.actions?.[action]?.approval?.approved can be undefined
-        if(job.actions?.[action]?.approval?.approved === false){
-          return (
-            <>
-              <DislikeOutlined /> {action}
-            </>
-          );
-        }
+      if (job.actions?.[action]?.result?.error) {
+        return (
+          <>
+            <WarningOutlined /> {action}
+          </>
+        );
+      }
+
+      if(job.actions?.[action]?.approval?.approved){
+        return (
+          <>
+             <LikeOutlined /> {action}
+          </>
+        );
+      }
+
+      // don't use "!" because job.actions?.[action]?.approval?.approved can be undefined
+      if(job.actions?.[action]?.approval?.approved === false){
+        return (
+          <>
+            <DislikeOutlined /> {action}
+          </>
+        );
+      }
+
+      if(job.actions?.[action]?.preview) {
         return (
           <>
             <QuestionCircleOutlined /> {action}
           </>
         );
       }
+
       if (!job.actions?.[action]?.result) {
         return action;
-      }
-      if (job.actions[action]?.result?.error) {
-        return (
-          <>
-            <WarningOutlined /> {action}
-          </>
-        );
       }
 
       return (

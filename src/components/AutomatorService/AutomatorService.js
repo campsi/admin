@@ -43,7 +43,7 @@ function BulkJobCreationModal({ api, services, ...props }) {
 class AutomatorService extends Component {
   constructor(props) {
     super(props);
-    this.refreshJobs = this.refreshJobs.bind(this);
+    this.fetchData = this.fetchData.bind(this);
   }
   state = {
     bulkJobCreationModalOpen: false,
@@ -88,8 +88,7 @@ class AutomatorService extends Component {
                   color = "red";
                 } else if (value[action].result) {
                   color = "green";
-                }
-                if (value[action].preview) {
+                } else if (value[action].preview) {
                   // value[action].approval.approved can be undefine
                   if(value[action].approval?.approved === false){
                     color = "lightgrey"
@@ -249,11 +248,6 @@ class AutomatorService extends Component {
     }
   }
 
-  async refreshJobs(){
-    console.log("fetching in props");
-    await this.fetchData();
-  }
-
   render(){
     const { services, service, api } = this.props;
     const {
@@ -285,7 +279,7 @@ class AutomatorService extends Component {
           <Routes>
             <Route
               path={`jobs/:id`}
-              element={<AutomatorJob onFetching={() => {this.refreshJobs()}} service={service} />}
+              element={<AutomatorJob onFetching={() => {this.fetchData()}} service={service} />}
             />
           </Routes>
           <Card
