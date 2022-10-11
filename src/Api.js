@@ -50,11 +50,19 @@ class Api {
       timeout: settings.timeout,
       headers: settings.headers,
     });
+    this.client.get(`/auth/me`).then((response) => {
+      this.clientEmail = response.data?.email;
+      this.clientId = response.data?._id;
+    })
   }
 
   setAccessToken(accessToken) {
     this.accessToken = accessToken;
     this.client.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
+    this.client.get(`/auth/me`).then((response) => {
+      this.clientEmail = response.data?.email;
+      this.clientId = response.data?._id;
+    })
   }
 
   revokeAccessToken() {

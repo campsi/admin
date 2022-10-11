@@ -50,6 +50,18 @@ function AutomatorJobForm({ onFinish, api }) {
     );
   }
 
+  function approvalOption(action) {
+    return (<Form.Item
+      name={["actions", action, "approval","email"]}
+      initialValue = {false}
+      label="Requires your approval"
+    >
+      <Switch />
+    </Form.Item>
+    )
+
+  }
+
   return (
     <Form
       labelAlign="right"
@@ -106,19 +118,22 @@ function AutomatorJobForm({ onFinish, api }) {
         </Form.Item>
         <Tabs type="card">
           <TabPane tab={getActionTab("scanner")} key="scanner">
+            {
+              approvalOption("scanner")
+            }
             <Form.Item
               name={["actions", "scanner", "maxTabs"]}
               label="Max Tabs"
               initialValue={4}
             >
-              <InputNumber min={1} max={10} />
+              <InputNumber min={1} max={20} />
             </Form.Item>
             <Form.Item
               name={["actions", "scanner", "maxPages"]}
               label="Max Pages"
               initialValue={10}
             >
-              <InputNumber min={1} max={1000} />
+              <InputNumber min={0} max={1000} />
             </Form.Item>
             <Form.Item
               name={["actions", "scanner", "testCMP"]}
@@ -138,9 +153,15 @@ function AutomatorJobForm({ onFinish, api }) {
             </Form.Item>
           </TabPane>
           <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
+            {
+              approvalOption("stylesheet")
+            }
             <Empty description="There are no option available for this action" />
           </TabPane>
           <TabPane tab={getActionTab("provisioning")} key="provisioning">
+            {
+              approvalOption("provisioning")
+            }
             <Form.Item
               name={["actions", "provisioning", "database"]}
               initialValue="test"
@@ -193,6 +214,9 @@ function AutomatorJobForm({ onFinish, api }) {
             />
           </TabPane>
           <TabPane tab={getActionTab("showcase")} key="showcase">
+            {
+              approvalOption("showcase")
+            }
             <Form.Item
               name={["actions", "showcase", "publishProject"]}
               initialValue={true}
@@ -321,6 +345,9 @@ function AutomatorJobForm({ onFinish, api }) {
             </Form.List>
           </TabPane>
           <TabPane tab={getActionTab("gtm")} key="gtm">
+            {
+              approvalOption("gtm")
+            }
             <Empty description="There are no option available for this action" />
           </TabPane>
           <TabPane tab={getActionTab("emailing")} key="emailing">
