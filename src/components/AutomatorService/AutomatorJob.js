@@ -81,7 +81,7 @@ class AutomatorJob extends Component {
               Accept
             </Button>,
             <Button danger onClick={() => this.disprovesAction(job, action)}>
-              Denied
+              Decline
             </Button>,
           ]}
         >
