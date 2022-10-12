@@ -243,7 +243,7 @@ class ResourceListing extends Component {
               return `${length} items`;
           }
         case "string":
-          return this.renderStringInCell(property, value, row);
+          return this.renderStringInCell(value,property, row);
         case "number":
         default:
           return value;
@@ -251,7 +251,7 @@ class ResourceListing extends Component {
     };
   }
 
-  renderStringInCell(property, string, row) {
+  renderStringInCell(string,property = {}, row) {
     let str = String(string || "");
     if (
       (str.indexOf("http") === 0 || property.format === "hostname") &&
@@ -394,13 +394,15 @@ class ResourceListing extends Component {
                 total: this.state.totalCount,
                 pageSizeOptions: [25, 50, 100, 200],
                 onChange: (page, pageSize) => {
-                  this.setState(
-                    {
-                      perPage: pageSize,
-                      page,
-                    },
-                    this.handleTableChange
-                  );
+                  if(this.state.page!==page) {
+                    this.setState(
+                      {
+                        perPage: pageSize,
+                        page,
+                      },
+                      this.handleTableChange
+                    );
+                  }
                 },
               }}
             />
