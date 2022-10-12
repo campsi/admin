@@ -76,11 +76,11 @@ class AutomatorJob extends Component {
             <Button
               danger
               style={{ borderColor: "green", color: "green" }}
-              onClick={() => this.approveAction(job, action)}
+              onClick={() => this.giveApprovalAction(job, action, true)}
             >
               Accept
             </Button>,
-            <Button danger onClick={() => this.disprovesAction(job, action)}>
+            <Button danger onClick={() => this.giveApprovalAction(job, action, false)}>
               Decline
             </Button>,
           ]}
@@ -109,23 +109,12 @@ class AutomatorJob extends Component {
     return this.actionDetails(job, action);
   }
 
-  approveAction(job, action) {
-    job.actions[action].approval.approved = true;
+  giveApprovalAction(job, action, approve) {
+    job.actions[action].approval.approved = approve;
     job.actions[action].approval.approvedBy = this.props.api.clientId;
-    job.status = "Pending";
+    job.status = approve ? "Pending" : "Done";
     this.props.api.client
-      .put(`/automator/jobs/${job._id}?push=true`, job, { timeout: 10000 })
-      .then(() => {
-        this.props.onFetching();
-      });
-    this.setState({ job });
-  }
-  disprovesAction(job, action) {
-    job.actions[action].approval.approved = false;
-    job.actions[action].approval.approvedBy = this.props.api.clientId;
-    job.status = "Done";
-    this.props.api.client
-      .put(`/automator/jobs/${job._id}`, job, { timeout: 10000 })
+      .put(`/automator/jobs/${job._id + (approve ? "?push=true" : "")}`, job, { timeout: 10000 })
       .then(() => {
         this.props.onFetching();
       });
