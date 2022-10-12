@@ -96,7 +96,7 @@ class AutomatorJob extends Component {
             title={`${
               job.actions?.[action]?.approval.approved
                 ? "Approved"
-                : "Disproves"
+                : "Disapproved"
             } by ${job.actions?.[action]?.approval.approvedBy}`}
             style={{ "text-align": "center" }}
           />
