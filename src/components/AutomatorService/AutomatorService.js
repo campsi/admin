@@ -29,7 +29,13 @@ function BulkJobCreationModal({ api, services, ...props }) {
   const [form] = Form.useForm();
 
   return (
-    <Modal {...props} onOk={() => form.submit()} title="Create Jobs in bulk">
+    <Modal
+      {...props}
+      okText="Submit"
+      cancelText="Leave"
+      onOk={() => form.submit()}
+      title="Create Jobs in bulk"
+    >
       <BulkJobCreationForm api={api} services={services} form={form} />
     </Modal>
   );
