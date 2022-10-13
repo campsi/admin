@@ -292,7 +292,8 @@ class ScannerDetails extends Component {
             {metadata.nbPagesParsed}
           </Item>
           <Item label="Vendor(s) Found" span={2}>
-            {metadata.nbVendorsFound ?? Object.keys(dataSource.call(this)).length}
+            {metadata.nbVendorsFound ??
+              Object.keys(dataSource.call(this)).length}
           </Item>
           <Item label="Vendor(s) exempt of consent" span={2}>
             {metadata.vendorsExemptOfConsent}
@@ -314,17 +315,15 @@ class ScannerDetails extends Component {
             {metadata.CMP}
           </Item>
           <Item label="CMP Extractions" span={2}>
-            <div style={{overflowY: 'scroll', maxHeight : 50}}>
-              {metadata.CMPExtraction ?
-                Object.keys(metadata.CMPExtraction).map((key, i) => (
-                  <p key={i}>
-                    <span>{key}: </span>
-                    <span>{metadata.CMPExtraction[key]}</span>
-                  </p>
-                )
-                ) :
-                ""
-              }
+            <div style={{ overflowY: "scroll", maxHeight: 50 }}>
+              {metadata.CMPExtraction
+                ? Object.keys(metadata.CMPExtraction).map((key, i) => (
+                    <p key={i}>
+                      <span>{key}: </span>
+                      <span>{metadata.CMPExtraction[key]}</span>
+                    </p>
+                  ))
+                : ""}
             </div>
           </Item>
         </Descriptions>
