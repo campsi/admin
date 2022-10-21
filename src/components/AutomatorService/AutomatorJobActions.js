@@ -32,7 +32,7 @@ export const actionNames = {
   provisioning: "provisioning",
   showcase: "showcase",
   gtm: "gtm",
-  emailing: "emailing"
+  emailing: "emailing",
 };
 
 export default actionsMap;
