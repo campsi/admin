@@ -41,20 +41,23 @@ class Api {
    */
   constructor(options = {}) {
     const settings = Object.assign({}, Api.defaults, options);
-    if (options.accessToken) {
-      this.accessToken = options.accessToken;
-      settings.headers["Authorization"] = `Bearer ${options.accessToken}`;
-    }
     this.client = axios.create({
       baseURL: settings.apiUrl.replace(/\/$/, ""),
       timeout: settings.timeout,
       headers: settings.headers,
     });
+    if (options.accessToken) {
+      this.setAccessToken(options.accessToken)
+    }
   }
 
   setAccessToken(accessToken) {
     this.accessToken = accessToken;
     this.client.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
+    this.client.get(`/auth/me`).then((response) => {
+      this.clientEmail = response.data?.email;
+      this.clientId = response.data?._id;
+    })
   }
 
   revokeAccessToken() {

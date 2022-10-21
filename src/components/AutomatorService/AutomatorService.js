@@ -47,6 +47,10 @@ function BulkJobCreationModal({ api, services, ...props }) {
  * as a standalone npm package
  */
 class AutomatorService extends Component {
+  constructor(props) {
+    super(props);
+    this.fetchData = this.fetchData.bind(this);
+  }
   state = {
     bulkJobCreationModalOpen: false,
     activeActions: [],
@@ -90,9 +94,13 @@ class AutomatorService extends Component {
                   color = "red";
                 } else if (value[action].result) {
                   color = "green";
-                }
-                if (value[action].progress) {
-                  color = "blue";
+                } else if (value[action].preview) {
+                  // value[action].approval.approved can be undefine
+                  if (value[action].approval?.approved === false) {
+                    color = "lightgrey";
+                  } else if (!value[action].approval?.approved) {
+                    color = "blue";
+                  }
                 }
                 return (
                   <Tag color={color} key={action}>
@@ -152,6 +160,12 @@ class AutomatorService extends Component {
     for (const [actionName, value] of Object.entries(job.actions)) {
       if (value.active) {
         updatedValues.actions[actionName] = value;
+        if (value.approval.email) {
+          updatedValues.actions[actionName].approval.email =
+            this.props.api.clientEmail;
+        } else {
+          delete updatedValues.actions[actionName].approval;
+        }
       }
     }
     return updatedValues;
@@ -240,6 +254,7 @@ class AutomatorService extends Component {
       this.setState({ pollingStart: null });
     }
   }
+
   render() {
     const { services, service, api } = this.props;
     const {
@@ -271,7 +286,14 @@ class AutomatorService extends Component {
           <Routes>
             <Route
               path={`jobs/:id`}
-              element={<AutomatorJob service={service} />}
+              element={
+                <AutomatorJob
+                  onFetching={() => {
+                    this.fetchData();
+                  }}
+                  service={service}
+                />
+              }
             />
           </Routes>
           <Card

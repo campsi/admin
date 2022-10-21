@@ -9,11 +9,15 @@ import ShowcaseDetails from "./Details/ShowcaseDetails";
 import GtmDetails from "./Details/GtmDetails";
 import {
   CheckCircleOutlined,
+  DislikeOutlined,
+  LikeOutlined,
   LoadingOutlined,
+  QuestionCircleOutlined,
   ReloadOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import AutomatorJobActions from "./AutomatorJobActions";
+import Meta from "antd/es/card/Meta";
 
 const { TabPane } = Tabs;
 const { TextArea } = Input;
@@ -47,30 +51,108 @@ class AutomatorJob extends Component {
 
   renderActionPanel(action) {
     const { job } = this.state;
-    if (!job.actions?.[action]?.result) {
-      return <Empty />;
-    }
-    if (job.actions[action].result.error) {
+    if (job.actions?.[action]?.result?.error) {
       return (
         <TextArea
           readOnly
           rows={6}
           style={{ width: "100%", fontFamily: "Monaco, monospace" }}
-          defaultValue={JSON.stringify(job.actions[action].result.error, null, 2)}
+          defaultValue={JSON.stringify(
+            job.actions[action].result.error,
+            null,
+            2
+          )}
         />
       );
     }
+    if (
+      job.actions?.[action]?.preview &&
+      job.actions?.[action]?.approval.approved === undefined
+    ) {
+      return (
+        <Card
+          title="Preview result"
+          actions={[
+            <Button
+              danger
+              style={{ borderColor: "green", color: "green" }}
+              onClick={() => this.giveApprovalAction(job, action, true)}
+            >
+              Accept
+            </Button>,
+            <Button danger onClick={() => this.giveApprovalAction(job, action, false)}>
+              Decline
+            </Button>,
+          ]}
+        >
+          {this.actionDetails(job, action)}
+        </Card>
+      );
+    }
+    if (typeof job.actions?.[action]?.approval?.approved === "boolean") {
+      return (
+        <Card cover={this.actionDetails(job, action)}>
+          <Meta
+            title={`${
+              job.actions?.[action]?.approval.approved
+                ? "Approved"
+                : "Disapproved"
+            } by ${job.actions?.[action]?.approval.approvedBy}`}
+            style={{ "text-align": "center" }}
+          />
+        </Card>
+      );
+    }
+    if (!job.actions?.[action]?.result) {
+      return <Empty />;
+    }
+    return this.actionDetails(job, action);
+  }
+
+  giveApprovalAction(job, action, approve) {
+    job.actions[action].approval.approved = approve;
+    job.actions[action].approval.approvedBy = this.props.api.clientId;
+    job.status = approve ? "Pending" : "Done";
+    this.props.api.client
+      .put(`/automator/jobs/${job._id + (approve ? "?push=true" : "")}`, job, { timeout: 10000 })
+      .then(() => {
+        this.props.onFetching();
+      });
+    this.setState({ job });
+  }
+
+  actionDetails(job, action) {
     switch (action) {
       case "stylesheet":
-        return <StylesheetDetails result={job.actions[action].result} />;
+        return (
+          <StylesheetDetails
+            result={job.actions[action].result ?? job.actions[action].preview}
+          />
+        );
       case "scanner":
-        return <ScannerDetails result={job.actions[action].result} />;
+        return (
+          <ScannerDetails
+            result={job.actions[action].result ?? job.actions[action].preview}
+          />
+        );
       case "provisioning":
-        return <ProvisioningDetails result={job.actions[action].result} />;
+        return (
+          <ProvisioningDetails
+            result={job.actions[action].result ?? job.actions[action].preview}
+          />
+        );
       case "showcase":
-        return <ShowcaseDetails result={job.actions[action].result} />;
+        return (
+          <ShowcaseDetails
+            result={job.actions[action].result ?? job.actions[action].preview}
+          />
+        );
       case "gtm":
-        return <GtmDetails result={job.actions[action].result} />;
+        return (
+          <GtmDetails
+            result={job.actions[action].result ?? job.actions[action].preview}
+          />
+        );
       case "emailing":
         return <></>;
       default:
@@ -91,15 +173,41 @@ class AutomatorJob extends Component {
     }
 
     function getTab(action) {
-      if (!job.actions?.[action]?.result) {
-        return action;
-      }
-      if (job.actions[action]?.result?.error) {
+      if (job.actions?.[action]?.result?.error) {
         return (
           <>
             <WarningOutlined /> {action}
           </>
         );
+      }
+
+      if (job.actions?.[action]?.approval?.approved) {
+        return (
+          <>
+            <LikeOutlined /> {action}
+          </>
+        );
+      }
+
+      // don't use "!" because job.actions?.[action]?.approval?.approved can be undefined
+      if (job.actions?.[action]?.approval?.approved === false) {
+        return (
+          <>
+            <DislikeOutlined /> {action}
+          </>
+        );
+      }
+
+      if (job.actions?.[action]?.preview) {
+        return (
+          <>
+            <QuestionCircleOutlined /> {action}
+          </>
+        );
+      }
+
+      if (!job.actions?.[action]?.result) {
+        return action;
       }
 
       return (
