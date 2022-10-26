@@ -148,32 +148,12 @@ class AutomatorService extends Component {
     });
   }
 
-  formatJobValues(job) {
-    let updatedValues = {
-      params: job.params,
-      actions: {},
-      projectId: job.projectId,
-    };
-    if (!new RegExp("^[a-f\\d]{24}$").test(updatedValues.projectId)) {
-      delete updatedValues.projectId;
-    }
-    for (const [actionName, value] of Object.entries(job.actions)) {
-      if (value.active) {
-        updatedValues.actions[actionName] = value;
-        if (value.approval.email) {
-          updatedValues.actions[actionName].approval.email =
-            this.props.api.clientEmail;
-        } else {
-          delete updatedValues.actions[actionName].approval;
-        }
-      }
-    }
-    return updatedValues;
-  }
-
   async startJob(job) {
     const { api, service } = this.props;
-    await api.client.post(`/${service.name}/jobs`, this.formatJobValues(job));
+    await api.client.post(
+      `/${service.name}/jobs`,
+      formatJobValues(job, this.props.api.clientEmail)
+    );
     await this.fetchData();
   }
 
@@ -350,5 +330,27 @@ AutomatorService.propTypes = {
     class: PropTypes.string.isRequired,
   }).isRequired,
 };
+
+export function formatJobValues(job, email) {
+  let updatedValues = {
+    params: job.params,
+    actions: {},
+    projectId: job.projectId,
+  };
+  if (!new RegExp("^[a-f\\d]{24}$").test(updatedValues.projectId)) {
+    delete updatedValues.projectId;
+  }
+  for (const [actionName, value] of Object.entries(job.actions)) {
+    if (value.active) {
+      updatedValues.actions[actionName] = value;
+      if (value.approval?.email) {
+        updatedValues.actions[actionName].approval.email = email;
+      } else {
+        delete updatedValues.actions[actionName].approval;
+      }
+    }
+  }
+  return updatedValues;
+}
 
 export default withAppContext(AutomatorService);

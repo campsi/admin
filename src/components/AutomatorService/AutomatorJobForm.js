@@ -16,6 +16,7 @@ import { useState } from "react";
 import userAgents from "./userAgents";
 import EmailingForm from "./Forms/EmailingForm";
 import copyText from "../../utils/copyText";
+import { formatJobValues } from "./AutomatorService";
 
 const { TabPane } = Tabs;
 
@@ -82,7 +83,11 @@ function AutomatorJobForm({ onFinish, api }) {
           <Button
             type="default"
             htmlType="button"
-            onClick={() => copyText(JSON.stringify(formValues))}
+            onClick={() =>
+              copyText(
+                JSON.stringify(formatJobValues(formValues, api.clientEmail))
+              )
+            }
           >
             Copy JSON
           </Button>,
