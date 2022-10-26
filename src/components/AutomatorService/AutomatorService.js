@@ -150,7 +150,10 @@ class AutomatorService extends Component {
 
   async startJob(job) {
     const { api, service } = this.props;
-    await api.client.post(`/${service.name}/jobs`, formatJobValues(job,this.props.api.clientEmail));
+    await api.client.post(
+      `/${service.name}/jobs`,
+      formatJobValues(job, this.props.api.clientEmail)
+    );
     await this.fetchData();
   }
 
@@ -328,7 +331,7 @@ AutomatorService.propTypes = {
   }).isRequired,
 };
 
-export function formatJobValues(job,email) {
+export function formatJobValues(job, email) {
   let updatedValues = {
     params: job.params,
     actions: {},
