@@ -23,7 +23,8 @@ function getOptions(type, formData) {
   return Object.keys(options[type]).map((name) => {
     return (
       <Option value={name} key={`${type}_${name}`}>
-        {options[type][name]}{formData[name] ? '*' : ''}
+        {options[type][name]}
+        {formData[name] ? "*" : ""}
       </Option>
     );
   });

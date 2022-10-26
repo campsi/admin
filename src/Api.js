@@ -47,7 +47,7 @@ class Api {
       headers: settings.headers,
     });
     if (options.accessToken) {
-      this.setAccessToken(options.accessToken)
+      this.setAccessToken(options.accessToken);
     }
   }
 
@@ -57,7 +57,7 @@ class Api {
     this.client.get(`/auth/me`).then((response) => {
       this.clientEmail = response.data?.email;
       this.clientId = response.data?._id;
-    })
+    });
   }
 
   revokeAccessToken() {
