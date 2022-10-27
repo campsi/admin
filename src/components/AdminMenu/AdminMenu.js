@@ -22,7 +22,7 @@ export default function AdminMenu({ services }) {
         theme="dark"
         defaultSelectedKeys={["1"]}
         defaultOpenKeys={["sub1"]}
-        style={{minHeight: '100%'}}
+        style={{ minHeight: "100%" }}
       >
         {Object.keys(services).map((serviceName) => {
           const service = services[serviceName];
