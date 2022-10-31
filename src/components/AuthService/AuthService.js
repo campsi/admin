@@ -1,7 +1,16 @@
 import PropTypes from "prop-types";
 import { Component } from "react";
 import { withAppContext } from "../../App";
-import { Layout, Form, Typography, Button, Input, Card, Space, Tag } from 'antd';
+import {
+  Layout,
+  Form,
+  Typography,
+  Button,
+  Input,
+  Card,
+  Space,
+  Tag,
+} from "antd";
 const { Title } = Typography;
 
 class AuthService extends Component {
@@ -51,8 +60,8 @@ class AuthService extends Component {
   async register(formData) {
     const { api, service, setAccessToken } = this.props;
 
-    const email = formData.email
-    const password = formData.password
+    const email = formData.email;
+    const password = formData.password;
     const response = await api.client.post(`${service.name}/local/signup`, {
       username: email,
       displayName: email,
@@ -94,10 +103,8 @@ class AuthService extends Component {
             </Form>
             {me && (
               <Form.Item>
-                <Tag color={'green'} key={'Connected'}>
-                  {
-                    'Connected'
-                  }
+                <Tag color={"green"} key={"Connected"}>
+                  {"Connected"}
                 </Tag>
                 <Button
                   type="ghost"
@@ -131,9 +138,7 @@ class AuthService extends Component {
           {this.state.hasLocalProvider && (
             <>
               <Card title="Log in">
-                <Form
-                  onFinish={(values) => this.login(values)}
-                >
+                <Form onFinish={(values) => this.login(values)}>
                   <Form.Item label="Email" name="email">
                     <Input type="email" />
                   </Form.Item>

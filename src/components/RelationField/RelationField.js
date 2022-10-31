@@ -72,13 +72,8 @@ function generateRelationField(properties) {
     }
 
     render() {
-      const {
-        formData,
-        onChange,
-        schema,
-        services,
-        formItemProps
-      } = this.props;
+      const { formData, onChange, schema, services, formItemProps } =
+        this.props;
       const relSchema = services[service].resources[resource].schema;
       const requiredProperties =
         relSchema.required?.map((propertyName) => {

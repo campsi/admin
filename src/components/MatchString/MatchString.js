@@ -3,13 +3,13 @@ import { Input, Select, Space } from "antd";
 import { useState } from "react";
 
 function cleanMatchString(value) {
-  const cleaned =  Object.keys(value).reduce((cleanedValue, key) => {
+  const cleaned = Object.keys(value).reduce((cleanedValue, key) => {
     if (value[key]) {
       return { ...cleanedValue, [key]: value[key] };
     }
     return cleanedValue;
   }, {});
-  if(Object.keys(cleaned).length > 0){
+  if (Object.keys(cleaned).length > 0) {
     return cleaned;
   }
   return undefined;

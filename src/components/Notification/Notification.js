@@ -8,10 +8,12 @@ const NotificationStyle = styled.div`
   margin: 10px;
 `;
 function Notification(props) {
-  return <NotificationStyle>
-    <h3>{props.title}</h3>
-    <h3>{props.message}</h3>
-  </NotificationStyle>;
+  return (
+    <NotificationStyle>
+      <h3>{props.title}</h3>
+      <h3>{props.message}</h3>
+    </NotificationStyle>
+  );
 }
 
-export default Notification
+export default Notification;

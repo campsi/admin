@@ -70,7 +70,7 @@ export default class JsonTextArea extends Component {
             fontSize: 12,
             backgroundColor: "#f5f5f5",
             fontFamily:
-              "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace"
+              "ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
           }}
         />
         {schemaErrors.length > 0 && (

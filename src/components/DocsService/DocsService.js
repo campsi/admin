@@ -14,14 +14,19 @@ function DocsService(props) {
     <Routes>
       <Route
         path="resources/:resourceName/:id"
-        element={<ResourceForm service={props.service} customWidgets={{
-          'DetectionStrategy': DetectionStrategy,
-          'LocalizedString': LocalizedText,
-          'MatchString': MatchString,
-          'Asset': Asset,
-          'ClearbitSync': ClearbitSync,
-          'JsonTextArea': JsonTextArea
-        }} />}
+        element={
+          <ResourceForm
+            service={props.service}
+            customWidgets={{
+              DetectionStrategy: DetectionStrategy,
+              LocalizedString: LocalizedText,
+              MatchString: MatchString,
+              Asset: Asset,
+              ClearbitSync: ClearbitSync,
+              JsonTextArea: JsonTextArea,
+            }}
+          />
+        }
       />
       <Route
         path="resources/:resourceName"

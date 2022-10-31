@@ -80,7 +80,10 @@ class AutomatorJob extends Component {
             >
               Accept
             </Button>,
-            <Button danger onClick={() => this.giveApprovalAction(job, action, false)}>
+            <Button
+              danger
+              onClick={() => this.giveApprovalAction(job, action, false)}
+            >
               Decline
             </Button>,
           ]}
@@ -114,7 +117,9 @@ class AutomatorJob extends Component {
     job.actions[action].approval.approvedBy = this.props.api.clientId;
     job.status = approve ? "Pending" : "Done";
     this.props.api.client
-      .put(`/automator/jobs/${job._id + (approve ? "?push=true" : "")}`, job, { timeout: 10000 })
+      .put(`/automator/jobs/${job._id + (approve ? "?push=true" : "")}`, job, {
+        timeout: 10000,
+      })
       .then(() => {
         this.props.onFetching();
       });
