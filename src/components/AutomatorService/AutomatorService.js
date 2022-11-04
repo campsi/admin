@@ -124,7 +124,6 @@ class AutomatorService extends Component {
                 onClick={() => this.deleteJob(job._id)}
               />
             )}
-
             {(job.status === 'Done' || job.status === 'Error') ? this.state.jobsToRestart.includes(job._id) ? (
               <Button disabled icon={<LoadingOutlined />} />
             ) : (
@@ -180,7 +179,6 @@ class AutomatorService extends Component {
       jobsDeleting: this.state.jobsDeleting.filter((jobId) => jobId !== id),
       jobs: this.state.jobs.filter((job) => job._id !== id),
     });
-
     if (this.state.jobsDeleting.length === 0) {
       await this.fetchData();
     }
