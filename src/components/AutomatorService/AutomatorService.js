@@ -18,8 +18,8 @@ import {
   DeleteOutlined,
   EyeOutlined,
   LoadingOutlined,
-  ReloadOutlined,
-} from "@ant-design/icons";
+  ReloadOutlined, UndoOutlined
+} from '@ant-design/icons';
 import AutomatorJobForm from "./AutomatorJobForm";
 import actions from "./AutomatorJobActions";
 import BulkJobCreationForm from "./BulkJobCreationForm";
@@ -129,7 +129,7 @@ class AutomatorService extends Component {
               <Button disabled icon={<LoadingOutlined />} />
             ) : (
               <Button
-                icon={<ReloadOutlined />}
+                icon={<UndoOutlined />}
                 onClick={() => this.restartJob(job)}
               />
             ) : ''}
