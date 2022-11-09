@@ -163,11 +163,8 @@ function AutomatorJobForm({ onFinish, api }) {
             {approvalOption("provisioning")}
             <Form.Item
               name={["actions", "provisioning", "database"]}
-              initialValue={
-                process.env.NODE_ENV === "production" ? "prod" : "test"
-              }
+              initialValue="test"
               label="Database"
-              hidden={true}
               help="Do not spam the production for testing purposes."
             >
               <Select>
