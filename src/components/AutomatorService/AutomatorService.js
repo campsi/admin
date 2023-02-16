@@ -18,8 +18,9 @@ import {
   DeleteOutlined,
   EyeOutlined,
   LoadingOutlined,
-  ReloadOutlined, UndoOutlined
-} from '@ant-design/icons';
+  ReloadOutlined,
+  UndoOutlined,
+} from "@ant-design/icons";
 import AutomatorJobForm from "./AutomatorJobForm";
 import actions from "./AutomatorJobActions";
 import BulkJobCreationForm from "./BulkJobCreationForm";
@@ -124,14 +125,18 @@ class AutomatorService extends Component {
                 onClick={() => this.deleteJob(job._id)}
               />
             )}
-            {(job.status === 'Done' || job.status === 'Error') ? this.state.jobsToRestart.includes(job._id) ? (
-              <Button disabled icon={<LoadingOutlined />} />
+            {job.status === "Done" || job.status === "Error" ? (
+              this.state.jobsToRestart.includes(job._id) ? (
+                <Button disabled icon={<LoadingOutlined />} />
+              ) : (
+                <Button
+                  icon={<UndoOutlined />}
+                  onClick={() => this.restartJob(job)}
+                />
+              )
             ) : (
-              <Button
-                icon={<UndoOutlined />}
-                onClick={() => this.restartJob(job)}
-              />
-            ) : ''}
+              ""
+            )}
             <Link to={`/services/${this.props.service.name}/jobs/${job._id}`}>
               <Button icon={<EyeOutlined />} />
             </Link>
@@ -144,7 +149,7 @@ class AutomatorService extends Component {
     page: 1,
     totalCount: 0,
     jobsDeleting: [],
-    jobsToRestart:[],
+    jobsToRestart: [],
     pollingStart: null,
     pollingInterval: 10000,
     pollingDuration: 500000,
@@ -192,10 +197,15 @@ class AutomatorService extends Component {
     await this.setStateAsync({
       jobsToRestart: [...this.state.jobsToRestart, jobToRestart._id],
     });
-    await api.client.put(`/${service.name}/jobs/${jobToRestart._id}?push=true`,formatJobValues(jobToRestart,api.clientEmail));
+    await api.client.put(
+      `/${service.name}/jobs/${jobToRestart._id}?push=true`,
+      formatJobValues(jobToRestart, api.clientEmail)
+    );
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await this.setStateAsync({
-      jobsToRestart: this.state.jobsToRestart.filter((jobId) => jobId !== jobToRestart._id)
+      jobsToRestart: this.state.jobsToRestart.filter(
+        (jobId) => jobId !== jobToRestart._id
+      ),
     });
     if (this.state.jobsToRestart.length === 0) {
       await this.fetchData();
@@ -358,7 +368,7 @@ AutomatorService.propTypes = {
 
 export function formatJobValues(job, email) {
   let updatedValues = {
-    status:"Pending",
+    status: "Pending",
     params: job.params,
     actions: {},
     projectId: job.projectId,
@@ -375,7 +385,7 @@ export function formatJobValues(job, email) {
         delete updatedValues.actions[actionName].approval;
       }
     }
-    if(updatedValues.actions[actionName]?.result) {
+    if (updatedValues.actions[actionName]?.result) {
       delete updatedValues.actions[actionName].result;
     }
   }

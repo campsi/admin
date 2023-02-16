@@ -1,6 +1,6 @@
-# Campsi Admin 
+# Campsi Admin
 
-Campsi Admin is a Single Page Application generator that uses a live Campsi API endpoint to build a full-fledge administration console on the fly. 
+Campsi Admin is a Single Page Application generator that uses a live Campsi API endpoint to build a full-fledge administration console on the fly.
 
 A Campsi API is composed of various services that are mounted on various endpoints. When accessing the index endpoint of the API (for example https://api.axept.io/v1/), Campsi API will expose all the services and their respective Service classes. The Campsi Admin App will generate a router and a menu that will display all the available services.
 
@@ -16,21 +16,21 @@ The AuthService component is capable of interacting with the Campsi API's AuthSe
 
 The DocService is an advanced CRUD for Campsi's [Docs Service](https://github.com/campsi/campsi-mono/tree/master/services/docs). It leverages the JSON Schema data model to generate dynamic forms.
 
-### 📚 Versioned Docs - __TODO__
+### 📚 Versioned Docs - **TODO**
 
-### 📸 Assets - __TODO__
+### 📸 Assets - **TODO**
 
 Administration Panel for [the Assets Service](https://github.com/campsi/campsi-mono/tree/master/services/assets). In this panel, the users should be able to upload and fetch assets on the different StorageProviders the Assets Service can interact with.
 
-### 🪝 Webhooks - __TODO__
+### 🪝 Webhooks - **TODO**
 
-Administration Panel for [the Webhooks Service](https://github.com/campsi/campsi-mono/tree/master/services/webhooks). In this panel, the users should be able to CRUD their webhooks. 
+Administration Panel for [the Webhooks Service](https://github.com/campsi/campsi-mono/tree/master/services/webhooks). In this panel, the users should be able to CRUD their webhooks.
 
-### 💶 Stripe Billing - __TODO__
+### 💶 Stripe Billing - **TODO**
 
 Administration Panel for [the Stripe Billing Service](https://github.com/campsi/campsi-mono/tree/master/services/stripe-billing).
 
-### 💶 Notifications - __TODO__
+### 💶 Notifications - **TODO**
 
 Administration Panel for [the Notification Service](https://github.com/campsi/campsi-mono/tree/master/services/notifications).
 
