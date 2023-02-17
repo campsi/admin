@@ -9,6 +9,7 @@ import {
   Button,
   Modal,
   Form,
+  Input,
 } from "antd";
 import { withAppContext } from "../../App";
 import PropTypes from "prop-types";
@@ -24,6 +25,7 @@ import {
 import AutomatorJobForm from "./AutomatorJobForm";
 import actions from "./AutomatorJobActions";
 import BulkJobCreationForm from "./BulkJobCreationForm";
+import { debounce } from "../../utils/debounce";
 const { Title } = Typography;
 
 function BulkJobCreationModal({ api, services, ...props }) {
@@ -75,7 +77,17 @@ class AutomatorService extends Component {
         },
       },
       {
-        title: "Domain",
+        title: () => {
+          return (
+            <Input
+              placeholder={`Search domain`}
+              onChange={debounce(async (e) => {
+                await this.setState({ domainFilter: e.target.value });
+                this.fetchData();
+              }, 500)}
+            />
+          );
+        },
         dataIndex: ["params", "domain"],
       },
       {
@@ -147,6 +159,7 @@ class AutomatorService extends Component {
     sort: "-_id",
     perPage: 5,
     page: 1,
+    domainFilter: "",
     totalCount: 0,
     jobsDeleting: [],
     jobsToRestart: [],
@@ -232,7 +245,7 @@ class AutomatorService extends Component {
     const { perPage, page, sort } = this.state;
     await this.setStateAsync({ isFetching: true });
     const response = await api.client.get(
-      `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}`,
+      `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}&domain=${this.state.domainFilter}`,
       { timeout: 20000 }
     );
     await this.setStateAsync({
