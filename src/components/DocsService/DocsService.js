@@ -5,7 +5,6 @@ import DetectionStrategy from "../DetectionStrategy/DetectionStrategy";
 import MatchString from "../MatchString/MatchString";
 import LocalizedText from "../LocalizedText/LocalizedText";
 import Asset from "../Asset/Asset";
-import ClearbitSync from "../ClearbitSync/ClearbitSync";
 import JsonTextArea from "../JsonTextArea/JsonTextArea";
 
 function DocsService(props) {
@@ -22,7 +21,6 @@ function DocsService(props) {
               LocalizedString: LocalizedText,
               MatchString: MatchString,
               Asset: Asset,
-              ClearbitSync: ClearbitSync,
               JsonTextArea: JsonTextArea,
             }}
           />

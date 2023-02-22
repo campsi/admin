@@ -49,7 +49,6 @@ export default function EmailingForm({ api }) {
             setProvider(value);
           }}
         >
-          <Select.Option value="lemlist">Lemlist</Select.Option>
           <Select.Option value="sendgrid">Sendgrid</Select.Option>
           <Select.Option value="hubspot" disabled>
             Hubspot
