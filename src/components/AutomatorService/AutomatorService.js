@@ -84,7 +84,7 @@ class AutomatorService extends Component {
               onChange={debounce(async (e) => {
                 await this.setState({ domainFilter: e.target.value });
                 this.fetchData();
-              }, 500)}
+              }, 800)}
             />
           );
         },
@@ -245,7 +245,9 @@ class AutomatorService extends Component {
     const { perPage, page, sort } = this.state;
     await this.setStateAsync({ isFetching: true });
     const response = await api.client.get(
-      `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}&domain=${this.state.domainFilter}`,
+      `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}${
+        this.state.domainFilter ? "&domain=" + this.state.domainFilter : ""
+      }`,
       { timeout: 20000 }
     );
     await this.setStateAsync({
