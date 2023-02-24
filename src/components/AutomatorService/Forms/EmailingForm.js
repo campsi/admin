@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 export default function EmailingForm({ api }) {
   const [campaigns, setCampaigns] = useState([]);
   const [emailCheck, setEmailCheck] = useState(undefined);
+  const [groups, setGroups] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState(undefined);
+  const [, setSelectedGroup] = useState(undefined);
+  const [, setSender] = useState(undefined);
   const [provider, setProvider] = useState("");
   const [email, setEmail] = useState("");
 
@@ -16,6 +19,9 @@ export default function EmailingForm({ api }) {
     api.client
       .get(`/automator/emailing/${provider}/campaigns`)
       .then((response) => setCampaigns(response.data));
+    api.client
+      .get(`/automator/emailing/${provider}/groups`)
+      .then((response) => setGroups(response.data));
   }, [provider, api.client]);
 
   useEffect(() => {
@@ -65,9 +71,28 @@ export default function EmailingForm({ api }) {
       >
         <Input onBlur={(event) => setEmail(event.target.value)} />
       </Form.Item>
+      <Form.Item name={["actions", "emailing", "sender"]} label="Sender">
+        <Input
+          placeHolder={"Automator 🍪 <noreply@axeptio.eu>"}
+          onBlur={(event) => setSender(event.target.value)}
+        />
+      </Form.Item>
       <Form.Item name={["actions", "emailing", "campaign"]} label="Campaign">
         <Select onChange={(value) => setSelectedCampaign(value)}>
           {campaigns.map((c) => (
+            <Select.Option value={c.id} key={c.id}>
+              {c.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+      <Form.Item
+        name={["actions", "emailing", "groupId"]}
+        label="Unsubscription Group"
+        help={"To choose in the case of a prospection/newsletter..."}
+      >
+        <Select onChange={(value) => setSelectedGroup(value)}>
+          {groups.map((c) => (
             <Select.Option value={c.id} key={c.id}>
               {c.name}
             </Select.Option>
