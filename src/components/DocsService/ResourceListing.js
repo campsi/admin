@@ -267,7 +267,7 @@ class ResourceListing extends Component {
         </a>
       );
     }
-    if (property.enum?.length > 0) {
+    if (!property.virtual && property.enum?.length > 0) {
       return (
         <Select
           showSearch
