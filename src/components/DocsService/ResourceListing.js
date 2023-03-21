@@ -3,6 +3,7 @@ import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import { Link } from "react-router-dom";
 import { CheckOutlined, FileOutlined, SearchOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 import {
   Layout,
   Typography,
@@ -323,10 +324,10 @@ class ResourceListing extends Component {
         sorter: true,
         dataIndex: "createdAt",
         render: (value) => {
-          const d = new Date(value);
+          const date = dayjs(value);
           return (
-            <span title={new Date(value).toTimeString()}>
-              {d.getFullYear()}/{d.getMonth() + 1}/{d.getDay()}
+            <span title={date.format("HH:mm:ss")}>
+              {date.format("YYYY/MM/DD")}
             </span>
           );
         },
