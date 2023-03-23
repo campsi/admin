@@ -2,7 +2,7 @@ import { Component } from "react";
 import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import { Link } from "react-router-dom";
-import { CheckOutlined, FileOutlined, SearchOutlined } from "@ant-design/icons";
+import { CheckOutlined, CloseOutlined, FileOutlined, SearchOutlined } from '@ant-design/icons';
 import dayjs from "dayjs";
 import {
   Layout,
@@ -96,17 +96,22 @@ class ResourceListing extends Component {
     }
   }
 
-  async fetchData(filters = {}, sorter = {}) {
+  async fetchData(filters = {}, sorter = {}, pagination) {
     /* Destructuring the props object. */
     const { api, service, authenticated } = this.props;
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
-    const {
+    let {
       perPage,
       page,
       selectedState = resourceClass.defaultState,
     } = this.state;
+    if(pagination){
+      perPage = pagination.pageSize
+      page = pagination.current
+    }
+
 
     const allowedMethods =
       resourceClass.permissions[authenticated ? "owner" : "public"]?.[
@@ -130,8 +135,7 @@ class ResourceListing extends Component {
 
     const params = new URLSearchParams({
       perPage: perPage,
-      page: page,
-      //with: "creator", currently not working with sort
+      page: page
     });
 
     Object.keys(filters)
@@ -152,7 +156,7 @@ class ResourceListing extends Component {
       const field = Array.isArray(sorter.field)
         ? sorter.field.join(".")
         : sorter.field;
-      params.append("sort", `${sorter.order === "ascend" ? "" : "-"}${field}`);
+      params.append("sort", `${sorter.order !== "ascend" ? `-states.${selectedState}.` : `states.${selectedState}.`}${field}`);
     }
 
     const response = await api.client.get(
@@ -167,7 +171,7 @@ class ResourceListing extends Component {
   }
 
   handleTableChange = async (pagination, filters, sorter) => {
-    await this.fetchData(filters, sorter);
+    await this.fetchData(filters, sorter, pagination);
   };
 
   async updateVisibleProperties() {
@@ -215,7 +219,7 @@ class ResourceListing extends Component {
       }
       switch (type) {
         case "boolean":
-          return value ? <CheckOutlined /> : null;
+          return value ? <CheckOutlined /> : <CloseOutlined />;
         case "object":
           if (value?.$lang) {
             return this.renderStringInCell(value.$lang[language]);
@@ -310,7 +314,6 @@ class ResourceListing extends Component {
       {
         title: "ID",
         dataIndex: "id",
-        sorter: true,
         render: (value) => (
           <Link
             to={`/services/${service.name}/resources/${resourceName}/${value}`}
@@ -332,14 +335,6 @@ class ResourceListing extends Component {
           );
         },
       },
-      /*
-      currently not working with sort. Need Campsi fix
-      {
-        title: "Creator",
-        sorter: true,
-        dataIndex: ['creator', 'email']
-      },
-      */
     ];
 
     properties.forEach((property) => {
@@ -395,15 +390,12 @@ class ResourceListing extends Component {
                 total: this.state.totalCount,
                 pageSizeOptions: [25, 50, 100, 200],
                 onChange: (page, pageSize) => {
-                  if (this.state.page !== page) {
                     this.setState(
                       {
                         perPage: pageSize,
                         page,
-                      },
-                      this.handleTableChange
+                      }
                     );
-                  }
                 },
               }}
             />

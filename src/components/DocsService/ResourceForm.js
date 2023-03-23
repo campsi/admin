@@ -142,7 +142,7 @@ class ResourceForm extends Component {
       } else if (customWidgets[schema["ui:widget"]]) {
         uiSchema["ui:widget"] = customWidgets[schema["ui:widget"]];
       } else if (schema["ui:relation"]) {
-        uiSchema["ui:field"] = generateRelationField(schema["ui:relation"]);
+        uiSchema["ui:field"] = generateRelationField({...schema["ui:relation"], perPage: 0});
       } else if (schema.items) {
         uiSchema.items = {};
         parseSchema(schema.items, uiSchema.items);
