@@ -232,14 +232,17 @@ class AutomatorJob extends Component {
           <TabPane tab="job details" key="tab_details">
             <Descriptions bordered column={2} size="small">
               <Descriptions.Item label="status">{job.status}</Descriptions.Item>
+              <Descriptions.Item label="Custom ID">
+                {job.params?.customId}
+              </Descriptions.Item>
+              <Descriptions.Item label="Domain">
+                {job.params?.domain}
+              </Descriptions.Item>
               <Descriptions.Item label="createdBy">
                 {job.createdBy}
               </Descriptions.Item>
               <Descriptions.Item label="createdAt">
                 {job.createdAt}
-              </Descriptions.Item>
-              <Descriptions.Item label="Domain">
-                {job.params?.domain}
               </Descriptions.Item>
               <Descriptions.Item label="Priority">
                 {job.params?.priority}
