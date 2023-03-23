@@ -8,18 +8,18 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
  * @todo disable item creation with a schema property
  * @todo implement server-side filtering
  *
- * @param {object} properties
+ * @param {*&{perPage: number}} properties
  * @param {string} properties.resource
  * @param {string} properties.service
  * @returns {React.Component}
  */
 function generateRelationField(properties) {
-  const { resource, service, labelIndex = "name" } = properties;
+  const { resource, service, labelIndex = "name", perPage } = properties;
 
   class RelationField extends Component {
     state = {
       items: [],
-      perPage: 100,
+      perPage: perPage ?? 100,
       page: 1,
       totalCount: 0,
       newItemData: {},
