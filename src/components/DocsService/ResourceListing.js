@@ -2,7 +2,12 @@ import { Component } from "react";
 import { withAppContext } from "../../App";
 import withParams from "../../utils/withParams";
 import { Link } from "react-router-dom";
-import { CheckOutlined, CloseOutlined, FileOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  FileOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
   Layout,
@@ -107,11 +112,10 @@ class ResourceListing extends Component {
       page,
       selectedState = resourceClass.defaultState,
     } = this.state;
-    if(pagination){
-      perPage = pagination.pageSize
-      page = pagination.current
+    if (pagination) {
+      perPage = pagination.pageSize;
+      page = pagination.current;
     }
-
 
     const allowedMethods =
       resourceClass.permissions[authenticated ? "owner" : "public"]?.[
@@ -135,7 +139,7 @@ class ResourceListing extends Component {
 
     const params = new URLSearchParams({
       perPage: perPage,
-      page: page
+      page: page,
     });
 
     Object.keys(filters)
@@ -156,7 +160,14 @@ class ResourceListing extends Component {
       const field = Array.isArray(sorter.field)
         ? sorter.field.join(".")
         : sorter.field;
-      params.append("sort", `${sorter.order !== "ascend" ? `-states.${selectedState}.` : `states.${selectedState}.`}${field}`);
+      params.append(
+        "sort",
+        `${
+          sorter.order !== "ascend"
+            ? `-states.${selectedState}.`
+            : `states.${selectedState}.`
+        }${field}`
+      );
     }
 
     const response = await api.client.get(
@@ -390,12 +401,10 @@ class ResourceListing extends Component {
                 total: this.state.totalCount,
                 pageSizeOptions: [25, 50, 100, 200],
                 onChange: (page, pageSize) => {
-                    this.setState(
-                      {
-                        perPage: pageSize,
-                        page,
-                      }
-                    );
+                  this.setState({
+                    perPage: pageSize,
+                    page,
+                  });
                 },
               }}
             />

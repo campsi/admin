@@ -29,7 +29,7 @@ function ProvisioningDetails({ result, api }) {
         </a>
       </Item>
       <Item label="Cookies ids" span={2}>
-        {result.cookies?.join(', ')}
+        {result.cookies?.join(", ")}
       </Item>
       <Item label="PublishId" span={2}>
         {result.publishId}

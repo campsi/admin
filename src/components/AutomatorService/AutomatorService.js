@@ -72,10 +72,19 @@ class AutomatorService extends Component {
       {
         title: "Status",
         render: (job) => {
-          return (<div>
-            <Tag>{job.status}</Tag>
-            {job.actions?.emailing?.sender?.includes('🍪') && <img src={"https://axeptio.imgix.net/2023/03/de7c1b1f-2f01-45d8-b272-d95ec95a186f.png?auto=format&fit=crop&w=35&h=auto&dpr=1"} alt={""}/>}
-          </div>) ;
+          return (
+            <div>
+              <Tag>{job.status}</Tag>
+              {job.actions?.emailing?.sender?.includes("🍪") && (
+                <img
+                  src={
+                    "https://axeptio.imgix.net/2023/03/de7c1b1f-2f01-45d8-b272-d95ec95a186f.png?auto=format&fit=crop&w=35&h=auto&dpr=1"
+                  }
+                  alt={""}
+                />
+              )}
+            </div>
+          );
         },
       },
       {
