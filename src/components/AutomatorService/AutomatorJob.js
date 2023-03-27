@@ -18,7 +18,7 @@ import {
 } from "@ant-design/icons";
 import AutomatorJobActions from "./AutomatorJobActions";
 import Meta from "antd/es/card/Meta";
-
+import copyText from '../../utils/copyText';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
@@ -243,6 +243,27 @@ class AutomatorJob extends Component {
               </Descriptions.Item>
               <Descriptions.Item label="Priority">
                 {job.params?.priority}
+              </Descriptions.Item>
+              <Descriptions.Item label="Priority">
+                <Button
+                  type="default"
+                  htmlType="button"
+                  onClick={() =>{
+                    return copyText(
+                      [
+                        job._id,
+                        job.status,
+                        job.params?.domain,
+                        job.params?.customId,
+                        job.params?.priority,
+                        job.createdAt,
+                        job.createdBy
+                     ].join('\t')
+                      )
+                  }}
+                >
+                  Copy JSON
+                </Button>
               </Descriptions.Item>
             </Descriptions>
           </TabPane>
