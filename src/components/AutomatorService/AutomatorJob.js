@@ -244,7 +244,7 @@ class AutomatorJob extends Component {
               <Descriptions.Item label="Priority">
                 {job.params?.priority}
               </Descriptions.Item>
-              <Descriptions.Item label="Priority">
+              <Descriptions.Item>
                 <Button
                   type="default"
                   htmlType="button"
