@@ -258,11 +258,11 @@ class AutomatorJob extends Component {
                         job.params?.priority,
                         job.createdAt,
                         job.createdBy
-                     ].join('\t')
+                     ].join('\t') //Google sheet do not support (,) but (/t), and this button is developper specialy for GSheet
                       )
                   }}
                 >
-                  Copy JSON
+                  Copy GSheet
                 </Button>
               </Descriptions.Item>
             </Descriptions>
