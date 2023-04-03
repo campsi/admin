@@ -307,9 +307,17 @@ class ScannerDetails extends Component {
             </a>
           </Item>
           <Item label="Download PDF" span={2}>
-            <a href={metadata.pdfURL} download>
-              <Button icon={<VerticalAlignBottomOutlined />} />
-            </a>
+            {metadata.pdfURL && (
+              <a href={metadata.pdfURL} download>
+                <Button icon={<VerticalAlignBottomOutlined />} />
+              </a>
+            )}
+            {metadata.pdfURLs &&
+              Object.values(metadata.pdfURLs).map((url) => (
+                <a style={{ padding: "5px" }} href={url} download>
+                  <Button icon={<VerticalAlignBottomOutlined />} />
+                </a>
+              ))}
           </Item>
           <Item label="CMP Found" span={2}>
             {metadata.CMP}

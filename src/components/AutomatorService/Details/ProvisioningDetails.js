@@ -28,6 +28,9 @@ function ProvisioningDetails({ result, api }) {
           {result.projectId}
         </a>
       </Item>
+      <Item label="Cookies ids" span={2}>
+        {result.cookies?.join(", ")}
+      </Item>
       <Item label="PublishId" span={2}>
         {result.publishId}
       </Item>
