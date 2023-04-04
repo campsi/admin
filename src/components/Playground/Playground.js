@@ -65,8 +65,18 @@ const schema = {
             type: "string",
           },
         },
+        __lang: {
+          title: "Language",
+          type: "object",
+          patternProperties: {
+            "^[a-z]{2}$": { type: "string" },
+          },
+          additionalProperties: {
+            type: "string",
+          },
+        },
       },
-      required: ["$lang"],
+      anyOf: [{ required: ["$lang"] }, { required: ["__lang"] }],
     },
   },
 };
