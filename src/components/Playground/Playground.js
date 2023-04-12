@@ -55,16 +55,6 @@ const schema = {
       isLocalizedString: true,
       type: "object",
       properties: {
-        $lang: {
-          title: "Language",
-          type: "object",
-          patternProperties: {
-            "^[a-z]{2}$": { type: "string" },
-          },
-          additionalProperties: {
-            type: "string",
-          },
-        },
         __lang: {
           title: "Language",
           type: "object",
@@ -76,7 +66,7 @@ const schema = {
           },
         },
       },
-      anyOf: [{ required: ["$lang"] }, { required: ["__lang"] }],
+      required: ["__lang"],
     },
   },
 };
