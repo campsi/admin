@@ -164,7 +164,7 @@ class ScannerDetails extends Component {
       dataIndex: "title",
       key: "title",
       render: (value) => {
-        return value ? value.$lang?.en ?? value : "";
+        return value ? (value.$lang?.en || value.__lang?.en) ?? value : "";
       },
     },
     {
@@ -200,13 +200,18 @@ class ScannerDetails extends Component {
         if (typeof value === "object") {
           return (
             <Space>
-              {Object.keys(value.$lang || {}).map((language) => {
-                return (
-                  <a key={language} href={value.$lang[language]}>
-                    {language}
-                  </a>
-                );
-              })}
+              {Object.keys(value.__lang || value.$lang || {}).map(
+                (language) => {
+                  return (
+                    <a
+                      key={language}
+                      href={value.__lang?.[language] || value.$lang[language]}
+                    >
+                      {language}
+                    </a>
+                  );
+                }
+              )}
             </Space>
           );
         }
