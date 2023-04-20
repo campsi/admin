@@ -213,7 +213,7 @@ class ResourceForm extends Component {
                 {new Date(doc.createdAt).toLocaleString()}
               </Descriptions.Item>
               <Descriptions.Item label="Created By">
-                {doc.createdBy}
+                {`${doc.createdBy}`}
               </Descriptions.Item>
             </Descriptions>
           </Card>

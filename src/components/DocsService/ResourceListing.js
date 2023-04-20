@@ -149,9 +149,7 @@ class ResourceListing extends Component {
       .forEach((key) => {
         let propertyPath = key;
         if (filters[key][0].isLocalizedString) {
-          propertyPath = filters[key][0].__lang
-            ? `${key}.__lang.en`
-            : `${key}.$lang.en`;
+          propertyPath = filters[key][0].__lang ? `${key}.__lang.en` : key;
         }
 
         params.append(
@@ -236,10 +234,8 @@ class ResourceListing extends Component {
         case "boolean":
           return value ? <CheckOutlined /> : <CloseOutlined />;
         case "object":
-          if (value?.__lang || value?.$lang) {
-            return this.renderStringInCell(
-              value.__lang?.[language] || value.$lang?.[language]
-            );
+          if (value?.__lang) {
+            return this.renderStringInCell(value.__lang?.[language]);
           }
           if (value?.url && value?.detectedMimeType) {
             if (value.detectedMimeType.includes("image")) {
