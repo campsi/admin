@@ -75,7 +75,7 @@ class AutomatorService extends Component {
           return (
             <div>
               <Tag>{job.status}</Tag>
-              {job.params?.origin === 'caas-styleguide' && (
+              {job.params?.origin === "caas-styleguide" && (
                 <img
                   src={
                     "https://axeptio.imgix.net/2023/03/de7c1b1f-2f01-45d8-b272-d95ec95a186f.png?auto=format&fit=crop&w=35&h=auto&dpr=1"

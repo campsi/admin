@@ -21,7 +21,7 @@ function DocsService(props) {
               LocalizedString: LocalizedText,
               MatchString: MatchString,
               Asset: Asset,
-              JsonTextArea: JsonTextArea,
+              JsonTextArea: JsonTextArea
             }}
           />
         }

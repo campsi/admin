@@ -162,12 +162,14 @@ class ResourceForm extends Component {
           }
         );
       }
+      if (schema["classNames"]) {
+        uiSchema["classNames"] = schema["classNames"]
+      }
     };
     parseSchema(resource.schema, result);
     result["ui:submitButtonOptions"] = {
       norender: true,
     };
-
     return result;
   }
 
@@ -235,38 +237,7 @@ class ResourceForm extends Component {
                 })}
               </Radio.Group>
             }
-            actions={[
-              <Button
-                danger
-                onClick={() => {
-                  confirm({
-                    title: "Do you Want to delete this document?",
-                    icon: <ExclamationCircleOutlined />,
-                    content: "The operation is definitive and irreversible",
-                    onOk: async () => {
-                      await this.deleteDocument();
-                    },
-                  });
-                }}
-              >
-                Delete Document
-              </Button>,
-              <Button onClick={() => this.fetchData()}>Reload Document</Button>,
-              <Button
-                type={"primary"}
-                onClick={() => {
-                  // @link https://github.com/rjsf-team/react-jsonschema-form/issues/2104
-                  this.formRef.formElement.dispatchEvent(
-                    new CustomEvent("submit", {
-                      cancelable: true,
-                      bubbles: true,
-                    })
-                  );
-                }}
-              >
-                Submit
-              </Button>,
-            ]}
+            actions={getActions.bind(this)(service, resourceName)}
           >
             <Form
               className="rjsf ant-form-vertical"
@@ -310,5 +281,74 @@ ResourceForm.propTypes = {
 ResourceForm.defaultProps = {
   customWidgets: {},
 };
+
+function getActions(service, resourceName) {
+  const actions = [
+    <Button
+      danger
+      onClick={() => {
+        confirm({
+          title: "Do you Want to delete this document?",
+          icon: <ExclamationCircleOutlined />,
+          content: "The operation is definitive and irreversible",
+          onOk: async () => {
+            await this.deleteDocument();
+          },
+        });
+      }}
+    >
+      Delete Document
+    </Button>,
+    <Button onClick={() => this.fetchData()}>Reload Document</Button>,
+    <Button
+      type={"primary"}
+      onClick={() => {
+        // @link https://github.com/rjsf-team/react-jsonschema-form/issues/2104
+        this.formRef.formElement.dispatchEvent(
+          new CustomEvent("submit", {
+            cancelable: true,
+            bubbles: true,
+          })
+        );
+      }}
+    >
+      Submit
+    </Button>,
+  ];
+  if (service.resources[resourceName].schema["ui:approvalDoc"]) {
+    actions.push(
+      <Button
+        danger
+        onClick={() => {
+        }}
+      >
+        Disapprove
+      </Button>
+    );
+    actions.push(
+      <Button
+        danger
+        style={{ borderColor: "green", color: "green" }}
+        onClick={async () => {
+          const { api, service, params } = this.props;
+          const { resourceName, id } = params;
+          await this.setStateAsync({ isFetching: true });
+          const response = await api.client.post(
+            `${service.name}/${resourceName}/${id}/approve`,{
+              resource : this.state.doc.data
+            }
+          );
+          this.setState({
+            doc: response.data,
+            isFetching: false,
+          });
+        }}
+      >
+        Approve
+      </Button>
+    );
+  }
+  return actions;
+}
 
 export default withAppContext(withParams(ResourceForm));

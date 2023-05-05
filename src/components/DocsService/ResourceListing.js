@@ -169,7 +169,6 @@ class ResourceListing extends Component {
         }${field}`
       );
     }
-
     const response = await api.client.get(
       `/${service.name}/${resourceName}?${params.toString()}`
     );
