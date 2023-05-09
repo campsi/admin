@@ -163,7 +163,7 @@ class ResourceForm extends Component {
         );
       }
       if (schema["classNames"]) {
-        uiSchema["classNames"] = schema["classNames"]
+        uiSchema["classNames"] = schema["classNames"];
       }
     };
     parseSchema(resource.schema, result);
@@ -317,11 +317,7 @@ function getActions(service, resourceName) {
   ];
   if (service.resources[resourceName].schema["ui:approvalDoc"]) {
     actions.push(
-      <Button
-        danger
-        onClick={() => {
-        }}
-      >
+      <Button danger onClick={() => {}}>
         Disapprove
       </Button>
     );
@@ -334,8 +330,9 @@ function getActions(service, resourceName) {
           const { resourceName, id } = params;
           await this.setStateAsync({ isFetching: true });
           const response = await api.client.post(
-            `${service.name}/${resourceName}/${id}/approve`,{
-              resource : this.state.doc.data
+            `${service.name}/${resourceName}/${id}/approve`,
+            {
+              resource: this.state.doc.data,
             }
           );
           this.setState({
