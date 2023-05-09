@@ -55,7 +55,7 @@ const schema = {
       isLocalizedString: true,
       type: "object",
       properties: {
-        $lang: {
+        __lang: {
           title: "Language",
           type: "object",
           patternProperties: {
@@ -66,7 +66,7 @@ const schema = {
           },
         },
       },
-      required: ["$lang"],
+      required: ["__lang"],
     },
   },
 };

@@ -9,7 +9,7 @@ export function cleanLocalizedValue(value) {
   }
 
   if (typeof value === "object" && value !== null) {
-    if (value.$lang && Object.keys(value.$lang).length === 0) {
+    if (value.__lang && Object.keys(value.__lang).length === 0) {
       return undefined;
     }
     const result = {};
@@ -27,7 +27,7 @@ export function cleanLocalizedValue(value) {
 
 export default function LocalizedText({ formData, schema, name, onChange }) {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
-  const value = formData?.$lang || { [selectedLanguage]: "" };
+  const value = formData?.__lang || { [selectedLanguage]: "" };
   const fieldValue = value[selectedLanguage];
   const InputComponent = schema["ui:multiline"] ? TextArea : Input;
   const [selectSpan, inputSpan] = schema["ui:multiline"] ? [24, 24] : [8, 16];
@@ -62,7 +62,7 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
             rows={6}
             onChange={(event) => {
               const newValue = {
-                $lang: sanitizeValue({
+                __lang: sanitizeValue({
                   ...value,
                   [selectedLanguage]: event.target.value,
                 }),
