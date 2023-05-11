@@ -1,25 +1,13 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { withAppContext } from "../../App";
-import withParams from "../../utils/withParams";
-import Form from "@rjsf/antd";
-import {
-  Button,
-  Card,
-  Descriptions,
-  Layout,
-  notification,
-  Radio,
-  Space,
-  Table,
-  Typography,
-  Modal,
-  Empty,
-} from "antd";
-import { generateRelationField } from "../RelationField/RelationField";
-import { cleanLocalizedValue } from "../LocalizedText/LocalizedText";
-import { Navigate } from "react-router-dom";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { withAppContext } from '../../App';
+import withParams from '../../utils/withParams';
+import Form from '@rjsf/antd';
+import { Button, Card, Descriptions, Empty, Layout, Modal, notification, Radio, Space, Table, Typography } from 'antd';
+import { generateRelationField } from '../RelationField/RelationField';
+import { cleanLocalizedValue } from '../LocalizedText/LocalizedText';
+import { Navigate } from 'react-router-dom';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { confirm } = Modal;
 const { Title } = Typography;
@@ -283,7 +271,7 @@ ResourceForm.defaultProps = {
 };
 
 function getActions(service, resourceName) {
-  const actions = [
+  return [
     <Button
       danger
       onClick={() => {
@@ -314,15 +302,11 @@ function getActions(service, resourceName) {
     >
       Submit
     </Button>,
-  ];
-  if (service.resources[resourceName].schema["ui:approvalDoc"]) {
-    actions.push(
-      <Button danger onClick={() => {}}>
+    ...(service.resources[resourceName].schema["ui:approvalDoc"] ? [
+      <Button danger onClick={() => {
+      }}>
         Disapprove
-      </Button>
-    );
-    actions.push(
-      <Button
+      </Button>, <Button
         danger
         style={{ borderColor: "green", color: "green" }}
         onClick={async () => {
@@ -342,10 +326,8 @@ function getActions(service, resourceName) {
         }}
       >
         Approve
-      </Button>
-    );
-  }
-  return actions;
+      </Button>] : [])
+  ];
 }
 
 export default withAppContext(withParams(ResourceForm));
