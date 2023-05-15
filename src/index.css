@@ -7,6 +7,15 @@
   margin-top: 30px;
 }
 
+.bg-blue {
+  background: #dde7fa;
+  border: 2px solid #a2c6ff;
+  border-radius: 4px;
+}
+.bg-blue .ant-form-item-extra {
+  display: none;
+}
+
 .rjsf .ant-form-item-with-help .ant-form-item-explain {
   min-height: auto;
 }
