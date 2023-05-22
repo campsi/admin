@@ -127,13 +127,15 @@ function AutomatorJobForm({ onFinish, api }) {
             <Form.Item
               name={["actions", "scanner", "maxTabs"]}
               label="Max Tabs"
+              help="Max 25"
               initialValue={4}
             >
-              <InputNumber min={1} max={20} />
+              <InputNumber min={1} max={25} />
             </Form.Item>
             <Form.Item
               name={["actions", "scanner", "maxPages"]}
               label="Max Pages"
+              help="We recommend to use 400 pages max (with 4 tabs and test-CMP activated)"
               initialValue={10}
             >
               <InputNumber min={0} max={1000} />
