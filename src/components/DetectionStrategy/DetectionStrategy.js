@@ -3,27 +3,41 @@ import { useState } from "react";
 import MatchString from "../MatchString/MatchString";
 const { Option } = Select;
 
+const options = {
+  cookie: {
+    props: {
+      name: "Cookie Name",
+      domain: "Cookie Domain",
+    },
+    default: "name",
+  },
+  resource: {
+    props: {
+      pathname: "Pathname",
+      href: "Href",
+      host: "Host",
+    },
+    default: "host",
+  },
+  identifier: {
+    props: {
+      value: "Identifier value",
+      system: "System",
+    },
+    default: "value",
+  },
+};
+
 /**
  * @param {"cookies"|"resources"} type
  * @param {Object} formData
  * @returns {React.ReactNode[]}
  */
 function getOptions(type, formData) {
-  const options = {
-    cookie: {
-      name: "Cookie Name",
-      domain: "Cookie Domain",
-    },
-    resource: {
-      pathname: "Pathname",
-      href: "Href",
-      host: "Host",
-    },
-  };
-  return Object.keys(options[type]).map((name) => {
+  return Object.keys(options[type].props).map((name) => {
     return (
       <Option value={name} key={`${type}_${name}`}>
-        {options[type][name]}
+        {options[type].props[name]}
         {formData[name] ? "*" : ""}
       </Option>
     );
@@ -33,9 +47,9 @@ function getOptions(type, formData) {
 export default function DetectionStrategy(props) {
   const { onChange, formData = {} } = props;
   const { type = "cookie" } = formData;
-  let defaultPart = type === "cookie" ? "domain" : "host";
+  let defaultPart = options[type].default;
   const [part, setPart] = useState(
-    Object.keys(formData).filter((k) => k !== "type")[0] || defaultPart
+    Object.keys(formData).filter((k) => k !== "type")[0]
   );
 
   const setType = (type) => {
@@ -59,8 +73,9 @@ export default function DetectionStrategy(props) {
         <Select value={type} onChange={setType}>
           <Option value="cookie">Cookie</Option>
           <Option value="resource">Resource</Option>
+          <Option value="identifier">Identifier</Option>
         </Select>
-        <Select value={part} onChange={setPart}>
+        <Select defaultValue={defaultPart} value={part} onChange={setPart} key={`select-${type}`}>
           {getOptions(type, formData)}
         </Select>
         <MatchString onChange={setMatch} formData={formData[part]} />
