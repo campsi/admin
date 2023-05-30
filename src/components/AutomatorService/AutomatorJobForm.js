@@ -102,6 +102,14 @@ function AutomatorJobForm({ onFinish, api }) {
           <Input />
         </Form.Item>
         <Form.Item
+          name={["params", "origin"]}
+          initialValue={"campsi-admin"}
+          label="Origin"
+          hidden={true}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
           name={["projectId"]}
           label="Project ID"
           required={isNecessaryToUseProjectId()}
@@ -109,17 +117,6 @@ function AutomatorJobForm({ onFinish, api }) {
           help="Fill this field to use an existing project or leave blank if you want to creat a new project with provisioning"
         >
           <Input />
-        </Form.Item>
-        <Form.Item
-          label="Priority"
-          name={["params", "priority"]}
-          initialValue="normal"
-        >
-          <Select>
-            <Select.Option value="low">Low</Select.Option>
-            <Select.Option value="normal">Normal</Select.Option>
-            <Select.Option value="high">High</Select.Option>
-          </Select>
         </Form.Item>
         <Tabs type="card">
           <TabPane tab={getActionTab("scanner")} key="scanner">
