@@ -102,6 +102,14 @@ function AutomatorJobForm({ onFinish, api }) {
           <Input />
         </Form.Item>
         <Form.Item
+          name={["params", "origin"]}
+          initialValue={"campsi-admin"}
+          label="Origin"
+          hidden={true}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
           name={["projectId"]}
           label="Project ID"
           required={isNecessaryToUseProjectId()}
