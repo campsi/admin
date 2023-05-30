@@ -110,17 +110,6 @@ function AutomatorJobForm({ onFinish, api }) {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          label="Priority"
-          name={["params", "priority"]}
-          initialValue="normal"
-        >
-          <Select>
-            <Select.Option value="low">Low</Select.Option>
-            <Select.Option value="normal">Normal</Select.Option>
-            <Select.Option value="high">High</Select.Option>
-          </Select>
-        </Form.Item>
         <Tabs type="card">
           <TabPane tab={getActionTab("scanner")} key="scanner">
             {approvalOption("scanner")}
