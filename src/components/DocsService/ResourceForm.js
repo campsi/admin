@@ -303,7 +303,20 @@ function getActions(service, resourceName) {
       Submit
     </Button>,
     ...(service.resources[resourceName].schema["ui:approvalDoc"] ? [
-      <Button danger onClick={() => {
+      <Button danger onClick={async () => {
+        const { api, service, params } = this.props;
+        const { resourceName, id } = params;
+        await this.setStateAsync({ isFetching: true });
+        await api.client.post(
+          `${service.name}/${resourceName}/${id}/disapprove`,
+          {
+            resource: {...this.state.doc.data, _id: this.state.doc.id},
+          }
+        );
+        this.setState({
+          doc: {},
+          isFetching: false,
+        });
       }}>
         Disapprove
       </Button>, <Button
@@ -313,14 +326,14 @@ function getActions(service, resourceName) {
           const { api, service, params } = this.props;
           const { resourceName, id } = params;
           await this.setStateAsync({ isFetching: true });
-          const response = await api.client.post(
+          await api.client.post(
             `${service.name}/${resourceName}/${id}/approve`,
             {
-              resource: this.state.doc.data,
+              resource: {...this.state.doc.data, _id: this.state.doc.id},
             }
           );
           this.setState({
-            doc: response.data,
+            doc: {},
             isFetching: false,
           });
         }}
