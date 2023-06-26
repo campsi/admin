@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { object } from 'prop-types';
 import { withAppContext } from '../../App';
 import withParams from '../../utils/withParams';
 import Form from '@rjsf/antd';
@@ -153,6 +153,11 @@ class ResourceForm extends Component {
       if (schema["classNames"]) {
         uiSchema["classNames"] = schema["classNames"];
       }
+      Object.keys(schema).forEach((key) => {
+        if (key.startsWith("ui:") &&  !uiSchema[key]) {
+          uiSchema[key] = schema[key];
+        }
+      });
     };
     parseSchema(resource.schema, result);
     result["ui:submitButtonOptions"] = {
