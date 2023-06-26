@@ -153,6 +153,11 @@ class ResourceForm extends Component {
       if (schema["classNames"]) {
         uiSchema["classNames"] = schema["classNames"];
       }
+      Object.keys(schema).forEach((key) => {
+        if (key.startsWith("ui:") && !uiSchema[key]) {
+          uiSchema[key] = schema[key];
+        }
+      });
     };
     parseSchema(resource.schema, result);
     result["ui:submitButtonOptions"] = {
