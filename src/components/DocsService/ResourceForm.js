@@ -309,18 +309,23 @@ function getActions(service, resourceName) {
     </Button>,
     ...(service.resources[resourceName].schema["ui:approvalDoc"] ? [
       <Button danger onClick={async () => {
-        const { api, service, params } = this.props;
-        const { resourceName, id } = params;
-        await this.setStateAsync({ isFetching: true });
-        await api.client.post(
-          `${service.name}/${resourceName}/${id}/disapprove`,
-          {
-            resource: {...this.state.doc.data, _id: this.state.doc.id},
-          }
-        );
-        this.setState({
-          doc: {},
-          isFetching: false,
+        confirm({
+          title: "Do you want to disapprove this document?",
+          icon: <ExclamationCircleOutlined />,
+          content: service.resources[resourceName].schema["ui:approvalDoc"].disapprovalDescription,
+          onOk: async () => {
+            const { api, service, params } = this.props;
+            const { resourceName, id } = params;
+            await api.client.post(
+              `${service.name}/${resourceName}/${id}/disapprove`,
+              {
+                resource: {...this.state.doc.data, _id: this.state.doc.id},
+              }
+            );
+            this.setState({
+              redirectTo: `/services/${service.name}/resources/${resourceName}/`,
+            });
+          },
         });
       }}>
         Disapprove
@@ -328,18 +333,23 @@ function getActions(service, resourceName) {
         danger
         style={{ borderColor: "green", color: "green" }}
         onClick={async () => {
-          const { api, service, params } = this.props;
-          const { resourceName, id } = params;
-          await this.setStateAsync({ isFetching: true });
-          await api.client.post(
-            `${service.name}/${resourceName}/${id}/approve`,
-            {
-              resource: {...this.state.doc.data, _id: this.state.doc.id},
-            }
-          );
-          this.setState({
-            doc: {},
-            isFetching: false,
+          confirm({
+            title: "Do you want to approve this document?",
+            icon: <ExclamationCircleOutlined />,
+            content: service.resources[resourceName].schema["ui:approvalDoc"].approvalDescription,
+            onOk: async () => {
+              const { api, service, params } = this.props;
+              const { resourceName, id } = params;
+              await api.client.post(
+                `${service.name}/${resourceName}/${id}/approve`,
+                {
+                  resource: {...this.formRef.state.formData, _id: this.state.doc.id},
+                }
+              );
+              this.setState({
+                redirectTo: `/services/${service.name}/resources/${resourceName}/`,
+              });
+            },
           });
         }}
       >
