@@ -22,7 +22,7 @@ const actionsMap = {
   },
   scoring: {
     name: "scoring",
-    title: "coring",
+    title: "Scoring",
   },
   emailing: {
     name: "emailing",
