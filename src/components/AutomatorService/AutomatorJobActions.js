@@ -20,6 +20,10 @@ const actionsMap = {
     name: "gtm",
     title: "GTM",
   },
+  scoring: {
+    name: "scoring",
+    title: "coring",
+  },
   emailing: {
     name: "emailing",
     title: "Emailing",
