@@ -376,7 +376,7 @@ function AutomatorJobForm({ onFinish, api }) {
           <TabPane tab={getActionTab("scoring")} key="scoring">
             <CenteredDiv>
               <Alert
-                message="The domain entry will be used for S3 storage"
+                message="This will produce an usable summary to compute a score, available on https://scoring.taaste.io/<domain>.json"
                 type="warning"
                 showIcon
               />
