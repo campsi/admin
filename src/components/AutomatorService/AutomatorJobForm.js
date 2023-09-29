@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Card,
   Checkbox,
@@ -17,6 +18,13 @@ import userAgents from "./userAgents";
 import EmailingForm from "./Forms/EmailingForm";
 import copyText from "../../utils/copyText";
 import { formatJobValues } from "./AutomatorService";
+import styled from "styled-components";
+
+const CenteredDiv = styled.div`
+  justify-content: center;
+  display: flex;
+  margin: 30px;
+`;
 
 const { TabPane } = Tabs;
 
@@ -364,6 +372,31 @@ function AutomatorJobForm({ onFinish, api }) {
                 </Space>
               )}
             </Form.List>
+          </TabPane>
+          <TabPane tab={getActionTab("scoring")} key="scoring">
+            <CenteredDiv>
+              <Alert
+                message="This will produce an usable summary to compute a score, available on https://scoring.taaste.io/<domain>.json"
+                type="warning"
+                showIcon
+              />
+            </CenteredDiv>
+            <Empty
+              image="https://taste.axept.io/taste.svg"
+              imageStyle={{ height: 150 }}
+              description={
+                <span>
+                  More about{" "}
+                  <a
+                    target={"_blank"}
+                    href="https://www.notion.so/axeptio/Taste-5a35649c090e403385137bd42008114e#0224e861e2a142df92c61fac145a03ca"
+                    rel="noreferrer"
+                  >
+                    this feature
+                  </a>
+                </span>
+              }
+            ></Empty>
           </TabPane>
           <TabPane tab={getActionTab("gtm")} key="gtm">
             {approvalOption("gtm")}
