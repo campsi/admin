@@ -121,7 +121,7 @@ class ResourceForm extends Component {
 
   getUISchema() {
     const { service, params, customWidgets } = this.props;
-    const { resourceName } = params;
+    const { resourceName, id } = params;
     const resource = service.resources[resourceName];
     const result = {};
     const parseSchema = (schema, uiSchema) => {
@@ -155,7 +155,11 @@ class ResourceForm extends Component {
       }
       Object.keys(schema).forEach((key) => {
         if (key.startsWith("ui:") && !uiSchema[key]) {
-          uiSchema[key] = schema[key];
+          if (schema["ui:readonly"]) {
+            uiSchema["ui:readonly"] = id !== 'new' && schema["ui:readonly"];
+          } else {
+            uiSchema[key] = schema[key];
+          }
         }
       });
     };
