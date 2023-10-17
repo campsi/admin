@@ -1,6 +1,6 @@
-import PropTypes from "prop-types";
-import { Input, Select, Space } from "antd";
-import { useState } from "react";
+import PropTypes from 'prop-types';
+import { Input, Select, Space } from 'antd';
+import { useState } from 'react';
 
 function cleanMatchString(value) {
   const cleaned = Object.keys(value).reduce((cleanedValue, key) => {
@@ -17,12 +17,9 @@ function cleanMatchString(value) {
 
 export default function MatchString(props) {
   const value = props.formData || {};
-  const [selectedOption, setSelectedOption] = useState(
-    Object.keys(value)[0] || "equals"
-  );
+  const [selectedOption, setSelectedOption] = useState(Object.keys(value)[0] || 'equals');
 
-  const properties =
-    !props.schema?.properties || MatchString.defaultProps.schema.properties;
+  const properties = !props.schema?.properties || MatchString.defaultProps.schema.properties;
 
   /**
    * If a value exists for the given option, we append a "*" character
@@ -30,13 +27,13 @@ export default function MatchString(props) {
    * @returns {string}
    */
   function getOptionLabel(name) {
-    return `${properties[name].title}${value[name] ? " *" : ""}`;
+    return `${properties[name].title}${value[name] ? ' *' : ''}`;
   }
 
   return (
     <Space direction="horizontal">
       <Select
-        options={Object.keys(properties).map((name) => {
+        options={Object.keys(properties).map(name => {
           return { value: name, label: getOptionLabel(name) };
         })}
         value={selectedOption}
@@ -45,11 +42,11 @@ export default function MatchString(props) {
       <Input
         type="text"
         value={value[selectedOption]}
-        onChange={(e) => {
+        onChange={e => {
           props.onChange(
             cleanMatchString({
               ...value,
-              [selectedOption]: e.target.value,
+              [selectedOption]: e.target.value
             })
           );
         }}
@@ -63,57 +60,57 @@ MatchString.propTypes = {
   schema: PropTypes.shape({
     properties: PropTypes.objectOf(
       PropTypes.shape({
-        title: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired
       })
-    ),
+    )
   }),
-  formData: PropTypes.object,
+  formData: PropTypes.object
 };
 
 MatchString.defaultProps = {
   schema: {
-    title: "Match string",
+    title: 'Match string',
     isMatchString: true,
-    type: "object",
+    type: 'object',
     properties: {
       equals: {
-        type: "string",
-        title: "Equals",
+        type: 'string',
+        title: 'Equals'
       },
       startsWith: {
-        type: "string",
-        title: "Starts with",
+        type: 'string',
+        title: 'Starts with'
       },
       endsWith: {
-        type: "string",
-        title: "Ends with",
+        type: 'string',
+        title: 'Ends with'
       },
       contains: {
-        type: "string",
-        title: "Contains",
+        type: 'string',
+        title: 'Contains'
       },
       regex: {
-        type: "string",
-        title: "Match",
-      },
+        type: 'string',
+        title: 'Match'
+      }
     },
     additionalProperties: false,
     anyOf: [
       {
-        required: ["equals"],
+        required: ['equals']
       },
       {
-        required: ["startsWith"],
+        required: ['startsWith']
       },
       {
-        required: ["endsWith"],
+        required: ['endsWith']
       },
       {
-        required: ["contains"],
+        required: ['contains']
       },
       {
-        required: ["regex"],
-      },
-    ],
-  },
+        required: ['regex']
+      }
+    ]
+  }
 };

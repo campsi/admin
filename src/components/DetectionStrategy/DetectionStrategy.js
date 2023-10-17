@@ -1,31 +1,31 @@
-import { Select, Space } from "antd";
-import { useState } from "react";
-import MatchString from "../MatchString/MatchString";
+import { Select, Space } from 'antd';
+import { useState } from 'react';
+import MatchString from '../MatchString/MatchString';
 const { Option } = Select;
 
 const options = {
   cookie: {
     props: {
-      name: "Cookie Name",
-      domain: "Cookie Domain",
+      name: 'Cookie Name',
+      domain: 'Cookie Domain'
     },
-    default: "name",
+    default: 'name'
   },
   resource: {
     props: {
-      pathname: "Pathname",
-      href: "Href",
-      host: "Host",
+      pathname: 'Pathname',
+      href: 'Href',
+      host: 'Host'
     },
-    default: "host",
+    default: 'host'
   },
   identifier: {
     props: {
-      value: "Identifier value",
-      system: "System",
+      value: 'Identifier value',
+      system: 'System'
     },
-    default: "value",
-  },
+    default: 'value'
+  }
 };
 
 /**
@@ -34,11 +34,11 @@ const options = {
  * @returns {React.ReactNode[]}
  */
 function getOptions(type, formData) {
-  return Object.keys(options[type].props).map((name) => {
+  return Object.keys(options[type].props).map(name => {
     return (
       <Option value={name} key={`${type}_${name}`}>
         {options[type].props[name]}
-        {formData[name] ? "*" : ""}
+        {formData[name] ? '*' : ''}
       </Option>
     );
   });
@@ -46,30 +46,28 @@ function getOptions(type, formData) {
 
 export default function DetectionStrategy(props) {
   const { onChange, formData = {} } = props;
-  const { type = "cookie" } = formData;
+  const { type = 'cookie' } = formData;
   let defaultPart = options[type].default;
-  const [part, setPart] = useState(
-    Object.keys(formData).filter((k) => k !== "type")[0]
-  );
+  const [part, setPart] = useState(Object.keys(formData).filter(k => k !== 'type')[0]);
 
-  const setType = (type) => {
+  const setType = type => {
     onChange({
       ...formData,
-      type,
+      type
     });
   };
 
-  const setMatch = (match) => {
+  const setMatch = match => {
     onChange({
       ...formData,
       [part]: match,
-      type,
+      type
     });
   };
 
   return (
     <div className="detection-strategy">
-      <Space direction={"horizontal"}>
+      <Space direction={'horizontal'}>
         <Select value={type} onChange={setType}>
           <Option value="cookie">Cookie</Option>
           <Option value="resource">Resource</Option>

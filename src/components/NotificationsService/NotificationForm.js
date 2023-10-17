@@ -1,43 +1,34 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { withAppContext } from "../../App";
-import withParams from "../../utils/withParams";
-import Form from "@rjsf/antd";
-import {
-  Button,
-  Card,
-  Descriptions,
-  Layout,
-  notification,
-  Space,
-  Typography,
-  Modal,
-} from "antd";
-import { generateRelationField } from "../RelationField/RelationField";
-import { cleanLocalizedValue } from "../LocalizedText/LocalizedText";
-import { Navigate } from "react-router-dom";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { withAppContext } from '../../App';
+import withParams from '../../utils/withParams';
+import Form from '@rjsf/antd';
+import { Button, Card, Descriptions, Layout, notification, Space, Typography, Modal } from 'antd';
+import { generateRelationField } from '../RelationField/RelationField';
+import { cleanLocalizedValue } from '../LocalizedText/LocalizedText';
+import { Navigate } from 'react-router-dom';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { confirm } = Modal;
 const { Title } = Typography;
 class NotificationForm extends Component {
   state = {
-    mode: "edit",
+    mode: 'edit'
   };
 
   formRef = React.createRef();
 
   setStateAsync(state) {
-    return new Promise((resolve) => this.setState(state, () => resolve()));
+    return new Promise(resolve => this.setState(state, () => resolve()));
   }
 
   async componentDidMount() {
-    if (this.props.params.id !== "new") {
+    if (this.props.params.id !== 'new') {
       await this.fetchData();
     } else {
       this.setState({
-        mode: "create",
-        notification: {},
+        mode: 'create',
+        notification: {}
       });
     }
   }
@@ -46,24 +37,20 @@ class NotificationForm extends Component {
     const { api, service, params } = this.props;
     const { id } = params;
     await this.setStateAsync({ isFetching: true });
-    const response = await api.client.get(
-      `${service.name}/notifications/${id}`
-    );
+    const response = await api.client.get(`${service.name}/notifications/${id}`);
     this.setState({
       notification: response.data.notification,
-      isFetching: false,
+      isFetching: false
     });
   }
 
   async deleteDocument() {
     const { api, service, params } = this.props;
     const { id } = params;
-    const response = await api.client.delete(
-      `${service.name}/notifications/${id}`
-    );
+    const response = await api.client.delete(`${service.name}/notifications/${id}`);
     if (response.status === 200) {
       this.setState({
-        redirectTo: `/services/${service.name}`,
+        redirectTo: `/services/${service.name}`
       });
     }
   }
@@ -75,24 +62,18 @@ class NotificationForm extends Component {
 
     return new Promise(async (resolve, reject) => {
       try {
-        const method = mode === "create" ? "post" : "put";
-        const url =
-          mode === "create"
-            ? `${service.name}/notifications/`
-            : `${service.name}/notifications/${id}`;
+        const method = mode === 'create' ? 'post' : 'put';
+        const url = mode === 'create' ? `${service.name}/notifications/` : `${service.name}/notifications/${id}`;
 
-        const response = await api.client[method](
-          url,
-          cleanLocalizedValue(newValue)
-        );
-        notification.success({ message: "Document saved" });
-        if (mode === "create") {
+        const response = await api.client[method](url, cleanLocalizedValue(newValue));
+        notification.success({ message: 'Document saved' });
+        if (mode === 'create') {
           return (window.location.href = `/services/${service.name}/${response.data.notification._id}`);
         }
 
         this.setStateAsync(
           {
-            notification: response.data.notification,
+            notification: response.data.notification
           },
           resolve
         );
@@ -108,25 +89,25 @@ class NotificationForm extends Component {
     const resource = service.resources.notifications;
     const result = {};
     const parseSchema = (schema, uiSchema) => {
-      if (customWidgets[schema["ui:field"]]) {
-        uiSchema["ui:field"] = customWidgets[schema["ui:field"]];
-      } else if (customWidgets[schema["ui:widget"]]) {
-        uiSchema["ui:widget"] = customWidgets[schema["ui:widget"]];
-      } else if (schema["ui:relation"]) {
-        uiSchema["ui:field"] = generateRelationField(schema["ui:relation"]);
+      if (customWidgets[schema['ui:field']]) {
+        uiSchema['ui:field'] = customWidgets[schema['ui:field']];
+      } else if (customWidgets[schema['ui:widget']]) {
+        uiSchema['ui:widget'] = customWidgets[schema['ui:widget']];
+      } else if (schema['ui:relation']) {
+        uiSchema['ui:field'] = generateRelationField(schema['ui:relation']);
       } else if (schema.items) {
         uiSchema.items = {};
         parseSchema(schema.items, uiSchema.items);
       } else if (schema.properties) {
-        Object.keys(schema.properties).forEach((propertyName) => {
+        Object.keys(schema.properties).forEach(propertyName => {
           uiSchema[propertyName] = {};
           parseSchema(schema.properties[propertyName], uiSchema[propertyName]);
         });
       }
     };
     parseSchema(resource.schema, result);
-    result["ui:submitButtonOptions"] = {
-      norender: true,
+    result['ui:submitButtonOptions'] = {
+      norender: true
     };
 
     return result;
@@ -158,18 +139,10 @@ class NotificationForm extends Component {
               <Descriptions.Item label="Description" span={2}>
                 {resource.schema.description}
               </Descriptions.Item>
-              <Descriptions.Item label="Resource Path">
-                {"notifications"}
-              </Descriptions.Item>
-              <Descriptions.Item label="Resource Class">
-                {"--"}
-              </Descriptions.Item>
-              <Descriptions.Item label="Created At">
-                {new Date(notification.createdAt).toLocaleString()}
-              </Descriptions.Item>
-              <Descriptions.Item label="Created By">
-                {notification.createdBy || "--"}
-              </Descriptions.Item>
+              <Descriptions.Item label="Resource Path">{'notifications'}</Descriptions.Item>
+              <Descriptions.Item label="Resource Class">{'--'}</Descriptions.Item>
+              <Descriptions.Item label="Created At">{new Date(notification.createdAt).toLocaleString()}</Descriptions.Item>
+              <Descriptions.Item label="Created By">{notification.createdBy || '--'}</Descriptions.Item>
             </Descriptions>
           </Card>
           <Card
@@ -179,31 +152,31 @@ class NotificationForm extends Component {
                 danger
                 onClick={() => {
                   confirm({
-                    title: "Do you Want to delete this document?",
+                    title: 'Do you Want to delete this document?',
                     icon: <ExclamationCircleOutlined />,
-                    content: "The operation is definitive and irreversible",
+                    content: 'The operation is definitive and irreversible',
                     onOk: async () => {
                       await this.deleteDocument();
-                    },
+                    }
                   });
                 }}
               >
                 Delete Document
               </Button>,
               <Button
-                type={"primary"}
+                type={'primary'}
                 onClick={() => {
                   // @link https://github.com/rjsf-team/react-jsonschema-form/issues/2104
                   this.formRef.formElement.dispatchEvent(
-                    new CustomEvent("submit", {
+                    new CustomEvent('submit', {
                       cancelable: true,
-                      bubbles: true,
+                      bubbles: true
                     })
                   );
                 }}
               >
                 Submit
-              </Button>,
+              </Button>
             ]}
           >
             <Form
@@ -213,10 +186,10 @@ class NotificationForm extends Component {
               formContext={{
                 id: notification._id,
                 createdAt: notification.createdAt,
-                createdBy: notification.createdBy,
+                createdBy: notification.createdBy
               }}
               uiSchema={this.getUISchema()}
-              ref={(ref) => {
+              ref={ref => {
                 this.formRef = ref;
               }}
               liveValidate
@@ -232,12 +205,12 @@ class NotificationForm extends Component {
 NotificationForm.propTypes = {
   service: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    class: PropTypes.string.isRequired,
-  }).isRequired,
+    class: PropTypes.string.isRequired
+  }).isRequired
 };
 
 NotificationForm.defaultProps = {
-  customWidgets: {},
+  customWidgets: {}
 };
 
 export default withAppContext(withParams(NotificationForm));

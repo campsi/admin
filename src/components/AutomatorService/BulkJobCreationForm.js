@@ -1,17 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  Form,
-  List,
-  Upload,
-  Input,
-  Progress,
-  Badge,
-  Select,
-} from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import Papa from "papaparse";
-import { generateRelationField } from "../RelationField/RelationField";
+import React, { useEffect, useMemo, useState } from 'react';
+import { Button, Form, List, Upload, Input, Progress, Badge, Select } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import Papa from 'papaparse';
+import { generateRelationField } from '../RelationField/RelationField';
 
 /**
  * Cooldown duration before creating subsequent jobs
@@ -20,7 +11,7 @@ import { generateRelationField } from "../RelationField/RelationField";
 const COOLDOWN = 500;
 
 async function sleep(timeout) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     setTimeout(resolve, timeout);
   });
 }
@@ -41,16 +32,13 @@ export default function BulkJobCreationForm({ api, services, form }) {
      * @returns {Promise<void>}
      */
     async function createJob({ task, index }) {
-      let status = "default";
+      let status = 'default';
       let error;
       try {
-        await api.client.post(
-          `/automator/jobs/${task.payload.jobTemplateId}`,
-          task.payload
-        );
-        status = "success";
+        await api.client.post(`/automator/jobs/${task.payload.jobTemplateId}`, task.payload);
+        status = 'success';
       } catch (err) {
-        status = "error";
+        status = 'error';
         error = err;
       }
       await sleep(COOLDOWN);
@@ -60,9 +48,7 @@ export default function BulkJobCreationForm({ api, services, form }) {
       }
       setTasks(
         tasks.map((taskItem, taskIndex) => {
-          return taskIndex === index
-            ? { ...taskItem, status, error }
-            : taskItem;
+          return taskIndex === index ? { ...taskItem, status, error } : taskItem;
         })
       );
     }
@@ -71,12 +57,12 @@ export default function BulkJobCreationForm({ api, services, form }) {
     // Get the first pending task from the tasks array
     // and call the createJob
     const pending = tasks.reduce((prev, task, index) => {
-      return task.status === "default" && !prev ? { task, index } : prev;
+      return task.status === 'default' && !prev ? { task, index } : prev;
     }, null);
 
     if (pending) {
-      createJob(pending).then((result) => {
-        console.info("Created job", { result });
+      createJob(pending).then(result => {
+        console.info('Created job', { result });
       });
     }
   }, [tasksState, tasks, api.client]);
@@ -88,9 +74,9 @@ export default function BulkJobCreationForm({ api, services, form }) {
   const JobTemplateField = useMemo(
     () =>
       generateRelationField({
-        resource: "automator-job-template",
-        service: "templates",
-        labelIndex: "title",
+        resource: 'automator-job-template',
+        service: 'templates',
+        labelIndex: 'title'
       }),
     []
   );
@@ -104,20 +90,17 @@ export default function BulkJobCreationForm({ api, services, form }) {
    */
   function createTask(row, tags) {
     return {
-      status: "default",
+      status: 'default',
       payload: {
         jobTemplateId: jobTemplate.id,
         tags,
-        variables: jobTemplate.data.variables.reduce(
-          (variablesMap, variable, index) => {
-            return {
-              ...variablesMap,
-              [variable.technicalName]: row[index],
-            };
-          },
-          {}
-        ),
-      },
+        variables: jobTemplate.data.variables.reduce((variablesMap, variable, index) => {
+          return {
+            ...variablesMap,
+            [variable.technicalName]: row[index]
+          };
+        }, {})
+      }
     };
   }
 
@@ -126,17 +109,14 @@ export default function BulkJobCreationForm({ api, services, form }) {
       return false;
     }
 
-    const csv = formData.csvFile?.file
-      ? formData.csvFile.file
-      : formData.csvString;
+    const csv = formData.csvFile?.file ? formData.csvFile.file : formData.csvString;
 
     if (!csv) {
       return false;
     }
 
     Papa.parse(csv, {
-      complete: (result) =>
-        setTasks(result.data.map((row) => createTask(row, formData.tags))),
+      complete: result => setTasks(result.data.map(row => createTask(row, formData.tags)))
     });
   }
 
@@ -144,21 +124,13 @@ export default function BulkJobCreationForm({ api, services, form }) {
     return (
       <div>
         <List
-          header={
-            <Progress
-              percent={
-                (tasks.filter((task) => task.status === "success").length /
-                  tasks.length) *
-                100
-              }
-            />
-          }
+          header={<Progress percent={(tasks.filter(task => task.status === 'success').length / tasks.length) * 100} />}
           bordered
           size="small"
           dataSource={tasks}
           style={{ marginBottom: 16 }}
           pagination={{
-            pageSize: 10,
+            pageSize: 10
           }}
           renderItem={(task, index) => (
             <List.Item>
@@ -166,9 +138,9 @@ export default function BulkJobCreationForm({ api, services, form }) {
               <Input.TextArea
                 rows={2}
                 style={{
-                  width: "100%",
+                  width: '100%',
                   fontSize: 12,
-                  fontFamily: "monospace",
+                  fontFamily: 'monospace'
                 }}
                 value={JSON.stringify(task.payload.variables)}
               />
@@ -192,12 +164,12 @@ export default function BulkJobCreationForm({ api, services, form }) {
           onChange={(id, jobTemplate) => setJobTemplate(jobTemplate)}
           services={services}
           schema={{
-            title: "Job template",
+            title: 'Job template'
           }}
           formItemProps={{
-            rules: [{ required: true, message: "A job template is required" }],
+            rules: [{ required: true, message: 'A job template is required' }],
             required: true,
-            validateStatus: jobTemplate.id ? "success" : "error",
+            validateStatus: jobTemplate.id ? 'success' : 'error'
           }}
         />
         {jobTemplate.data && (
@@ -205,11 +177,9 @@ export default function BulkJobCreationForm({ api, services, form }) {
             style={{ marginBottom: 16 }}
             size="small"
             bordered
-            header={
-              <b>The selected job template requires the following variables</b>
-            }
+            header={<b>The selected job template requires the following variables</b>}
             dataSource={jobTemplate.data.variables}
-            renderItem={(variable) => (
+            renderItem={variable => (
               <List.Item>
                 <label>{variable.title}</label>&nbsp;
                 <code>{variable.technicalName}</code>
@@ -218,7 +188,7 @@ export default function BulkJobCreationForm({ api, services, form }) {
           />
         )}
         <Form.Item label="Data" name="csvString">
-          <Input.TextArea style={{ fontFamily: "monospace" }} />
+          <Input.TextArea style={{ fontFamily: 'monospace' }} />
         </Form.Item>
         <Form.Item label="CSV" name="csvFile">
           <Upload

@@ -1,42 +1,42 @@
 const actionsMap = {
   scanner: {
-    name: "scanner",
-    title: "Scanner",
-    description: "",
+    name: 'scanner',
+    title: 'Scanner',
+    description: ''
   },
   stylesheet: {
-    name: "stylesheet",
-    title: "Stylesheet extractor",
+    name: 'stylesheet',
+    title: 'Stylesheet extractor'
   },
   provisioning: {
-    name: "provisioning",
-    title: "Project provisioning",
+    name: 'provisioning',
+    title: 'Project provisioning'
   },
   showcase: {
-    name: "showcase",
-    title: "Showcase",
+    name: 'showcase',
+    title: 'Showcase'
   },
   gtm: {
-    name: "gtm",
-    title: "GTM",
+    name: 'gtm',
+    title: 'GTM'
   },
   scoring: {
-    name: "scoring",
-    title: "Scoring",
+    name: 'scoring',
+    title: 'Scoring'
   },
   emailing: {
-    name: "emailing",
-    title: "Emailing",
-  },
+    name: 'emailing',
+    title: 'Emailing'
+  }
 };
 
 export const actionNames = {
-  scanner: "scanner",
-  stylesheet: "stylesheet",
-  provisioning: "provisioning",
-  showcase: "showcase",
-  gtm: "gtm",
-  emailing: "emailing",
+  scanner: 'scanner',
+  stylesheet: 'stylesheet',
+  provisioning: 'provisioning',
+  showcase: 'showcase',
+  gtm: 'gtm',
+  emailing: 'emailing'
 };
 
 export default actionsMap;

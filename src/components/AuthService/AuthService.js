@@ -1,23 +1,14 @@
-import PropTypes from "prop-types";
-import { Component } from "react";
-import { withAppContext } from "../../App";
-import {
-  Layout,
-  Form,
-  Typography,
-  Button,
-  Input,
-  Card,
-  Space,
-  Tag,
-} from "antd";
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { withAppContext } from '../../App';
+import { Layout, Form, Typography, Button, Input, Card, Space, Tag } from 'antd';
 const { Title } = Typography;
 
 class AuthService extends Component {
   state = {
     me: null,
     providers: [],
-    hasLocalProvider: false,
+    hasLocalProvider: false
   };
 
   async componentDidMount() {
@@ -38,8 +29,7 @@ class AuthService extends Component {
     const response = await api.client.get(`${service.name}/providers`);
     this.setState({
       providers: response.data,
-      hasLocalProvider:
-        response.data.map((p) => p.name).indexOf("local") !== -1,
+      hasLocalProvider: response.data.map(p => p.name).indexOf('local') !== -1
     });
   }
 
@@ -49,7 +39,7 @@ class AuthService extends Component {
       username: values.email,
       email: values.email,
       password: values.password,
-      mode: "signin",
+      mode: 'signin'
     });
     if (response.data?.token) {
       setAccessToken(response.data.token);
@@ -66,7 +56,7 @@ class AuthService extends Component {
       username: email,
       displayName: email,
       email,
-      password,
+      password
     });
 
     if (response.data?.token) {
@@ -80,19 +70,15 @@ class AuthService extends Component {
     return (
       <Layout.Content className="main-page-content">
         <Title>Auth</Title>
-        <Space direction="vertical" style={{ width: "100%" }}>
+        <Space direction="vertical" style={{ width: '100%' }}>
           <Card title="Me">
             <Form
-              onFinish={async (values) => {
+              onFinish={async values => {
                 setAccessToken(values.accessToken);
                 await this.fetchMe();
               }}
             >
-              <Form.Item
-                label="Access Token"
-                name="accessToken"
-                initialValue={api.accessToken}
-              >
+              <Form.Item label="Access Token" name="accessToken" initialValue={api.accessToken}>
                 <Input />
               </Form.Item>
               <Form.Item>
@@ -103,12 +89,12 @@ class AuthService extends Component {
             </Form>
             {me && (
               <Form.Item>
-                <Tag color={"green"} key={"Connected"}>
-                  {"Connected"}
+                <Tag color={'green'} key={'Connected'}>
+                  {'Connected'}
                 </Tag>
                 <Button
                   type="ghost"
-                  color={"red"}
+                  color={'red'}
                   onClick={async () => {
                     await revokeAccessToken();
                     this.setState({ me: null });
@@ -122,8 +108,8 @@ class AuthService extends Component {
           <Card title="Identify providers">
             <Button.Group>
               {this.state.providers
-                .filter((p) => p.name !== "local")
-                .map((provider) => (
+                .filter(p => p.name !== 'local')
+                .map(provider => (
                   <Button
                     key={provider.name}
                     onClick={() => {
@@ -138,7 +124,7 @@ class AuthService extends Component {
           {this.state.hasLocalProvider && (
             <>
               <Card title="Log in">
-                <Form onFinish={(values) => this.login(values)}>
+                <Form onFinish={values => this.login(values)}>
                   <Form.Item label="Email" name="email">
                     <Input type="email" />
                   </Form.Item>
@@ -153,19 +139,11 @@ class AuthService extends Component {
                 </Form>
               </Card>
               <Card title="Create Account">
-                <Form onFinish={(formData) => this.register(formData)}>
-                  <Form.Item
-                    label="Email"
-                    name="email"
-                    rules={[{ required: true }, { type: "email" }]}
-                  >
+                <Form onFinish={formData => this.register(formData)}>
+                  <Form.Item label="Email" name="email" rules={[{ required: true }, { type: 'email' }]}>
                     <Input type="email" />
                   </Form.Item>
-                  <Form.Item
-                    name="password"
-                    label="Password"
-                    rules={[{ required: true }]}
-                  >
+                  <Form.Item name="password" label="Password" rules={[{ required: true }]}>
                     <Input type="password" />
                   </Form.Item>
                   <Button type="primary" htmlType="submit">
@@ -187,11 +165,11 @@ AuthService.propTypes = {
     class: PropTypes.string.isRequired,
     providers: PropTypes.arrayOf(
       PropTypes.shape({
-        name: PropTypes.string,
+        name: PropTypes.string
       })
-    ),
+    )
   }),
-  ...withAppContext.propTypes,
+  ...withAppContext.propTypes
 };
 
 export default withAppContext(AuthService);

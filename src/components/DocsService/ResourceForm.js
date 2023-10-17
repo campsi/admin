@@ -16,32 +16,32 @@ class ResourceForm extends Component {
   state = {
     selectedState: undefined,
     users: [],
-    doc: {},
+    doc: {}
   };
 
   formRef = React.createRef();
 
   usersColumns = [
     {
-      title: "ID",
-      dataIndex: "_id",
+      title: 'ID',
+      dataIndex: '_id'
     },
     {
-      title: "Email",
-      dataIndex: "email",
-    },
+      title: 'Email',
+      dataIndex: 'email'
+    }
   ];
 
   setStateAsync(state) {
-    return new Promise((resolve) => this.setState(state, () => resolve()));
+    return new Promise(resolve => this.setState(state, () => resolve()));
   }
 
   async componentDidMount() {
-    if (this.props.params.id !== "new") {
+    if (this.props.params.id !== 'new') {
       await this.fetchData();
     } else {
       this.setState({
-        doc: {},
+        doc: {}
       });
     }
   }
@@ -50,12 +50,10 @@ class ResourceForm extends Component {
     const { api, service, params } = this.props;
     const { resourceName, id } = params;
     await this.setStateAsync({ isFetching: true });
-    const response = await api.client.get(
-      `${service.name}/${resourceName}/${id}`
-    );
+    const response = await api.client.get(`${service.name}/${resourceName}/${id}`);
     this.setState({
       doc: response.data,
-      isFetching: false,
+      isFetching: false
     });
   }
 
@@ -63,25 +61,21 @@ class ResourceForm extends Component {
     const { api, service, params } = this.props;
     const { resourceName, id } = params;
     await this.setStateAsync({ isFetchingUsers: true });
-    const response = await api.client.get(
-      `${service.name}/${resourceName}/${id}/users`
-    );
+    const response = await api.client.get(`${service.name}/${resourceName}/${id}/users`);
     this.setState({
-      users: response.data.map((u) => {
+      users: response.data.map(u => {
         return { ...u, key: u._id };
-      }),
+      })
     });
   }
 
   async deleteDocument() {
     const { api, service, params } = this.props;
     const { resourceName, id } = params;
-    const response = await api.client.delete(
-      `${service.name}/${resourceName}/${id}`
-    );
+    const response = await api.client.delete(`${service.name}/${resourceName}/${id}`);
     if (response.status === 200) {
       this.setState({
-        redirectTo: `/services/${service.name}/resources/${resourceName}`,
+        redirectTo: `/services/${service.name}/resources/${resourceName}`
       });
     }
   }
@@ -93,22 +87,17 @@ class ResourceForm extends Component {
 
     return new Promise(async (resolve, reject) => {
       try {
-        const method = doc.id ? "put" : "post";
-        const url = doc.id
-          ? `${service.name}/${resourceName}/${doc.id}`
-          : `${service.name}/${resourceName}`;
+        const method = doc.id ? 'put' : 'post';
+        const url = doc.id ? `${service.name}/${resourceName}/${doc.id}` : `${service.name}/${resourceName}`;
 
-        const response = await api.client[method](
-          url,
-          cleanLocalizedValue(newValue)
-        );
-        notification.success({ message: "Document saved" });
+        const response = await api.client[method](url, cleanLocalizedValue(newValue));
+        notification.success({ message: 'Document saved' });
         this.setState(
           {
             doc: response.data,
             redirectTo: doc.id
               ? null // existing doc, no redirect
-              : `/services/${service.name}/resources/${resourceName}/${response.data.id}`,
+              : `/services/${service.name}/resources/${resourceName}/${response.data.id}`
           },
           resolve
         );
@@ -125,38 +114,31 @@ class ResourceForm extends Component {
     const resource = service.resources[resourceName];
     const result = {};
     const parseSchema = (schema, uiSchema) => {
-      if (customWidgets[schema["ui:field"]]) {
-        uiSchema["ui:field"] = customWidgets[schema["ui:field"]];
-      } else if (customWidgets[schema["ui:widget"]]) {
-        uiSchema["ui:widget"] = customWidgets[schema["ui:widget"]];
-      } else if (schema["ui:relation"]) {
-        uiSchema["ui:field"] = generateRelationField({
-          ...schema["ui:relation"],
-          perPage: 0,
+      if (customWidgets[schema['ui:field']]) {
+        uiSchema['ui:field'] = customWidgets[schema['ui:field']];
+      } else if (customWidgets[schema['ui:widget']]) {
+        uiSchema['ui:widget'] = customWidgets[schema['ui:widget']];
+      } else if (schema['ui:relation']) {
+        uiSchema['ui:field'] = generateRelationField({
+          ...schema['ui:relation'],
+          perPage: 0
         });
       } else if (schema.items) {
         uiSchema.items = {};
         parseSchema(schema.items, uiSchema.items);
       } else if (schema.properties) {
-        Object.entries(schema.properties).forEach(
-          ([propertyName, propertySchema]) => {
-            uiSchema[propertyName] = propertySchema.virtual
-              ? { "ui:readonly": true }
-              : {};
-            parseSchema(
-              schema.properties[propertyName],
-              uiSchema[propertyName]
-            );
-          }
-        );
+        Object.entries(schema.properties).forEach(([propertyName, propertySchema]) => {
+          uiSchema[propertyName] = propertySchema.virtual ? { 'ui:readonly': true } : {};
+          parseSchema(schema.properties[propertyName], uiSchema[propertyName]);
+        });
       }
-      if (schema["classNames"]) {
-        uiSchema["classNames"] = schema["classNames"];
+      if (schema['classNames']) {
+        uiSchema['classNames'] = schema['classNames'];
       }
-      Object.keys(schema).forEach((key) => {
-        if (key.startsWith("ui:") && !uiSchema[key]) {
-          if (schema["ui:readonly"]) {
-            uiSchema["ui:readonly"] = id !== 'new' && schema["ui:readonly"];
+      Object.keys(schema).forEach(key => {
+        if (key.startsWith('ui:') && !uiSchema[key]) {
+          if (schema['ui:readonly']) {
+            uiSchema['ui:readonly'] = id !== 'new' && schema['ui:readonly'];
           } else {
             uiSchema[key] = schema[key];
           }
@@ -164,8 +146,8 @@ class ResourceForm extends Component {
       });
     };
     parseSchema(resource.schema, result);
-    result["ui:submitButtonOptions"] = {
-      norender: true,
+    result['ui:submitButtonOptions'] = {
+      norender: true
     };
     return result;
   }
@@ -176,12 +158,7 @@ class ResourceForm extends Component {
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
 
-    const {
-      doc,
-      selectedState = resourceClass.defaultState,
-      users,
-      redirectTo,
-    } = this.state;
+    const { doc, selectedState = resourceClass.defaultState, users, redirectTo } = this.state;
 
     if (!doc) {
       return <Empty description="No document" />;
@@ -189,9 +166,7 @@ class ResourceForm extends Component {
 
     return (
       <Layout style={{ padding: 30 }}>
-        {redirectTo && window.location.pathname !== redirectTo && (
-          <Navigate to={redirectTo} replace />
-        )}
+        {redirectTo && window.location.pathname !== redirectTo && <Navigate to={redirectTo} replace />}
         <Title>Resource form</Title>
         <Space direction="vertical">
           <Card title="Document details">
@@ -202,18 +177,10 @@ class ResourceForm extends Component {
               <Descriptions.Item label="Description" span={2}>
                 {resource.schema.description}
               </Descriptions.Item>
-              <Descriptions.Item label="Resource Path">
-                {resourceName}
-              </Descriptions.Item>
-              <Descriptions.Item label="Resource Class">
-                {resource.class}
-              </Descriptions.Item>
-              <Descriptions.Item label="Created At">
-                {new Date(doc.createdAt).toLocaleString()}
-              </Descriptions.Item>
-              <Descriptions.Item label="Created By">
-                {`${doc.createdBy}`}
-              </Descriptions.Item>
+              <Descriptions.Item label="Resource Path">{resourceName}</Descriptions.Item>
+              <Descriptions.Item label="Resource Class">{resource.class}</Descriptions.Item>
+              <Descriptions.Item label="Created At">{new Date(doc.createdAt).toLocaleString()}</Descriptions.Item>
+              <Descriptions.Item label="Created By">{`${doc.createdBy}`}</Descriptions.Item>
             </Descriptions>
           </Card>
           <Card
@@ -221,11 +188,11 @@ class ResourceForm extends Component {
             extra={
               <Radio.Group
                 value={selectedState}
-                onChange={(event) => {
+                onChange={event => {
                   this.setState({ selectedState: event.target.value });
                 }}
               >
-                {Object.keys(resourceClass.states).map((state) => {
+                {Object.keys(resourceClass.states).map(state => {
                   return (
                     <Radio.Button key={state} value={state}>
                       {state}
@@ -243,20 +210,17 @@ class ResourceForm extends Component {
               formContext={{
                 id: doc.id,
                 createdAt: doc.createdAt,
-                createdBy: doc.createdBy,
+                createdBy: doc.createdBy
               }}
               uiSchema={this.getUISchema()}
-              ref={(ref) => {
+              ref={ref => {
                 this.formRef = ref;
               }}
               liveValidate
               onSubmit={({ formData }) => this.updateDocument(formData)}
             />
           </Card>
-          <Card
-            title="Users"
-            actions={[<Button onClick={() => this.fetchUsers()}>Fetch</Button>]}
-          >
+          <Card title="Users" actions={[<Button onClick={() => this.fetchUsers()}>Fetch</Button>]}>
             <Table dataSource={users} columns={this.usersColumns} />
           </Card>
         </Space>
@@ -268,15 +232,15 @@ class ResourceForm extends Component {
 ResourceForm.propTypes = {
   service: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    class: PropTypes.string.isRequired,
+    class: PropTypes.string.isRequired
   }).isRequired,
   customWidgets: PropTypes.objectOf(PropTypes.element),
   ...withParams.propTypes,
-  ...withAppContext.propTypes,
+  ...withAppContext.propTypes
 };
 
 ResourceForm.defaultProps = {
-  customWidgets: {},
+  customWidgets: {}
 };
 
 function getActions(service, resourceName) {
@@ -285,12 +249,12 @@ function getActions(service, resourceName) {
       danger
       onClick={() => {
         confirm({
-          title: "Do you Want to delete this document?",
+          title: 'Do you Want to delete this document?',
           icon: <ExclamationCircleOutlined />,
-          content: "The operation is definitive and irreversible",
+          content: 'The operation is definitive and irreversible',
           onOk: async () => {
             await this.deleteDocument();
-          },
+          }
         });
       }}
     >
@@ -298,67 +262,68 @@ function getActions(service, resourceName) {
     </Button>,
     <Button onClick={() => this.fetchData()}>Reload Document</Button>,
     <Button
-      type={"primary"}
+      type={'primary'}
       onClick={() => {
         // @link https://github.com/rjsf-team/react-jsonschema-form/issues/2104
         this.formRef.formElement.dispatchEvent(
-          new CustomEvent("submit", {
+          new CustomEvent('submit', {
             cancelable: true,
-            bubbles: true,
+            bubbles: true
           })
         );
       }}
     >
       Submit
     </Button>,
-    ...(service.resources[resourceName].schema["ui:approvalDoc"] ? [
-      <Button danger onClick={async () => {
-        confirm({
-          title: "Do you want to disapprove this document?",
-          icon: <ExclamationCircleOutlined />,
-          content: service.resources[resourceName].schema["ui:approvalDoc"].disapprovalDescription,
-          onOk: async () => {
-            const { api, service, params } = this.props;
-            const { resourceName, id } = params;
-            await api.client.post(
-              `${service.name}/${resourceName}/${id}/disapprove`,
-              {
-                resource: {...this.state.doc.data, _id: this.state.doc.id},
-              }
-            );
-            this.setState({
-              redirectTo: `/services/${service.name}/resources/${resourceName}/`,
-            });
-          },
-        });
-      }}>
-        Disapprove
-      </Button>, <Button
-        danger
-        style={{ borderColor: "green", color: "green" }}
-        onClick={async () => {
-          confirm({
-            title: "Do you want to approve this document?",
-            icon: <ExclamationCircleOutlined />,
-            content: service.resources[resourceName].schema["ui:approvalDoc"].approvalDescription,
-            onOk: async () => {
-              const { api, service, params } = this.props;
-              const { resourceName, id } = params;
-              await api.client.post(
-                `${service.name}/${resourceName}/${id}/approve`,
-                {
-                  resource: {...this.formRef.state.formData, _id: this.state.doc.id},
+    ...(service.resources[resourceName].schema['ui:approvalDoc']
+      ? [
+          <Button
+            danger
+            onClick={async () => {
+              confirm({
+                title: 'Do you want to disapprove this document?',
+                icon: <ExclamationCircleOutlined />,
+                content: service.resources[resourceName].schema['ui:approvalDoc'].disapprovalDescription,
+                onOk: async () => {
+                  const { api, service, params } = this.props;
+                  const { resourceName, id } = params;
+                  await api.client.post(`${service.name}/${resourceName}/${id}/disapprove`, {
+                    resource: { ...this.state.doc.data, _id: this.state.doc.id }
+                  });
+                  this.setState({
+                    redirectTo: `/services/${service.name}/resources/${resourceName}/`
+                  });
                 }
-              );
-              this.setState({
-                redirectTo: `/services/${service.name}/resources/${resourceName}/`,
               });
-            },
-          });
-        }}
-      >
-        Approve
-      </Button>] : [])
+            }}
+          >
+            Disapprove
+          </Button>,
+          <Button
+            danger
+            style={{ borderColor: 'green', color: 'green' }}
+            onClick={async () => {
+              confirm({
+                title: 'Do you want to approve this document?',
+                icon: <ExclamationCircleOutlined />,
+                content: service.resources[resourceName].schema['ui:approvalDoc'].approvalDescription,
+                onOk: async () => {
+                  const { api, service, params } = this.props;
+                  const { resourceName, id } = params;
+                  await api.client.post(`${service.name}/${resourceName}/${id}/approve`, {
+                    resource: { ...this.formRef.state.formData, _id: this.state.doc.id }
+                  });
+                  this.setState({
+                    redirectTo: `/services/${service.name}/resources/${resourceName}/`
+                  });
+                }
+              });
+            }}
+          >
+            Approve
+          </Button>
+        ]
+      : [])
   ];
 }
 

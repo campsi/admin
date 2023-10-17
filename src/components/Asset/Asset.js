@@ -1,23 +1,7 @@
-import React, { Component } from "react";
-import { withAppContext } from "../../App";
-import {
-  Button,
-  Card,
-  Col,
-  Descriptions,
-  Input,
-  Modal,
-  Progress,
-  Row,
-  Select,
-  Space,
-} from "antd";
-import {
-  DeleteOutlined,
-  FileImageOutlined,
-  InfoCircleOutlined,
-  UploadOutlined,
-} from "@ant-design/icons";
+import React, { Component } from 'react';
+import { withAppContext } from '../../App';
+import { Button, Card, Col, Descriptions, Input, Modal, Progress, Row, Select, Space } from 'antd';
+import { DeleteOutlined, FileImageOutlined, InfoCircleOutlined, UploadOutlined } from '@ant-design/icons';
 const { Item } = Descriptions;
 class Asset extends Component {
   assetsServices = this.getAssetsServices();
@@ -27,60 +11,41 @@ class Asset extends Component {
     uploadModalVisible: false,
     isUploading: false,
     detailsVisible: false,
-    currentAssetsService: this.assetsServices[0],
+    currentAssetsService: this.assetsServices[0]
   };
 
   setStateAsync(state) {
-    return new Promise((resolve) => this.setState(state, () => resolve()));
+    return new Promise(resolve => this.setState(state, () => resolve()));
   }
 
   render() {
     const { formData } = this.props;
-    const {
-      uploadModalVisible,
-      isUploading,
-      uploadProgress,
-      currentAssetsService,
-      detailsVisible,
-    } = this.state;
+    const { uploadModalVisible, isUploading, uploadProgress, currentAssetsService, detailsVisible } = this.state;
 
     return (
       <>
         <Col>
           <Row>
             <Card
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
               bodyStyle={{
-                padding: 0,
+                padding: 0
               }}
               size="small"
               title={
                 <>
-                  <FileImageOutlined />{" "}
-                  {this.props.schema.title || this.props.name}
+                  <FileImageOutlined /> {this.props.schema.title || this.props.name}
                 </>
               }
               extra={
                 <Space>
-                  <Select
-                    options={this.getAssetsServices()}
-                    value={currentAssetsService.name}
-                    style={{ width: "auto" }}
-                  />
+                  <Select options={this.getAssetsServices()} value={currentAssetsService.name} style={{ width: 'auto' }} />
                   {formData._id ? (
                     <>
-                      <Button
-                        onClick={() => this.eraseAsset()}
-                        icon={<DeleteOutlined />}
-                      >
+                      <Button onClick={() => this.eraseAsset()} icon={<DeleteOutlined />}>
                         Delete
                       </Button>
-                      <Button
-                        onClick={() =>
-                          this.setState({ detailsVisible: !detailsVisible })
-                        }
-                        icon={<InfoCircleOutlined />}
-                      >
+                      <Button onClick={() => this.setState({ detailsVisible: !detailsVisible })} icon={<InfoCircleOutlined />}>
                         Toggle details
                       </Button>
                     </>
@@ -98,13 +63,9 @@ class Asset extends Component {
             >
               {formData._id && (
                 <Descriptions column={2} bordered size="small">
-                  {formData.detectedMimeType?.includes("image") && (
+                  {formData.detectedMimeType?.includes('image') && (
                     <Item label="Preview" span={2}>
-                      <img
-                        src={formData.url}
-                        style={{ maxWidth: 300, maxHeight: 250 }}
-                        alt="asset"
-                      />
+                      <img src={formData.url} style={{ maxWidth: 300, maxHeight: 250 }} alt="asset" />
                     </Item>
                   )}
                   {detailsVisible && (
@@ -116,15 +77,9 @@ class Asset extends Component {
                         {formData.originalName}
                       </Item>
                       <Item label="Created By">{formData.createdBy}</Item>
-                      <Item label="Created At">
-                        {new Date(formData.createdAt).toLocaleString()}
-                      </Item>
-                      <Item label="Detected Mime Type">
-                        {formData.detectedMimeType}
-                      </Item>
-                      <Item label="Client reported Mime Type">
-                        {formData.clientReportedMimeType}
-                      </Item>
+                      <Item label="Created At">{new Date(formData.createdAt).toLocaleString()}</Item>
+                      <Item label="Detected Mime Type">{formData.detectedMimeType}</Item>
+                      <Item label="Client reported Mime Type">{formData.clientReportedMimeType}</Item>
                     </>
                   )}
                 </Descriptions>
@@ -141,10 +96,7 @@ class Asset extends Component {
             await this.uploadAsset(this.uploadFormRef.current);
           }}
         >
-          <form
-            ref={this.uploadFormRef}
-            onSubmit={(event) => event.preventDefault()}
-          >
+          <form ref={this.uploadFormRef} onSubmit={event => event.preventDefault()}>
             <div>
               <input type="file" name="file" />
             </div>
@@ -173,33 +125,25 @@ class Asset extends Component {
     const formData = new FormData(form);
     const commonParams = {
       timeout: 10 * 60 * 1000,
-      onUploadProgress: (event) => {
+      onUploadProgress: event => {
         this.setState({ uploadProgress: (event.loaded / event.total) * 100 });
-      },
+      }
     };
     let response;
-    if (formData.get("url")) {
-      response = await api.client.post(
-        `${currentAssetsService.name}/copy`,
-        { url: formData.get("url") },
-        { ...commonParams }
-      );
+    if (formData.get('url')) {
+      response = await api.client.post(`${currentAssetsService.name}/copy`, { url: formData.get('url') }, { ...commonParams });
     } else {
-      response = await api.client.post(
-        `${currentAssetsService.name}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          ...commonParams,
-        }
-      );
+      response = await api.client.post(`${currentAssetsService.name}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        ...commonParams
+      });
     }
     await this.setStateAsync({
       isUploading: false,
       uploadModalVisible: false,
-      uploadProgress: 0,
+      uploadProgress: 0
     });
     this.props.onChange(response.data[0]);
   }
@@ -207,16 +151,16 @@ class Asset extends Component {
   getAssetsServices() {
     const { services } = this.props;
     return Object.keys(services)
-      .filter((serviceName) => {
-        return services[serviceName].class === "AssetsService";
+      .filter(serviceName => {
+        return services[serviceName].class === 'AssetsService';
       })
-      .map((serviceName) => {
+      .map(serviceName => {
         return {
           name: serviceName,
           key: serviceName,
           value: serviceName,
           label: services[serviceName].title,
-          ...services[serviceName],
+          ...services[serviceName]
         };
       });
   }

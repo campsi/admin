@@ -1,28 +1,24 @@
-import PropTypes from "prop-types";
-import Api from "./Api";
-import { Component, createContext } from "react";
-import AdminMenu from "./components/AdminMenu/AdminMenu";
-import Service from "./components/Service/Service";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "antd/dist/antd.min.css";
-import { Layout } from "antd";
-import Playground from "./components/Playground/Playground";
+import PropTypes from 'prop-types';
+import Api from './Api';
+import { Component, createContext } from 'react';
+import AdminMenu from './components/AdminMenu/AdminMenu';
+import Service from './components/Service/Service';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import 'antd/dist/antd.min.css';
+import { Layout } from 'antd';
+import Playground from './components/Playground/Playground';
 
 export const AppContext = createContext({
   services: {},
   api: null,
   authenticated: false,
   setAccessToken: async () => {},
-  revokeAccessToken: async () => {},
+  revokeAccessToken: async () => {}
 });
 
 export function withAppContext(Component) {
   function WrappedComponent(props) {
-    return (
-      <AppContext.Consumer>
-        {(context) => <Component {...context} {...props} />}
-      </AppContext.Consumer>
-    );
+    return <AppContext.Consumer>{context => <Component {...context} {...props} />}</AppContext.Consumer>;
   }
   WrappedComponent.displayName = `withAppContext(${Component.name})`;
   return WrappedComponent;
@@ -33,10 +29,10 @@ withAppContext.propTypes = {
   authenticated: PropTypes.bool,
   api: PropTypes.instanceOf(Api),
   setAccessToken: PropTypes.func,
-  revokeAccessToken: PropTypes.func,
+  revokeAccessToken: PropTypes.func
 };
 
-const accessToken = localStorage ? localStorage.getItem("access_token") : null;
+const accessToken = localStorage ? localStorage.getItem('access_token') : null;
 
 /**
  * The App class is the root Component for the Campsi/Admin
@@ -52,10 +48,10 @@ class App extends Component {
      * in the components using the AppContext
      * @param {string} accessToken
      */
-    setAccessToken: async (accessToken) => {
-      localStorage.setItem("access_token", accessToken);
+    setAccessToken: async accessToken => {
+      localStorage.setItem('access_token', accessToken);
       this.state.api.setAccessToken(accessToken);
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.setState({ authenticated: true }, resolve);
       });
     },
@@ -63,19 +59,19 @@ class App extends Component {
      * Equivalent to a sign out. Clears the access_token from the API and the local storage
      */
     revokeAccessToken: async () => {
-      localStorage.removeItem("access_token");
+      localStorage.removeItem('access_token');
       this.state.api.revokeAccessToken();
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.setState({ authenticated: false }, resolve);
       });
-    },
+    }
   };
 
   async componentDidMount() {
     await this.fetchData();
     const params = new URLSearchParams(window.location.search);
-    if (params.get("access_token")) {
-      this.state.setAccessToken(params.get("access_token"));
+    if (params.get('access_token')) {
+      this.state.setAccessToken(params.get('access_token'));
     }
   }
 
@@ -97,14 +93,11 @@ class App extends Component {
       <BrowserRouter>
         <AppContext.Provider value={this.state}>
           {services && (
-            <Layout hasSider style={{ minHeight: "100vh" }}>
+            <Layout hasSider style={{ minHeight: '100vh' }}>
               <AdminMenu services={services} />
               <Layout>
                 <Routes>
-                  <Route
-                    path="/services/:serviceName/*"
-                    element={<Service services={services} />}
-                  />
+                  <Route path="/services/:serviceName/*" element={<Service services={services} />} />
                   <Route path="/playground" element={<Playground />} />
                 </Routes>
               </Layout>

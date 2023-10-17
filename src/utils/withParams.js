@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import PropTypes from "prop-types";
+import { useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 function withParams(Component) {
   function WrappedComponent(props) {
     const params = useParams();
@@ -10,7 +10,7 @@ function withParams(Component) {
 }
 
 withParams.propTypes = {
-  params: PropTypes.objectOf(PropTypes.string),
+  params: PropTypes.objectOf(PropTypes.string)
 };
 
 export default withParams;

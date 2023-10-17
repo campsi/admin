@@ -1,22 +1,22 @@
-import { Descriptions } from "antd";
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { Descriptions } from 'antd';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 const { Item } = Descriptions;
 
 function Color({ value }) {
   return (
     <div
       style={{
-        display: "inline-block",
-        border: "1px solid #CCC",
-        padding: "3px",
-        marginBottom: "-7px",
+        display: 'inline-block',
+        border: '1px solid #CCC',
+        padding: '3px',
+        marginBottom: '-7px'
       }}
     >
       <div
         style={{
-          height: "20px",
-          width: "35px",
-          background: `#${value}`,
+          height: '20px',
+          width: '35px',
+          background: `#${value}`
         }}
       />
     </div>
@@ -29,15 +29,9 @@ function StylesheetDetails({ result }) {
       <Item label="Font" span={3}>
         {result.font}
       </Item>
-      <Item label="Is Dark Mode">
-        {result.isDarkMode ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
-      </Item>
+      <Item label="Is Dark Mode">{result.isDarkMode ? <CheckCircleOutlined /> : <CloseCircleOutlined />}</Item>
       <Item label="Is Monochrome" span={2}>
-        {result.isMonochrome ? (
-          <CheckCircleOutlined />
-        ) : (
-          <CloseCircleOutlined />
-        )}
+        {result.isMonochrome ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
       </Item>
       <Item label="Dark Color">
         <Color value={result.darkColor} />

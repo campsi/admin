@@ -1,11 +1,11 @@
-import { Route, Routes, useParams } from "react-router-dom";
-import ResourceListing from "./ResourceListing";
-import ResourceForm from "./ResourceForm";
-import DetectionStrategy from "../DetectionStrategy/DetectionStrategy";
-import MatchString from "../MatchString/MatchString";
-import LocalizedText from "../LocalizedText/LocalizedText";
-import Asset from "../Asset/Asset";
-import JsonTextArea from "../JsonTextArea/JsonTextArea";
+import { Route, Routes, useParams } from 'react-router-dom';
+import ResourceListing from './ResourceListing';
+import ResourceForm from './ResourceForm';
+import DetectionStrategy from '../DetectionStrategy/DetectionStrategy';
+import MatchString from '../MatchString/MatchString';
+import LocalizedText from '../LocalizedText/LocalizedText';
+import Asset from '../Asset/Asset';
+import JsonTextArea from '../JsonTextArea/JsonTextArea';
 
 function DocsService(props) {
   useParams();
@@ -21,15 +21,12 @@ function DocsService(props) {
               LocalizedString: LocalizedText,
               MatchString: MatchString,
               Asset: Asset,
-              JsonTextArea: JsonTextArea,
+              JsonTextArea: JsonTextArea
             }}
           />
         }
       />
-      <Route
-        path="resources/:resourceName"
-        element={<ResourceListing service={props.service} />}
-      />
+      <Route path="resources/:resourceName" element={<ResourceListing service={props.service} />} />
     </Routes>
   );
 }

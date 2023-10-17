@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 /**
  * @typedef CampsiService
@@ -18,18 +18,18 @@ class Api {
    */
   static defaults = {
     // The :3003 port is the one used by the developers using Campsi
-    apiUrl: "http://localhost:3003/",
+    apiUrl: 'http://localhost:3003/',
     timeout: 5000,
     headers: {
       // this needs to be set for the AuthService. If x-requested-with is not
       // XMLHttpRequest, the AuthService assumes that you want a redirect after
       // signup or signin, which is not the intended behaviour
-      "X-Requested-With": "XMLHttpRequest",
+      'X-Requested-With': 'XMLHttpRequest',
       // not required, it's mostly for fun
-      "X-Requested-With-App": "campsi/admin",
-      "Content-type": "application/json; charset=utf-8",
-      Accept: "application/json",
-    },
+      'X-Requested-With-App': 'campsi/admin',
+      'Content-type': 'application/json; charset=utf-8',
+      Accept: 'application/json'
+    }
   };
 
   /**
@@ -42,9 +42,9 @@ class Api {
   constructor(options = {}) {
     const settings = Object.assign({}, Api.defaults, options);
     this.client = axios.create({
-      baseURL: settings.apiUrl.replace(/\/$/, ""),
+      baseURL: settings.apiUrl.replace(/\/$/, ''),
       timeout: settings.timeout,
-      headers: settings.headers,
+      headers: settings.headers
     });
     if (options.accessToken) {
       this.setAccessToken(options.accessToken);
@@ -53,8 +53,8 @@ class Api {
 
   setAccessToken(accessToken) {
     this.accessToken = accessToken;
-    this.client.defaults.headers["Authorization"] = `Bearer ${accessToken}`;
-    this.client.get(`/auth/me`).then((response) => {
+    this.client.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
+    this.client.get(`/auth/me`).then(response => {
       this.clientEmail = response.data?.email;
       this.clientId = response.data?._id;
     });
@@ -62,7 +62,7 @@ class Api {
 
   revokeAccessToken() {
     delete this.accessToken;
-    delete this.client.defaults.headers["Authorization"];
+    delete this.client.defaults.headers['Authorization'];
   }
 
   /**
@@ -70,7 +70,7 @@ class Api {
    * @returns {Promise<CampsiService[]>}
    */
   async getServices() {
-    const response = await this.client.get("/");
+    const response = await this.client.get('/');
     return response.data.services || [];
   }
 }
