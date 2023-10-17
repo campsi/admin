@@ -38,7 +38,7 @@ class ResourceListing extends Component {
 
   async componentDidMount() {
     const urlParams = new URLSearchParams(window?.location?.search);
-    const page = urlParams.get('page') || this.state.page;
+    const page = urlParams.get('page');
     const perPage = urlParams.get('perPage');
 
     if(this.state.perPage !== perPage) {
