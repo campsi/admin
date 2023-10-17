@@ -37,15 +37,17 @@ class ResourceListing extends Component {
   };
 
   async componentDidMount() {
-    const urlParams = new URLSearchParams(window?.location?.search);
-    const page = urlParams.get('page');
-    const perPage = urlParams.get('perPage');
+    if(window?.location?.search) {
+      const urlParams = new URLSearchParams(window?.location?.search);
+      const page = urlParams.get('page');
+      const perPage = urlParams.get('perPage');
 
-    if(this.state.perPage !== perPage) {
-      this.setState({ perPage });
-    }
-    if(this.state.page !== page) {
-      this.setState({ page });
+      if(this.state.perPage !== perPage) {
+        this.setState({ perPage });
+      }
+      if(this.state.page !== page) {
+        this.setState({ page });
+      }
     }
 
     await this.updateVisibleProperties();
