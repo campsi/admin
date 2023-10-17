@@ -37,6 +37,17 @@ class ResourceListing extends Component {
   };
 
   async componentDidMount() {
+    const urlParams = new URLSearchParams(window?.location?.search);
+    const page = urlParams.get('page') || this.state.page;
+    const perPage = urlParams.get('perPage');
+
+    if(this.state.perPage !== perPage) {
+      this.setState({ perPage });
+    }
+    if(this.state.page !== page) {
+      this.setState({ page });
+    }
+
     await this.updateVisibleProperties();
     await this.fetchData();
   }
@@ -180,6 +191,28 @@ class ResourceListing extends Component {
       lastPage: Number(response.headers["x-last-page"]),
       totalCount: Number(response.headers["x-total-count"]),
     });
+
+    const urlParams = new URLSearchParams(window?.location?.search);
+
+    if(urlParams && urlParams.has('page') && urlParams.has('perPage')) {
+
+      if(parseInt(urlParams.get('page')) !== page) {
+        urlParams.set("page", page);
+      }
+
+      if(parseInt(urlParams.get('perPage')) !== perPage) {
+        urlParams.set("perPage", perPage);
+      }
+
+      if(urlParams.toString() !== new URLSearchParams(window?.location?.search).toString()) {
+        window.history.pushState( {} , '', window.location.pathname + '?' + urlParams.toString() );
+      }
+    }
+    else {
+      urlParams.append("page", page);
+      urlParams.append("perPage", perPage);
+      window.history.replaceState( {} , '', window.location.pathname + '?' + urlParams.toString() );
+    }
   }
 
   handleTableChange = async (pagination, filters, sorter) => {
