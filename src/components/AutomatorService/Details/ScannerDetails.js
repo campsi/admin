@@ -1,10 +1,10 @@
-import { Descriptions, Button, Space, Table, Tag, Typography } from "antd";
-import { VerticalAlignBottomOutlined } from "@ant-design/icons";
-import { GlobalOutlined } from "@ant-design/icons";
-import { withAppContext } from "../../../App";
-import PropTypes from "prop-types";
-import { Component } from "react";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
+import { Descriptions, Button, Space, Table, Tag, Typography } from 'antd';
+import { VerticalAlignBottomOutlined } from '@ant-design/icons';
+import { GlobalOutlined } from '@ant-design/icons';
+import { withAppContext } from '../../../App';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 const { Item } = Descriptions;
@@ -34,7 +34,7 @@ const { Item } = Descriptions;
  * @constructor
  */
 function ExpandedVendorRow({ vendor, isKnown = true }) {
-  const codeStyle = { fontFamily: "Monaco, Menlo, monospace", fontSize: 12 };
+  const codeStyle = { fontFamily: 'Monaco, Menlo, monospace', fontSize: 12 };
   const ulStyle = { ...codeStyle, margin: 0, paddingLeft: 10 };
 
   if (!isKnown) {
@@ -43,13 +43,7 @@ function ExpandedVendorRow({ vendor, isKnown = true }) {
         <Title level={1}>Pages</Title>
         {Object.keys(vendor.pagesFound).map((resource, index) => {
           return (
-            <Descriptions
-              key={`resource_${index}`}
-              size="small"
-              bordered
-              column={1}
-              style={{ marginBottom: 16 }}
-            >
+            <Descriptions key={`resource_${index}`} size="small" bordered column={1} style={{ marginBottom: 16 }}>
               <Item label="hrefs">
                 <ul style={ulStyle}>
                   <li key={index} title={resource}>
@@ -71,16 +65,10 @@ function ExpandedVendorRow({ vendor, isKnown = true }) {
       <Title level={4}>Resources</Title>
       {vendor.detectionHints.resources.map((resource, index) => {
         return (
-          <Descriptions
-            key={`resource_${index}`}
-            size="small"
-            bordered
-            column={1}
-            style={{ marginBottom: 16 }}
-          >
+          <Descriptions key={`resource_${index}`} size="small" bordered column={1} style={{ marginBottom: 16 }}>
             <Item label="hrefs">
               <ul style={ulStyle}>
-                {resource.hrefs.map((href) => (
+                {resource.hrefs.map(href => (
                   <li key={href} title={href}>
                     {href.substring(0, 100)}
                   </li>
@@ -90,7 +78,7 @@ function ExpandedVendorRow({ vendor, isKnown = true }) {
             <Item label="hosts">
               {
                 <ul style={ulStyle}>
-                  {resource.hosts.map((host) => (
+                  {resource.hosts.map(host => (
                     <li key={host} title={host}>
                       {host.substring(0, 100)}
                     </li>
@@ -104,9 +92,7 @@ function ExpandedVendorRow({ vendor, isKnown = true }) {
               </span>
             </Item>
             <Item label="hint">
-              <span style={codeStyle}>
-                {JSON.stringify(resource.hint, null, 2)}
-              </span>
+              <span style={codeStyle}>{JSON.stringify(resource.hint, null, 2)}</span>
             </Item>
           </Descriptions>
         );
@@ -121,86 +107,75 @@ class ScannerDetails extends Component {
     metadata: this.props?.result,
     dataSource: () => {
       let vendors = [];
-      this.props?.result.knownVendors.map((vendor) =>
-        vendors.push({ isKnown: true, ...vendor })
-      );
-      this.props?.result.unknownVendors.map((vendor) =>
-        vendors.push({ isKnown: false, ...vendor })
-      );
-      return vendors.map((vendor) => {
+      this.props?.result.knownVendors.map(vendor => vendors.push({ isKnown: true, ...vendor }));
+      this.props?.result.unknownVendors.map(vendor => vendors.push({ isKnown: false, ...vendor }));
+      return vendors.map(vendor => {
         return { key: vendor.name, ...vendor };
       });
-    },
+    }
   };
   componentDidMount() {
     this.fetchCategories();
   }
 
   fetchCategories() {
-    this.props.api.client.get("/vendors/categories").then((response) => {
+    this.props.api.client.get('/vendors/categories').then(response => {
       this.setState({
-        categories: response.data,
+        categories: response.data
       });
     });
   }
 
   getColumns = () => [
     {
-      title: "Technical name",
-      key: "name",
-      render: (vendor) => {
+      title: 'Technical name',
+      key: 'name',
+      render: vendor => {
         if (vendor.id) {
-          return (
-            <a href={`/services/vendors/resources/solutions/${vendor.id}`}>
-              {vendor.name}
-            </a>
-          );
+          return <a href={`/services/vendors/resources/solutions/${vendor.id}`}>{vendor.name}</a>;
         }
         return vendor.name;
-      },
+      }
     },
     {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
-      render: (value) => {
-        return value ? value.__lang?.en ?? value : "";
-      },
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+      render: value => {
+        return value ? value.__lang?.en ?? value : '';
+      }
     },
     {
-      title: "Categories",
-      dataIndex: "categories",
-      key: "Categories",
-      render: (categories) => {
+      title: 'Categories',
+      dataIndex: 'categories',
+      key: 'Categories',
+      render: categories => {
         if (!categories) {
-          return "";
+          return '';
         }
-        return categories.map((category) => {
+        return categories.map(category => {
           return (
-            <Tag key={category.id}>
-              {this.state.categories.filter((c) => c.id === category.id)[0]
-                ?.data.name || category.id}
-            </Tag>
+            <Tag key={category.id}>{this.state.categories.filter(c => c.id === category.id)[0]?.data.name || category.id}</Tag>
           );
         });
-      },
+      }
     },
     {
-      title: "Policy URL",
-      dataIndex: "policyUrl",
-      key: "policyUrl",
-      render: (value) => {
-        if (typeof value === "string") {
+      title: 'Policy URL',
+      dataIndex: 'policyUrl',
+      key: 'policyUrl',
+      render: value => {
+        if (typeof value === 'string') {
           return (
             <a href={value}>
               <GlobalOutlined />
             </a>
           );
         }
-        if (typeof value === "object") {
+        if (typeof value === 'object') {
           return (
             <Space>
-              {Object.keys(value.__lang || {}).map((language) => {
+              {Object.keys(value.__lang || {}).map(language => {
                 return (
                   <a key={language} href={value.__lang?.[language]}>
                     {language}
@@ -210,90 +185,69 @@ class ScannerDetails extends Component {
             </Space>
           );
         }
-      },
+      }
     },
     {
-      title: "Company",
-      dataIndex: ["company", "name"],
-      key: "Company",
-      render: (value) => (value ? value : ""),
+      title: 'Company',
+      dataIndex: ['company', 'name'],
+      key: 'Company',
+      render: value => (value ? value : '')
     },
     {
-      title: " After Consent",
-      dataIndex: ["detectedAfterConsent"],
-      sorter: (a, b) =>
-        a.detectedAfterConsent === b.detectedAfterConsent
-          ? 0
-          : a.detectedAfterConsent
-          ? -1
-          : 1,
-      key: "detectedAfterConsent",
-      render: (value) =>
-        value ? (
-          <CheckOutlined style={{ color: "green" }} />
-        ) : (
-          <CloseOutlined style={{ color: "red" }} />
-        ),
+      title: ' After Consent',
+      dataIndex: ['detectedAfterConsent'],
+      sorter: (a, b) => (a.detectedAfterConsent === b.detectedAfterConsent ? 0 : a.detectedAfterConsent ? -1 : 1),
+      key: 'detectedAfterConsent',
+      render: value => (value ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />)
     },
     {
-      title: "Exempted of consent",
-      dataIndex: ["consentExemption"],
-      sorter: (a, b) =>
-        a.consentExemption === b.consentExemption
-          ? 0
-          : a.consentExemption
-          ? -1
-          : 1,
-      key: "consentExemption",
-      render: (value) => (value ? <CheckOutlined /> : <CloseOutlined />),
+      title: 'Exempted of consent',
+      dataIndex: ['consentExemption'],
+      sorter: (a, b) => (a.consentExemption === b.consentExemption ? 0 : a.consentExemption ? -1 : 1),
+      key: 'consentExemption',
+      render: value => (value ? <CheckOutlined /> : <CloseOutlined />)
     },
     {
-      title: "Known",
-      dataIndex: ["isKnown"],
+      title: 'Known',
+      dataIndex: ['isKnown'],
       sorter: (a, b) => (a.isKnown === b.isKnown ? 0 : a.isKnown ? -1 : 1),
-      key: "isKnown",
-      render: (value) =>
-        value ? (
-          <CheckOutlined style={{ color: "green" }} />
-        ) : (
-          <CloseOutlined style={{ color: "red" }} />
-        ),
-    },
+      key: 'isKnown',
+      render: value => (value ? <CheckOutlined style={{ color: 'green' }} /> : <CloseOutlined style={{ color: 'red' }} />)
+    }
   ];
 
   getCmp(dataSource) {
     return (
       dataSource()
         //Get known vendor
-        .filter((vendor) => {
+        .filter(vendor => {
           return vendor.isKnown;
         })
         //Search for CMP
-        .map((vendor) => {
+        .map(vendor => {
           for (let i = 0; i < vendor.categories.length; i++) {
-            if (vendor.categories[i].name === "CMP") {
+            if (vendor.categories[i].name === 'CMP') {
               return vendor;
             }
           }
-          return "";
+          return '';
         })
-        .filter((vendor) => {
+        .filter(vendor => {
           return vendor;
-        })[0]?.name || "Not Found"
+        })[0]?.name || 'Not Found'
     );
   }
 
   render() {
     const { dataSource, metadata } = this.state;
     return (
-      <Space size={"middle"} direction={"vertical"} style={{ width: "100%" }}>
+      <Space size={'middle'} direction={'vertical'} style={{ width: '100%' }}>
         <Descriptions bordered column={3} size="large">
           <Item label="nbPagesParsed" span={2}>
             {metadata.nbPagesParsed}
           </Item>
           <Item label="Vendor(s) Found" span={2}>
-            {metadata.nbVendorsFound ??
-              Object.keys(dataSource.call(this)).length}
+            {metadata.nbVendorsFound ?? Object.keys(dataSource.call(this)).length}
           </Item>
           <Item label="Vendor(s) exempt of consent" span={2}>
             {metadata.vendorsExemptOfConsent}
@@ -313,8 +267,8 @@ class ScannerDetails extends Component {
               </a>
             )}
             {metadata.pdfURLs &&
-              Object.values(metadata.pdfURLs).map((url) => (
-                <a style={{ padding: "5px" }} href={url} download>
+              Object.values(metadata.pdfURLs).map(url => (
+                <a style={{ padding: '5px' }} href={url} download>
                   <Button icon={<VerticalAlignBottomOutlined />} />
                 </a>
               ))}
@@ -323,7 +277,7 @@ class ScannerDetails extends Component {
             {metadata.CMP}
           </Item>
           <Item label="CMP Extractions" span={2}>
-            <div style={{ overflowY: "scroll", maxHeight: 50 }}>
+            <div style={{ overflowY: 'scroll', maxHeight: 50 }}>
               {metadata.CMPExtraction
                 ? Object.keys(metadata.CMPExtraction).map((key, i) => (
                     <p key={i}>
@@ -331,7 +285,7 @@ class ScannerDetails extends Component {
                       <span>{metadata.CMPExtraction[key]}</span>
                     </p>
                   ))
-                : ""}
+                : ''}
             </div>
           </Item>
         </Descriptions>
@@ -339,9 +293,7 @@ class ScannerDetails extends Component {
           columns={this.getColumns()}
           dataSource={dataSource.call(this)}
           expandable={{
-            expandedRowRender: (vendor) => (
-              <ExpandedVendorRow vendor={vendor} isKnown={vendor.isKnown} />
-            ),
+            expandedRowRender: vendor => <ExpandedVendorRow vendor={vendor} isKnown={vendor.isKnown} />
           }}
         />
       </Space>
@@ -355,9 +307,9 @@ ScannerDetails.propTypes = {
       name: PropTypes.string,
       categoryIds: PropTypes.arrayOf(PropTypes.string),
       company: PropTypes.shape({
-        name: PropTypes.string,
-      }),
+        name: PropTypes.string
+      })
     })
-  ),
+  )
 };
 export default withAppContext(ScannerDetails);

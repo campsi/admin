@@ -1,6 +1,6 @@
-import { Button, Descriptions } from "antd";
-import { withAppContext } from "../../../App";
-import { VerticalAlignBottomOutlined } from "@ant-design/icons";
+import { Button, Descriptions } from 'antd';
+import { withAppContext } from '../../../App';
+import { VerticalAlignBottomOutlined } from '@ant-design/icons';
 
 const { Item } = Descriptions;
 

@@ -1,6 +1,6 @@
-import { Component } from "react";
-import { withAppContext } from "../../App";
-import { Typography } from "antd";
+import { Component } from 'react';
+import { withAppContext } from '../../App';
+import { Typography } from 'antd';
 
 const { Title } = Typography;
 
@@ -9,7 +9,7 @@ class AssetsService extends Component {
     fileList: [],
     isFetching: false,
     isUploading: false,
-    noListing: false,
+    noListing: false
   };
 
   componentDidMount() {
@@ -17,7 +17,7 @@ class AssetsService extends Component {
   }
 
   setStateAsync(state) {
-    return new Promise((resolve) => this.setState(state, () => resolve()));
+    return new Promise(resolve => this.setState(state, () => resolve()));
   }
 
   async fetchAssets() {

@@ -1,113 +1,108 @@
-import Form from "@rjsf/antd";
-import { Card } from "antd";
-import LocalizedText from "../LocalizedText/LocalizedText";
-import MatchString from "../MatchString/MatchString";
-import JsonTextArea from "../JsonTextArea/JsonTextArea";
+import Form from '@rjsf/antd';
+import { Card } from 'antd';
+import LocalizedText from '../LocalizedText/LocalizedText';
+import MatchString from '../MatchString/MatchString';
+import JsonTextArea from '../JsonTextArea/JsonTextArea';
 
 const schema = {
-  type: "object",
+  type: 'object',
   properties: {
-    name: { type: "string" },
+    name: { type: 'string' },
     child: {
-      type: "object",
+      type: 'object',
       additionalProperties: false,
       properties: {
         childName: {
-          type: "string",
+          type: 'string'
         },
         active: {
-          type: "boolean",
+          type: 'boolean'
         },
         description: {
-          type: "string",
-        },
-      },
+          type: 'string'
+        }
+      }
     },
 
     json: {
-      type: "object",
+      type: 'object',
       additionalProperties: false,
       properties: {
         childName: {
-          type: "string",
+          type: 'string'
         },
         active: {
-          type: "boolean",
+          type: 'boolean'
         },
         description: {
-          type: "string",
-        },
-      },
+          type: 'string'
+        }
+      }
     },
     match: {
-      title: "Match string",
+      title: 'Match string',
       isMatchString: true,
-      type: "object",
+      type: 'object',
       properties: {
-        equals: { type: "string", title: "Equals" },
-        startsWith: { type: "string", title: "Starts with" },
-        endsWith: { type: "string", title: "Ends with" },
-        contains: { type: "string", title: "Contains" },
-        regex: { type: "string", title: "Match" },
-      },
+        equals: { type: 'string', title: 'Equals' },
+        startsWith: { type: 'string', title: 'Starts with' },
+        endsWith: { type: 'string', title: 'Ends with' },
+        contains: { type: 'string', title: 'Contains' },
+        regex: { type: 'string', title: 'Match' }
+      }
     },
     title: {
       isLocalizedString: true,
-      type: "object",
+      type: 'object',
       properties: {
         __lang: {
-          title: "Language",
-          type: "object",
+          title: 'Language',
+          type: 'object',
           patternProperties: {
-            "^[a-z]{2}$": { type: "string" },
+            '^[a-z]{2}$': { type: 'string' }
           },
           additionalProperties: {
-            type: "string",
-          },
-        },
+            type: 'string'
+          }
+        }
       },
-      required: ["__lang"],
-    },
-  },
+      required: ['__lang']
+    }
+  }
 };
 
 const uiSchema = {
   child: {
     active: {
-      "ui:widget": "checkbox",
+      'ui:widget': 'checkbox'
     },
     description: {
-      "ui:widget": "textarea",
-    },
+      'ui:widget': 'textarea'
+    }
   },
   json: {
-    "ui:field": JsonTextArea,
+    'ui:field': JsonTextArea
   },
   match: {
-    "ui:field": MatchString,
+    'ui:field': MatchString
   },
   title: {
-    "ui:field": LocalizedText,
-  },
+    'ui:field': LocalizedText
+  }
 };
 
 const formData = {
   json: {
-    childName: "Field 242A",
+    childName: 'Field 242A',
     active: true,
-    description: "Child of field 123C",
-  },
+    description: 'Child of field 123C'
+  }
 };
 
 function Playground() {
   return (
     <Card title="Playground" style={{ margin: 30 }}>
-      <Form
-        schema={schema}
-        uiSchema={uiSchema}
-        formData={formData}
-        onChange={(data) => console.info(data)}
-      />
+      <Form schema={schema} uiSchema={uiSchema} formData={formData} onChange={data => console.info(data)} />
     </Card>
   );
 }

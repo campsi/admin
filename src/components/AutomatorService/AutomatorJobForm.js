@@ -1,24 +1,11 @@
-import {
-  Alert,
-  Button,
-  Card,
-  Checkbox,
-  Empty,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Space,
-  Switch,
-  Tabs,
-} from "antd";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { useState } from "react";
-import userAgents from "./userAgents";
-import EmailingForm from "./Forms/EmailingForm";
-import copyText from "../../utils/copyText";
-import { formatJobValues } from "./AutomatorService";
-import styled from "styled-components";
+import { Alert, Button, Card, Checkbox, Empty, Form, Input, InputNumber, Select, Space, Switch, Tabs } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { useState } from 'react';
+import userAgents from './userAgents';
+import EmailingForm from './Forms/EmailingForm';
+import copyText from '../../utils/copyText';
+import { formatJobValues } from './AutomatorService';
+import styled from 'styled-components';
 
 const CenteredDiv = styled.div`
   justify-content: center;
@@ -37,20 +24,13 @@ function AutomatorJobForm({ onFinish, api }) {
   }
 
   function isNecessaryToUseProjectId() {
-    return (
-      (isActionActive("showcase") || isActionActive("gtm")) &&
-      !isActionActive("provisioning")
-    );
+    return (isActionActive('showcase') || isActionActive('gtm')) && !isActionActive('provisioning');
   }
 
   function getActionTab(action) {
     return (
       <>
-        <Form.Item
-          name={["actions", action, "active"]}
-          valuePropName="checked"
-          noStyle
-        >
+        <Form.Item name={['actions', action, 'active']} valuePropName="checked" noStyle>
           <Checkbox />
         </Form.Item>
         &nbsp;
@@ -61,11 +41,7 @@ function AutomatorJobForm({ onFinish, api }) {
 
   function approvalOption(action) {
     return (
-      <Form.Item
-        name={["actions", action, "approval", "email"]}
-        initialValue={false}
-        label="Requires your approval"
-      >
+      <Form.Item name={['actions', action, 'approval', 'email']} initialValue={false} label="Requires your approval">
         <Switch />
       </Form.Item>
     );
@@ -91,34 +67,25 @@ function AutomatorJobForm({ onFinish, api }) {
           <Button
             type="default"
             htmlType="button"
-            onClick={() =>
-              copyText(
-                JSON.stringify(formatJobValues(formValues, api.clientEmail))
-              )
-            }
+            onClick={() => copyText(JSON.stringify(formatJobValues(formValues, api.clientEmail)))}
           >
             Copy JSON
-          </Button>,
+          </Button>
         ]}
       >
         <Form.Item
           label="Domain"
-          name={["params", "domain"]}
+          name={['params', 'domain']}
           required
-          rules={[{ required: true, message: "A website domain is mandatory" }]}
+          rules={[{ required: true, message: 'A website domain is mandatory' }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name={["params", "origin"]}
-          initialValue={"campsi-admin"}
-          label="Origin"
-          hidden={true}
-        >
+        <Form.Item name={['params', 'origin']} initialValue={'campsi-admin'} label="Origin" hidden={true}>
           <Input />
         </Form.Item>
         <Form.Item
-          name={["projectId"]}
+          name={['projectId']}
           label="Project ID"
           required={isNecessaryToUseProjectId()}
           rules={[{ required: isNecessaryToUseProjectId() }]}
@@ -127,33 +94,19 @@ function AutomatorJobForm({ onFinish, api }) {
           <Input />
         </Form.Item>
         <Tabs type="card">
-          <TabPane tab={getActionTab("scanner")} key="scanner">
-            {approvalOption("scanner")}
-            <Form.Item
-              name={["actions", "scanner", "maxTabs"]}
-              label="Max Tabs"
-              help="Max 25"
-              initialValue={4}
-            >
+          <TabPane tab={getActionTab('scanner')} key="scanner">
+            {approvalOption('scanner')}
+            <Form.Item name={['actions', 'scanner', 'maxTabs']} label="Max Tabs" help="Max 25" initialValue={4}>
               <InputNumber min={1} max={25} />
             </Form.Item>
-            <Form.Item
-              name={["actions", "scanner", "maxPages"]}
-              label="Max Pages"
-              help="Max 150"
-              initialValue={10}
-            >
+            <Form.Item name={['actions', 'scanner', 'maxPages']} label="Max Pages" help="Max 150" initialValue={10}>
               <InputNumber min={1} max={150} />
             </Form.Item>
-            <Form.Item
-              label="PDF Languages"
-              name={["actions", "scanner", "languages"]}
-              initialValue={["en"]}
-            >
+            <Form.Item label="PDF Languages" name={['actions', 'scanner', 'languages']} initialValue={['en']}>
               <Select mode="tags" />
             </Form.Item>
             <Form.Item
-              name={["actions", "scanner", "testCMP"]}
+              name={['actions', 'scanner', 'testCMP']}
               initialValue={true}
               valuePropName="checked"
               label="Test the CMP compliance"
@@ -161,7 +114,7 @@ function AutomatorJobForm({ onFinish, api }) {
               <Switch />
             </Form.Item>
             <Form.Item
-              name={["actions", "scanner", "followSubDomains"]}
+              name={['actions', 'scanner', 'followSubDomains']}
               initialValue={false}
               valuePropName="checked"
               label="Follow subdomains"
@@ -169,7 +122,7 @@ function AutomatorJobForm({ onFinish, api }) {
               <Switch />
             </Form.Item>
             <Form.Item
-              name={["actions", "scanner", "alleviate"]}
+              name={['actions', 'scanner', 'alleviate']}
               initialValue={true}
               valuePropName="checked"
               label="Alleviate"
@@ -178,17 +131,15 @@ function AutomatorJobForm({ onFinish, api }) {
               <Switch />
             </Form.Item>
           </TabPane>
-          <TabPane tab={getActionTab("stylesheet")} key="stylesheet">
-            {approvalOption("stylesheet")}
+          <TabPane tab={getActionTab('stylesheet')} key="stylesheet">
+            {approvalOption('stylesheet')}
             <Empty description="There are no option available for this action" />
           </TabPane>
-          <TabPane tab={getActionTab("provisioning")} key="provisioning">
-            {approvalOption("provisioning")}
+          <TabPane tab={getActionTab('provisioning')} key="provisioning">
+            {approvalOption('provisioning')}
             <Form.Item
-              name={["actions", "provisioning", "database"]}
-              initialValue={
-                process.env.NODE_ENV === "production" ? "prod" : "test"
-              }
+              name={['actions', 'provisioning', 'database']}
+              initialValue={process.env.NODE_ENV === 'production' ? 'prod' : 'test'}
               label="Database"
               hidden={true}
               help="Do not spam the production for testing purposes."
@@ -198,56 +149,44 @@ function AutomatorJobForm({ onFinish, api }) {
                 <Select.Option value="test">Test</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item
-              name={["actions", "provisioning", "name"]}
-              label="Project Name"
-            >
+            <Form.Item name={['actions', 'provisioning', 'name']} label="Project Name">
               <Input />
             </Form.Item>
             <Form.Item
               label="Languages"
-              name={["actions", "provisioning", "languages"]}
-              required={isActionActive("provisioning")}
-              initialValue={["en"]}
-              rules={[{ required: isActionActive("provisioning") }]}
+              name={['actions', 'provisioning', 'languages']}
+              required={isActionActive('provisioning')}
+              initialValue={['en']}
+              rules={[{ required: isActionActive('provisioning') }]}
             >
               <Select mode="tags" />
             </Form.Item>
-            <Form.Item
-              label="Cookies to update"
-              name={["actions", "provisioning", "cookies"]}
-            >
+            <Form.Item label="Cookies to update" name={['actions', 'provisioning', 'cookies']}>
               <Select mode="tags" />
             </Form.Item>
             <Form.Item
-              name={["actions", "provisioning", "organizationId"]}
+              name={['actions', 'provisioning', 'organizationId']}
               label="Organization ID"
               help="Check if your ID is in the correct database"
             >
               <Input />
             </Form.Item>
             <Form.Item
-              label={"Contextual Consent Wall"}
-              name={["actions", "provisioning", "withContextualConsentWall"]}
+              label={'Contextual Consent Wall'}
+              name={['actions', 'provisioning', 'withContextualConsentWall']}
               valuePropName="checked"
             >
               <Switch />
             </Form.Item>
-            <Form.Item
-              label="Invitation email"
-              name={["actions", "provisioning", "invitationsEmail"]}
-            >
+            <Form.Item label="Invitation email" name={['actions', 'provisioning', 'invitationsEmail']}>
               <Select mode="tags" />
             </Form.Item>
-            <Form.Item
-              name={["actions", "provisioning", "metadata", "origin"]}
-              initialValue={"campsi-admin/automator"}
-            />
+            <Form.Item name={['actions', 'provisioning', 'metadata', 'origin']} initialValue={'campsi-admin/automator'} />
           </TabPane>
-          <TabPane tab={getActionTab("showcase")} key="showcase">
-            {approvalOption("showcase")}
+          <TabPane tab={getActionTab('showcase')} key="showcase">
+            {approvalOption('showcase')}
             <Form.Item
-              name={["actions", "showcase", "publishProject"]}
+              name={['actions', 'showcase', 'publishProject']}
               initialValue={true}
               valuePropName="checked"
               label="Publish the project before launch the showcase"
@@ -255,15 +194,15 @@ function AutomatorJobForm({ onFinish, api }) {
               <Switch />
             </Form.Item>
             <Form.List
-              name={["actions", "showcase", "output"]}
+              name={['actions', 'showcase', 'output']}
               initialValue={[
                 {
-                  name: "animated_gif",
-                  format: "GIF",
+                  name: 'animated_gif',
+                  format: 'GIF',
                   userAgent: userAgents[0].value,
                   viewport: { width: 1600, height: 900 },
-                  dimensions: { width: 800, height: 450 },
-                },
+                  dimensions: { width: 800, height: 450 }
+                }
               ]}
             >
               {(fields, { add, remove }) => (
@@ -274,27 +213,16 @@ function AutomatorJobForm({ onFinish, api }) {
                         <Card
                           title={`Output #${index + 1}`}
                           key={field.key}
-                          extra={
-                            <MinusCircleOutlined
-                              className="dynamic-delete-button"
-                              onClick={() => remove(field.name)}
-                            />
-                          }
+                          extra={<MinusCircleOutlined className="dynamic-delete-button" onClick={() => remove(field.name)} />}
                         >
-                          <Form.Item
-                            {...field}
-                            name={[field.name, "name"]}
-                            key={[field.fieldKey, "name"]}
-                            label="name"
-                            required
-                          >
+                          <Form.Item {...field} name={[field.name, 'name']} key={[field.fieldKey, 'name']} label="name" required>
                             <Input />
                           </Form.Item>
                           <Form.Item
                             {...field}
                             label="format"
-                            name={[field.name, "format"]}
-                            key={[field.fieldKey, "format"]}
+                            name={[field.name, 'format']}
+                            key={[field.fieldKey, 'format']}
                             required
                           >
                             <Select placeholder="Media Type *">
@@ -307,12 +235,12 @@ function AutomatorJobForm({ onFinish, api }) {
                           <Form.Item
                             {...field}
                             label="user agent"
-                            name={[field.name, "userAgent"]}
-                            key={[field.fieldKey, "userAgent"]}
+                            name={[field.name, 'userAgent']}
+                            key={[field.fieldKey, 'userAgent']}
                             required
                           >
                             <Select placeholder="">
-                              {userAgents.map((ua) => (
+                              {userAgents.map(ua => (
                                 <Select.Option value={ua.value} key={ua.value}>
                                   {ua.name}
                                 </Select.Option>
@@ -323,17 +251,17 @@ function AutomatorJobForm({ onFinish, api }) {
                             <span>Viewport</span>
                             <Form.Item
                               {...field}
-                              name={[field.name, "viewport", "width"]}
+                              name={[field.name, 'viewport', 'width']}
                               required
-                              key={[field.fieldKey, "viewport", "width"]}
+                              key={[field.fieldKey, 'viewport', 'width']}
                             >
                               <InputNumber placeholder="width" />
                             </Form.Item>
                             <Form.Item
                               {...field}
-                              name={[field.name, "viewport", "height"]}
+                              name={[field.name, 'viewport', 'height']}
                               required
-                              key={[field.fieldKey, "viewport", "height"]}
+                              key={[field.fieldKey, 'viewport', 'height']}
                             >
                               <InputNumber placeholder="height" />
                             </Form.Item>
@@ -342,17 +270,17 @@ function AutomatorJobForm({ onFinish, api }) {
                             <span>Dimensions</span>
                             <Form.Item
                               {...field}
-                              name={[field.name, "dimensions", "width"]}
+                              name={[field.name, 'dimensions', 'width']}
                               required
-                              key={[field.fieldKey, "dimensions", "width"]}
+                              key={[field.fieldKey, 'dimensions', 'width']}
                             >
                               <InputNumber placeholder="width" />
                             </Form.Item>
                             <Form.Item
                               {...field}
-                              name={[field.name, "dimensions", "height"]}
+                              name={[field.name, 'dimensions', 'height']}
                               required
-                              key={[field.fieldKey, "dimensions", "height"]}
+                              key={[field.fieldKey, 'dimensions', 'height']}
                             >
                               <InputNumber placeholder="height" />
                             </Form.Item>
@@ -362,18 +290,14 @@ function AutomatorJobForm({ onFinish, api }) {
                     })}
                   </Space>
 
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    icon={<PlusOutlined />}
-                  >
+                  <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />}>
                     Add output
                   </Button>
                 </Space>
               )}
             </Form.List>
           </TabPane>
-          <TabPane tab={getActionTab("scoring")} key="scoring">
+          <TabPane tab={getActionTab('scoring')} key="scoring">
             <CenteredDiv>
               <Alert
                 message="This will produce an usable summary to compute a score, available on https://scoring.taaste.io/<domain>.json"
@@ -386,9 +310,9 @@ function AutomatorJobForm({ onFinish, api }) {
               imageStyle={{ height: 150 }}
               description={
                 <span>
-                  More about{" "}
+                  More about{' '}
                   <a
-                    target={"_blank"}
+                    target={'_blank'}
                     href="https://www.notion.so/axeptio/Taste-5a35649c090e403385137bd42008114e#0224e861e2a142df92c61fac145a03ca"
                     rel="noreferrer"
                   >
@@ -398,11 +322,11 @@ function AutomatorJobForm({ onFinish, api }) {
               }
             ></Empty>
           </TabPane>
-          <TabPane tab={getActionTab("gtm")} key="gtm">
-            {approvalOption("gtm")}
+          <TabPane tab={getActionTab('gtm')} key="gtm">
+            {approvalOption('gtm')}
             <Empty description="There are no option available for this action" />
           </TabPane>
-          <TabPane tab={getActionTab("emailing")} key="emailing">
+          <TabPane tab={getActionTab('emailing')} key="emailing">
             <EmailingForm api={api} />
           </TabPane>
         </Tabs>

@@ -1,17 +1,12 @@
-import { Select } from "antd";
-import languages from "@cospired/i18n-iso-languages";
-languages.registerLocale(require("@cospired/i18n-iso-languages/langs/en.json"));
+import { Select } from 'antd';
+import languages from '@cospired/i18n-iso-languages';
+languages.registerLocale(require('@cospired/i18n-iso-languages/langs/en.json'));
 
 const { Option, OptGroup } = Select;
 
-function LanguageSelect({
-  value = "universal",
-  activeLanguages = [],
-  style = {},
-  onChange,
-}) {
-  const languageNames = languages.getNames("en");
-  const languageCodeToOption = (code) => {
+function LanguageSelect({ value = 'universal', activeLanguages = [], style = {}, onChange }) {
+  const languageNames = languages.getNames('en');
+  const languageCodeToOption = code => {
     return (
       <Option value={code} key={code}>
         {languageNames[code]}
@@ -20,15 +15,13 @@ function LanguageSelect({
   };
   const activeLanguagesOptions = activeLanguages.map(languageCodeToOption);
   const otherLanguagesOptions = Object.keys(languageNames)
-    .filter((code) => activeLanguages.indexOf(code) === -1)
+    .filter(code => activeLanguages.indexOf(code) === -1)
     .map(languageCodeToOption);
   return (
     <Select
       showSearch
       filterOption={(input, option) => {
-        return String(option.children)
-          .toLowerCase()
-          .includes(input.toLowerCase());
+        return String(option.children).toLowerCase().includes(input.toLowerCase());
       }}
       value={value}
       onChange={onChange}

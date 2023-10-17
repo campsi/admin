@@ -1,16 +1,16 @@
-import DocsService from "../DocsService/DocsService";
-import AuthService from "../AuthService/AuthService";
-import AssetsService from "../AssetsService/AssetsService";
-import { useParams } from "react-router-dom";
-import AutomatorService from "../AutomatorService/AutomatorService";
-import NotificationsService from "../NotificationsService/NotificationsService";
+import DocsService from '../DocsService/DocsService';
+import AuthService from '../AuthService/AuthService';
+import AssetsService from '../AssetsService/AssetsService';
+import { useParams } from 'react-router-dom';
+import AutomatorService from '../AutomatorService/AutomatorService';
+import NotificationsService from '../NotificationsService/NotificationsService';
 
 const ServiceComponents = {
   DocsService,
   AuthService,
   AutomatorService,
   AssetsService,
-  NotificationsService,
+  NotificationsService
 };
 
 function Service(props) {

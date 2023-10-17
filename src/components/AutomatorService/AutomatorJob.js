@@ -1,12 +1,12 @@
-import { withAppContext } from "../../App";
-import { Button, Card, Descriptions, Empty, Tabs, Input } from "antd";
-import withParams from "../../utils/withParams";
-import React, { Component } from "react";
-import StylesheetDetails from "./Details/StylesheetDetails";
-import ScannerDetails from "./Details/ScannerDetails";
-import ProvisioningDetails from "./Details/ProvisioningDetails";
-import ShowcaseDetails from "./Details/ShowcaseDetails";
-import GtmDetails from "./Details/GtmDetails";
+import { withAppContext } from '../../App';
+import { Button, Card, Descriptions, Empty, Tabs, Input } from 'antd';
+import withParams from '../../utils/withParams';
+import React, { Component } from 'react';
+import StylesheetDetails from './Details/StylesheetDetails';
+import ScannerDetails from './Details/ScannerDetails';
+import ProvisioningDetails from './Details/ProvisioningDetails';
+import ShowcaseDetails from './Details/ShowcaseDetails';
+import GtmDetails from './Details/GtmDetails';
 import {
   CheckCircleOutlined,
   DislikeOutlined,
@@ -14,18 +14,18 @@ import {
   LoadingOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
-  WarningOutlined,
-} from "@ant-design/icons";
-import AutomatorJobActions from "./AutomatorJobActions";
-import Meta from "antd/es/card/Meta";
-import copyText from "../../utils/copyText";
+  WarningOutlined
+} from '@ant-design/icons';
+import AutomatorJobActions from './AutomatorJobActions';
+import Meta from 'antd/es/card/Meta';
+import copyText from '../../utils/copyText';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
 class AutomatorJob extends Component {
   state = {
     job: {},
-    isFetching: false,
+    isFetching: false
   };
   componentDidMount() {
     this.fetchData();
@@ -39,12 +39,10 @@ class AutomatorJob extends Component {
   fetchData() {
     const { api, service, params } = this.props;
     this.setState({ isFetching: true }, async () => {
-      const response = await api.client.get(
-        `/${service.name}/jobs/${params.id}`
-      );
+      const response = await api.client.get(`/${service.name}/jobs/${params.id}`);
       this.setState({
         job: response.data,
-        isFetching: false,
+        isFetching: false
       });
     });
   }
@@ -56,52 +54,40 @@ class AutomatorJob extends Component {
         <TextArea
           readOnly
           rows={6}
-          style={{ width: "100%", fontFamily: "Monaco, monospace" }}
-          defaultValue={JSON.stringify(
-            job.actions[action].result.error,
-            null,
-            2
-          )}
+          style={{ width: '100%', fontFamily: 'Monaco, monospace' }}
+          defaultValue={JSON.stringify(job.actions[action].result.error, null, 2)}
         />
       );
     }
-    if (
-      job.actions?.[action]?.preview &&
-      job.actions?.[action]?.approval.approved === undefined
-    ) {
+    if (job.actions?.[action]?.preview && job.actions?.[action]?.approval.approved === undefined) {
       return (
         <Card
           title="Preview result"
           actions={[
             <Button
               danger
-              style={{ borderColor: "green", color: "green" }}
+              style={{ borderColor: 'green', color: 'green' }}
               onClick={() => this.giveApprovalAction(job, action, true)}
             >
               Accept
             </Button>,
-            <Button
-              danger
-              onClick={() => this.giveApprovalAction(job, action, false)}
-            >
+            <Button danger onClick={() => this.giveApprovalAction(job, action, false)}>
               Decline
-            </Button>,
+            </Button>
           ]}
         >
           {this.actionDetails(job, action)}
         </Card>
       );
     }
-    if (typeof job.actions?.[action]?.approval?.approved === "boolean") {
+    if (typeof job.actions?.[action]?.approval?.approved === 'boolean') {
       return (
         <Card cover={this.actionDetails(job, action)}>
           <Meta
-            title={`${
-              job.actions?.[action]?.approval.approved
-                ? "Approved"
-                : "Disapproved"
-            } by ${job.actions?.[action]?.approval.approvedBy}`}
-            style={{ "text-align": "center" }}
+            title={`${job.actions?.[action]?.approval.approved ? 'Approved' : 'Disapproved'} by ${
+              job.actions?.[action]?.approval.approvedBy
+            }`}
+            style={{ 'text-align': 'center' }}
           />
         </Card>
       );
@@ -115,10 +101,10 @@ class AutomatorJob extends Component {
   giveApprovalAction(job, action, approve) {
     job.actions[action].approval.approved = approve;
     job.actions[action].approval.approvedBy = this.props.api.clientId;
-    job.status = approve ? "Pending" : "Done";
+    job.status = approve ? 'Pending' : 'Done';
     this.props.api.client
-      .put(`/automator/jobs/${job._id + (approve ? "?push=true" : "")}`, job, {
-        timeout: 10000,
+      .put(`/automator/jobs/${job._id + (approve ? '?push=true' : '')}`, job, {
+        timeout: 10000
       })
       .then(() => {
         this.props.onFetching();
@@ -128,37 +114,17 @@ class AutomatorJob extends Component {
 
   actionDetails(job, action) {
     switch (action) {
-      case "stylesheet":
-        return (
-          <StylesheetDetails
-            result={job.actions[action].result ?? job.actions[action].preview}
-          />
-        );
-      case "scanner":
-        return (
-          <ScannerDetails
-            result={job.actions[action].result ?? job.actions[action].preview}
-          />
-        );
-      case "provisioning":
-        return (
-          <ProvisioningDetails
-            result={job.actions[action].result ?? job.actions[action].preview}
-          />
-        );
-      case "showcase":
-        return (
-          <ShowcaseDetails
-            result={job.actions[action].result ?? job.actions[action].preview}
-          />
-        );
-      case "gtm":
-        return (
-          <GtmDetails
-            result={job.actions[action].result ?? job.actions[action].preview}
-          />
-        );
-      case "emailing":
+      case 'stylesheet':
+        return <StylesheetDetails result={job.actions[action].result ?? job.actions[action].preview} />;
+      case 'scanner':
+        return <ScannerDetails result={job.actions[action].result ?? job.actions[action].preview} />;
+      case 'provisioning':
+        return <ProvisioningDetails result={job.actions[action].result ?? job.actions[action].preview} />;
+      case 'showcase':
+        return <ShowcaseDetails result={job.actions[action].result ?? job.actions[action].preview} />;
+      case 'gtm':
+        return <GtmDetails result={job.actions[action].result ?? job.actions[action].preview} />;
+      case 'emailing':
         return <></>;
       default:
         return <Empty />;
@@ -222,31 +188,16 @@ class AutomatorJob extends Component {
       );
     }
     return (
-      <Card
-        title="Job detail"
-        extra={
-          <Button onClick={() => this.fetchData()} icon={<ReloadOutlined />} />
-        }
-      >
+      <Card title="Job detail" extra={<Button onClick={() => this.fetchData()} icon={<ReloadOutlined />} />}>
         <Tabs type="card" key={job.id}>
           <TabPane tab="job details" key="tab_details">
             <Descriptions bordered column={2} size="small">
               <Descriptions.Item label="status">{job.status}</Descriptions.Item>
-              <Descriptions.Item label="Custom ID">
-                {job.params?.customId}
-              </Descriptions.Item>
-              <Descriptions.Item label="Domain">
-                {job.params?.domain}
-              </Descriptions.Item>
-              <Descriptions.Item label="createdBy">
-                {job.createdBy}
-              </Descriptions.Item>
-              <Descriptions.Item label="createdAt">
-                {job.createdAt}
-              </Descriptions.Item>
-              <Descriptions.Item label="Priority">
-                {job.params?.priority}
-              </Descriptions.Item>
+              <Descriptions.Item label="Custom ID">{job.params?.customId}</Descriptions.Item>
+              <Descriptions.Item label="Domain">{job.params?.domain}</Descriptions.Item>
+              <Descriptions.Item label="createdBy">{job.createdBy}</Descriptions.Item>
+              <Descriptions.Item label="createdAt">{job.createdAt}</Descriptions.Item>
+              <Descriptions.Item label="Priority">{job.params?.priority}</Descriptions.Item>
               <Descriptions.Item>
                 <Button
                   type="default"
@@ -260,8 +211,8 @@ class AutomatorJob extends Component {
                         job.params?.customId,
                         job.params?.priority,
                         job.createdAt,
-                        job.createdBy,
-                      ].join("\t") //Google sheet do not support (,) but (/t), and this button is developper specialy for GSheet
+                        job.createdBy
+                      ].join('\t') //Google sheet do not support (,) but (/t), and this button is developper specialy for GSheet
                     );
                   }}
                 >
@@ -270,13 +221,9 @@ class AutomatorJob extends Component {
               </Descriptions.Item>
             </Descriptions>
           </TabPane>
-          {allActions.map((action) => {
+          {allActions.map(action => {
             return (
-              <TabPane
-                tab={getTab(action)}
-                key={`tab_${action}`}
-                disabled={typeof job.actions?.[action] === "undefined"}
-              >
+              <TabPane tab={getTab(action)} key={`tab_${action}`} disabled={typeof job.actions?.[action] === 'undefined'}>
                 {this.renderActionPanel(action)}
               </TabPane>
             );

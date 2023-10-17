@@ -1,25 +1,10 @@
-import { Component } from "react";
-import { withAppContext } from "../../App";
-import withParams from "../../utils/withParams";
-import { Link } from "react-router-dom";
-import {
-  CheckOutlined,
-  CloseOutlined,
-  FileOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import dayjs from "dayjs";
-import {
-  Layout,
-  Typography,
-  Table,
-  notification,
-  Card,
-  Space,
-  Button,
-  Select,
-  Input,
-} from "antd";
+import { Component } from 'react';
+import { withAppContext } from '../../App';
+import withParams from '../../utils/withParams';
+import { Link } from 'react-router-dom';
+import { CheckOutlined, CloseOutlined, FileOutlined, SearchOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import { Layout, Typography, Table, notification, Card, Space, Button, Select, Input } from 'antd';
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -31,9 +16,9 @@ class ResourceListing extends Component {
     totalCount: 0,
     lastPage: 1,
     selectedState: undefined,
-    language: "en",
+    language: 'en',
     visibleProperties: [],
-    filters: {},
+    filters: {}
   };
 
   async componentDidMount() {
@@ -46,7 +31,7 @@ class ResourceListing extends Component {
     const { resourceName } = params;
 
     await api.client.patch(`${service.name}/${resourceName}/${id}`, {
-      [propertyName]: value,
+      [propertyName]: value
     });
 
     await this.fetchData();
@@ -55,15 +40,15 @@ class ResourceListing extends Component {
   generateFilterDropdown({ name, title, ...property }) {
     return ({ setSelectedKeys, selectedKeys, confirm }) => {
       const current = selectedKeys[0] || {
-        operator: "*",
-        value: "",
-        isLocalizedString: property["ui:field"] === "LocalizedString",
+        operator: '*',
+        value: '',
+        isLocalizedString: property['ui:field'] === 'LocalizedString'
       };
       return (
         <Space style={{ padding: 8 }} direction="horizontal">
           <Select
             value={current.operator}
-            onChange={(value) => {
+            onChange={value => {
               setSelectedKeys([{ ...current, operator: value }]);
             }}
           >
@@ -75,19 +60,10 @@ class ResourceListing extends Component {
           <Input
             placeholder={`Search ${title || name}`}
             value={current.value}
-            onChange={(e) =>
-              setSelectedKeys(
-                e.target.value ? [{ ...current, value: e.target.value }] : []
-              )
-            }
+            onChange={e => setSelectedKeys(e.target.value ? [{ ...current, value: e.target.value }] : [])}
             onPressEnter={() => confirm({ closeDropdown: true })}
           />
-          <Button
-            type="primary"
-            onClick={() => confirm({ closeDropdown: true })}
-            icon={<SearchOutlined />}
-            size="small"
-          >
+          <Button type="primary" onClick={() => confirm({ closeDropdown: true })} icon={<SearchOutlined />} size="small">
             Search
           </Button>
         </Space>
@@ -107,31 +83,23 @@ class ResourceListing extends Component {
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
-    let {
-      perPage,
-      page,
-      selectedState = resourceClass.defaultState,
-    } = this.state;
+    let { perPage, page, selectedState = resourceClass.defaultState } = this.state;
     if (pagination) {
       perPage = pagination.pageSize;
       page = pagination.current;
     }
 
-    const allowedMethods =
-      resourceClass.permissions[authenticated ? "owner" : "public"]?.[
-        selectedState
-      ];
+    const allowedMethods = resourceClass.permissions[authenticated ? 'owner' : 'public']?.[selectedState];
     if (!allowedMethods) {
       if (authenticated) {
         notification.open({
-          message: "Resource is not available",
-          description: "This resource cannot be fetched when logged in",
+          message: 'Resource is not available',
+          description: 'This resource cannot be fetched when logged in'
         });
       } else {
         notification.open({
-          message: "Resource is not public",
-          description:
-            "This resource cannot be fetched anonymously, please log in first.",
+          message: 'Resource is not public',
+          description: 'This resource cannot be fetched anonymously, please log in first.'
         });
       }
       return;
@@ -139,46 +107,32 @@ class ResourceListing extends Component {
 
     const params = new URLSearchParams({
       perPage: perPage,
-      page: page,
+      page: page
     });
 
     Object.keys(filters)
-      .filter((key) => {
+      .filter(key => {
         return filters[key]?.length > 0;
       })
-      .forEach((key) => {
+      .forEach(key => {
         let propertyPath = key;
         if (filters[key][0].isLocalizedString) {
           propertyPath = filters[key][0].__lang ? `${key}.__lang.en` : key;
         }
 
-        params.append(
-          `${propertyPath}${filters[key][0].operator}`,
-          filters[key][0].value
-        );
+        params.append(`${propertyPath}${filters[key][0].operator}`, filters[key][0].value);
       });
 
     if (sorter.field) {
-      const field = Array.isArray(sorter.field)
-        ? sorter.field.join(".")
-        : sorter.field;
-      params.append(
-        "sort",
-        `${
-          sorter.order !== "ascend"
-            ? `-states.${selectedState}.`
-            : `states.${selectedState}.`
-        }${field}`
-      );
+      const field = Array.isArray(sorter.field) ? sorter.field.join('.') : sorter.field;
+      params.append('sort', `${sorter.order !== 'ascend' ? `-states.${selectedState}.` : `states.${selectedState}.`}${field}`);
     }
-    const response = await api.client.get(
-      `/${service.name}/${resourceName}?${params.toString()}`
-    );
+    const response = await api.client.get(`/${service.name}/${resourceName}?${params.toString()}`);
     this.setState({
       items: response.data,
       isFetching: false,
-      lastPage: Number(response.headers["x-last-page"]),
-      totalCount: Number(response.headers["x-total-count"]),
+      lastPage: Number(response.headers['x-last-page']),
+      totalCount: Number(response.headers['x-total-count'])
     });
   }
 
@@ -187,13 +141,13 @@ class ResourceListing extends Component {
   };
 
   async updateVisibleProperties() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const { service } = this.props;
       const { resourceName } = this.props.params;
       const resource = service.resources[resourceName];
       this.setState(
         {
-          visibleProperties: resource.schema["ui:defaultColumns"] ?? [],
+          visibleProperties: resource.schema['ui:defaultColumns'] ?? []
         },
         () => resolve()
       );
@@ -201,7 +155,7 @@ class ResourceListing extends Component {
   }
 
   renderPropertyOptions(properties) {
-    return properties.map((p) => {
+    return properties.map(p => {
       return (
         <Option value={p.name} key={`option_${p.name}`}>
           {p.title}
@@ -212,16 +166,13 @@ class ResourceListing extends Component {
 
   getColumnRender(property, language) {
     return (value, row) => {
-      if (property["ui:relation"]) {
-        const { service, resource, labelIndex, embeddedIndex } =
-          property["ui:relation"];
+      if (property['ui:relation']) {
+        const { service, resource, labelIndex, embeddedIndex } = property['ui:relation'];
         if (!value) {
-          return "";
+          return '';
         }
         return (
-          <Link to={`/services/${service}/resources/${resource}/${value}`}>
-            {row[embeddedIndex]?.[labelIndex] || value}
-          </Link>
+          <Link to={`/services/${service}/resources/${resource}/${value}`}>{row[embeddedIndex]?.[labelIndex] || value}</Link>
         );
       }
 
@@ -230,38 +181,32 @@ class ResourceListing extends Component {
         type = typeof value;
       }
       switch (type) {
-        case "boolean":
+        case 'boolean':
           return value ? <CheckOutlined /> : <CloseOutlined />;
-        case "object":
+        case 'object':
           if (value?.__lang) {
             return this.renderStringInCell(value.__lang?.[language]);
           }
           if (value?.url && value?.detectedMimeType) {
-            if (value.detectedMimeType.includes("image")) {
-              return (
-                <img
-                  src={value?.url}
-                  style={{ maxHeight: 30, maxWidth: 50 }}
-                  alt={value?.originalName}
-                />
-              );
+            if (value.detectedMimeType.includes('image')) {
+              return <img src={value?.url} style={{ maxHeight: 30, maxWidth: 50 }} alt={value?.originalName} />;
             }
             return <FileOutlined title={value.originalName} />;
           }
           return JSON.stringify(value);
-        case "array":
+        case 'array':
           const length = Array.from(value || []).length;
           switch (length) {
             case 0:
-              return "Empty";
+              return 'Empty';
             case 1:
-              return "1 item";
+              return '1 item';
             default:
               return `${length} items`;
           }
-        case "string":
+        case 'string':
           return this.renderStringInCell(value, property, row);
-        case "number":
+        case 'number':
         default:
           return value;
       }
@@ -269,18 +214,11 @@ class ResourceListing extends Component {
   }
 
   renderStringInCell(string, property = {}, row) {
-    let str = String(string || "");
-    if (
-      (str.indexOf("http") === 0 || property.format === "hostname") &&
-      !property.enum
-    ) {
+    let str = String(string || '');
+    if ((str.indexOf('http') === 0 || property.format === 'hostname') && !property.enum) {
       return (
-        <a
-          href={str.indexOf("http") === 0 ? str : `https://${str}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {str.indexOf("http") === 0 ? str : `https://${str}`}
+        <a href={str.indexOf('http') === 0 ? str : `https://${str}`} target="_blank" rel="noreferrer">
+          {str.indexOf('http') === 0 ? str : `https://${str}`}
         </a>
       );
     }
@@ -290,11 +228,11 @@ class ResourceListing extends Component {
           showSearch
           placeholder={property.name}
           value={string}
-          onChange={async (value) => {
+          onChange={async value => {
             await this.quickUpdate(row.id, property.name, value);
           }}
         >
-          {property.enum.map((option) => {
+          {property.enum.map(option => {
             return (
               <Option key={option} value={option} selected={option === string}>
                 {option}
@@ -313,53 +251,39 @@ class ResourceListing extends Component {
     const { language, visibleProperties } = this.state;
     const resource = service.resources[resourceName];
 
-    const allProperties = Object.keys(resource.schema.properties).map(
-      (prop) => {
-        return { name: prop, ...resource.schema.properties[prop] };
-      }
-    );
-    const properties = visibleProperties.map((prop) => {
+    const allProperties = Object.keys(resource.schema.properties).map(prop => {
+      return { name: prop, ...resource.schema.properties[prop] };
+    });
+    const properties = visibleProperties.map(prop => {
       return { name: prop, ...resource.schema.properties[prop] };
     });
 
     const columns = [
       {
-        title: "ID",
-        dataIndex: "id",
-        render: (value) => (
-          <Link
-            to={`/services/${service.name}/resources/${resourceName}/${value}`}
-          >
-            {value.substring(20)}
-          </Link>
-        ),
+        title: 'ID',
+        dataIndex: 'id',
+        render: value => <Link to={`/services/${service.name}/resources/${resourceName}/${value}`}>{value.substring(20)}</Link>
       },
       {
-        title: "Created At",
+        title: 'Created At',
         sorter: true,
-        dataIndex: "createdAt",
-        render: (value) => {
+        dataIndex: 'createdAt',
+        render: value => {
           const date = dayjs(value);
-          return (
-            <span title={date.format("HH:mm:ss")}>
-              {date.format("YYYY/MM/DD")}
-            </span>
-          );
-        },
-      },
+          return <span title={date.format('HH:mm:ss')}>{date.format('YYYY/MM/DD')}</span>;
+        }
+      }
     ];
 
-    properties.forEach((property) => {
+    properties.forEach(property => {
       columns.push({
         title: property.title || property.name,
-        dataIndex: ["data", property.name],
+        dataIndex: ['data', property.name],
         ellipsis: true,
         filterDropdown: this.generateFilterDropdown(property),
-        filterIcon: (filtered) => (
-          <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
-        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         sorter: true,
-        render: this.getColumnRender(property, language),
+        render: this.getColumnRender(property, language)
       });
     });
 
@@ -371,16 +295,14 @@ class ResourceListing extends Component {
         <Space direction="vertical">
           <Card>
             <Space>
-              <Link
-                to={`/services/${service.name}/resources/${resourceName}/new`}
-              >
+              <Link to={`/services/${service.name}/resources/${resourceName}/new`}>
                 <Button>Create new document</Button>
               </Link>
               <Select
                 mode="tags"
                 style={{ minWidth: 400 }}
                 value={visibleProperties}
-                onChange={(selection) => {
+                onChange={selection => {
                   this.setState({ visibleProperties: selection });
                 }}
               >
@@ -391,7 +313,7 @@ class ResourceListing extends Component {
           <div className="site-layout-background">
             <Table
               columns={columns}
-              rowKey={(item) => item.id}
+              rowKey={item => item.id}
               dataSource={this.state.items}
               onChange={this.handleTableChange}
               current={this.state.page}
@@ -404,9 +326,9 @@ class ResourceListing extends Component {
                 onChange: (page, pageSize) => {
                   this.setState({
                     perPage: pageSize,
-                    page,
+                    page
                   });
-                },
+                }
               }}
             />
           </div>

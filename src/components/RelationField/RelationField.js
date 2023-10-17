@@ -1,7 +1,7 @@
-import { withAppContext } from "../../App";
-import { Component } from "react";
-import { Divider, Form, Input, Select, Space, Typography } from "antd";
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { withAppContext } from '../../App';
+import { Component } from 'react';
+import { Divider, Form, Input, Select, Space, Typography } from 'antd';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 /**
  *
  * @todo implement pagination
@@ -14,7 +14,7 @@ import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
  * @returns {React.Component}
  */
 function generateRelationField(properties) {
-  const { resource, service, labelIndex = "name", perPage } = properties;
+  const { resource, service, labelIndex = 'name', perPage } = properties;
 
   class RelationField extends Component {
     state = {
@@ -23,7 +23,7 @@ function generateRelationField(properties) {
       page: 1,
       totalCount: 0,
       newItemData: {},
-      isCreatingNewItem: false,
+      isCreatingNewItem: false
     };
 
     async componentDidMount() {
@@ -31,18 +31,16 @@ function generateRelationField(properties) {
     }
 
     setStateAsync(state) {
-      return new Promise((resolve) => this.setState(state, () => resolve()));
+      return new Promise(resolve => this.setState(state, () => resolve()));
     }
 
     async fetchData() {
       const { api } = this.props;
       const { perPage, page, totalCount } = this.state;
-      const response = await api.client.get(
-        `${service}/${resource}?perPage=${perPage}&page=${page}&totalCount=${totalCount}`
-      );
+      const response = await api.client.get(`${service}/${resource}?perPage=${perPage}&page=${page}&totalCount=${totalCount}`);
       this.setState({
         items: response.data,
-        totalCount: response.headers["X-Total-Count"],
+        totalCount: response.headers['X-Total-Count']
       });
     }
 
@@ -52,31 +50,27 @@ function generateRelationField(properties) {
       const { api, onChange } = this.props;
       await this.setStateAsync({ isCreatingNewItem: true });
       try {
-        const response = await api.client.post(
-          `${service}/${resource}`,
-          newItemData
-        );
+        const response = await api.client.post(`${service}/${resource}`, newItemData);
         if (response.data) {
           await this.setStateAsync({
             items: items.concat([response.data]),
-            isCreatingNewItem: false,
+            isCreatingNewItem: false
           });
           onChange(response.data.id);
         }
       } catch (error) {
         await this.setStateAsync({
-          isCreatingNewItem: false,
+          isCreatingNewItem: false
         });
         console.error(error);
       }
     }
 
     render() {
-      const { formData, onChange, schema, services, formItemProps } =
-        this.props;
+      const { formData, onChange, schema, services, formItemProps } = this.props;
       const relSchema = services[service].resources[resource].schema;
       const requiredProperties =
-        relSchema.required?.map((propertyName) => {
+        relSchema.required?.map(propertyName => {
           return { name: propertyName, ...relSchema.properties[propertyName] };
         }) || [];
       const { items, isCreatingNewItem, newItemData } = this.state;
@@ -86,29 +80,25 @@ function generateRelationField(properties) {
             showSearch
             value={formData}
             optionFilterProp="children"
-            onChange={(value) =>
-              onChange(value, items.filter((item) => value === item.id)[0])
-            }
+            onChange={value => onChange(value, items.filter(item => value === item.id)[0])}
             filterOption={(input, option) => {
               // implement querying
-              return String(option.label)
-                .toLowerCase()
-                .includes(input.toLowerCase());
+              return String(option.label).toLowerCase().includes(input.toLowerCase());
             }}
-            options={items.map((doc) => {
+            options={items.map(doc => {
               return {
                 key: doc.id,
                 value: doc.id,
-                label: doc.data[labelIndex],
+                label: doc.data[labelIndex]
               };
             })}
-            dropdownRender={(menu) => {
+            dropdownRender={menu => {
               return (
                 <>
                   {menu}
-                  <Divider style={{ margin: "8px 0" }} />
-                  <Space align="center" style={{ padding: "0 8px 4px" }}>
-                    {requiredProperties.map((propSchema) => {
+                  <Divider style={{ margin: '8px 0' }} />
+                  <Space align="center" style={{ padding: '0 8px 4px' }}>
+                    {requiredProperties.map(propSchema => {
                       return (
                         <div key={propSchema.name}>
                           <Input
@@ -117,12 +107,12 @@ function generateRelationField(properties) {
                             placeholder={propSchema.title}
                             required
                             value={newItemData[propSchema.name]}
-                            onChange={(e) => {
+                            onChange={e => {
                               this.setState({
                                 newItemData: {
                                   ...newItemData,
-                                  [e.target.name]: e.target.value,
-                                },
+                                  [e.target.name]: e.target.value
+                                }
                               });
                             }}
                           />
@@ -130,15 +120,11 @@ function generateRelationField(properties) {
                       );
                     })}
                     <Typography.Link
-                      onClick={(e) => this.addNewItem(e)}
-                      style={{ whiteSpace: "nowrap" }}
+                      onClick={e => this.addNewItem(e)}
+                      style={{ whiteSpace: 'nowrap' }}
                       disabled={isCreatingNewItem}
                     >
-                      {isCreatingNewItem ? (
-                        <LoadingOutlined />
-                      ) : (
-                        <PlusOutlined />
-                      )}
+                      {isCreatingNewItem ? <LoadingOutlined /> : <PlusOutlined />}
                       Add item
                     </Typography.Link>
                   </Space>

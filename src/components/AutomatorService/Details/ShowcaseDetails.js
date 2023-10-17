@@ -1,9 +1,9 @@
-import { Table } from "antd";
-import { Component } from "react";
+import { Table } from 'antd';
+import { Component } from 'react';
 
 class ShowcaseDetails extends Component {
   state = {
-    dataSource: [],
+    dataSource: []
   };
 
   componentDidMount() {
@@ -18,38 +18,38 @@ class ShowcaseDetails extends Component {
 
   updateStateFromProps() {
     this.setState({
-      dataSource: this.props.result.map((output) => {
+      dataSource: this.props.result.map(output => {
         return { key: output.name, ...output };
-      }),
+      })
     });
   }
 
   getColumns = () => [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name'
     },
     {
-      title: "Viewport",
-      dataIndex: "viewport",
-      key: "viewport",
-      render: (item) => (
+      title: 'Viewport',
+      dataIndex: 'viewport',
+      key: 'viewport',
+      render: item => (
         <span>
-          {item["width"]} &times; {item["height"]} px
+          {item['width']} &times; {item['height']} px
         </span>
-      ),
+      )
     },
 
     {
-      title: "Public Url",
-      dataIndex: "url",
-      key: "url",
-      render: (item) => {
+      title: 'Public Url',
+      dataIndex: 'url',
+      key: 'url',
+      render: item => {
         if (Array.isArray(item)) {
           return (
             <ul>
-              {item.map((url) => (
+              {item.map(url => (
                 <li>
                   <a href={url}>
                     <img src={url} width={300} alt="showcase render" />
@@ -64,8 +64,8 @@ class ShowcaseDetails extends Component {
             <img src={item} width={300} alt="showcase render" />
           </a>
         );
-      },
-    },
+      }
+    }
   ];
 
   render() {
