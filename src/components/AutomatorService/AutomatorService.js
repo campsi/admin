@@ -287,13 +287,7 @@ class AutomatorService extends Component {
             extra={
               <>
                 <Button onClick={() => this.fetchData()}>{isFetching ? <LoadingOutlined /> : <ReloadOutlined />}</Button>
-                <Button
-                  onClick={() => {
-                    pollingStart ? this.stopPolling() : this.startPolling();
-                  }}
-                >
-                  {pollingStart ? 'Stop polling' : 'Start polling'}
-                </Button>
+                <Button onClick={() => this.startPolling()}>{pollingStart ? 'Stop polling' : 'Start polling'}</Button>
               </>
             }
           >

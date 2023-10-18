@@ -1,3 +1,21 @@
 {
-  "extends": "eslint-config-axeptio"
+  "extends": ["react-app", "plugin:prettier/recommended"],
+  "ignorePatterns": ["*.css"],
+  "rules": {
+    "no-unused-expressions": 0,
+    "babel/no-unused-expressions": 1,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "prettier/prettier": [
+      "warn",
+      {
+        "endOfLine": "auto"
+      }
+    ],
+    "no-console": ["warn", { "allow": ["warn", "error","info"] }]
+  },
+  "plugins": [
+    "react-hooks",
+    "babel"
+  ]
 }
