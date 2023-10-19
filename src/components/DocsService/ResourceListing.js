@@ -93,6 +93,46 @@ class ResourceListing extends Component {
       await this.updateVisibleProperties();
       await this.fetchData();
     }
+    if (prevProps.params.resourceName === this.props.params.resourceName) {
+      // this.setState({
+      //   page: 1,
+      //   perPage: 25,
+      // });
+      // await this.updateVisibleProperties();
+      // await this.fetchData();
+
+      if(window?.location?.search) {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = parseInt(urlParams.get('page'));
+        const perPage = parseInt(urlParams.get('perPage'));
+        console.log("DID update", "state perPage", this.state.perPage, "url perPage", perPage, "prevstate perPage", prevState.perPage, "state page", this.state.page, "url page", page, "prevstate page", prevState.page)
+
+        if(this.state.perPage !== perPage && prevState.perPage === perPage) {
+          console.log('did update, perPage changed')
+
+          await this.fetchData({}, {}, { current: page, pageSize: perPage });
+          //this.handleTableChange();
+          //this.setState({ perPage });
+          //await this.fetchData();
+        }
+        if(this.state.page !== page && prevState.page === page) {
+          console.log('did update, PAGE changed', this.state.page, page, prevState.page);
+
+
+          await this.fetchData({}, {}, { current: page, pageSize: perPage });
+          if(this.state.page !== prevState.page) {
+
+
+          }
+          //this.handleTableChange();
+
+        }
+
+        //console.log("did update END state :", this.state)
+
+      }
+    }
   }
 
   async fetchData(filters = {}, sorter = {}, pagination) {
