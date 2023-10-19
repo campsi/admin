@@ -124,7 +124,9 @@ export default function BulkJobCreationForm({ api, services, form }) {
     return (
       <div>
         <List
-          header={<Progress percent={(tasks.filter(task => task.status === 'success').length / tasks.length) * 100} />}
+          header={
+            <Progress percent={Math.round((tasks.filter(task => task.status === 'success').length / tasks.length) * 100)} />
+          }
           bordered
           size="small"
           dataSource={tasks}

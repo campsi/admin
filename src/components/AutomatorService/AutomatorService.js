@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Typography, Layout, Table, Tag, Card, Space, Button, Modal, Form, Input } from 'antd';
+import { Typography, Layout, Table, Tag, Card, Space, Button, Modal, Form, Input, Tooltip } from 'antd';
 import { withAppContext } from '../../App';
 import PropTypes from 'prop-types';
 import { Link, Route, Routes } from 'react-router-dom';
@@ -15,7 +15,7 @@ function BulkJobCreationModal({ api, services, ...props }) {
   const [form] = Form.useForm();
 
   return (
-    <Modal {...props} okText="Submit" cancelText="Leave" onOk={() => form.submit()} title="Create Jobs in bulk">
+    <Modal width={800} {...props} okText="Submit" cancelText="Leave" onOk={() => form.submit()} title="Create Jobs in bulk">
       <BulkJobCreationForm api={api} services={services} form={form} />
     </Modal>
   );
@@ -47,7 +47,11 @@ class AutomatorService extends Component {
         render: job => {
           return (
             <div>
-              <Tag>{job.status}</Tag>
+              <Tag
+                color={job.status === 'Error' ? 'red' : job.status === 'Done' ? 'green' : job.status === 'Active' ? 'blue' : ''}
+              >
+                {job.status}
+              </Tag>
               {job.params?.origin === 'caas-styleguide' && (
                 <img
                   src={
@@ -116,19 +120,23 @@ class AutomatorService extends Component {
             {this.state.jobsDeleting.includes(job._id) ? (
               <Button disabled icon={<LoadingOutlined />} />
             ) : (
-              <Button icon={<DeleteOutlined />} onClick={() => this.deleteJob(job._id)} />
+              <Button danger title={'delete the job'} icon={<DeleteOutlined />} onClick={() => this.deleteJob(job._id)} />
             )}
             {job.status === 'Done' || job.status === 'Error' ? (
               this.state.jobsToRestart.includes(job._id) ? (
                 <Button disabled icon={<LoadingOutlined />} />
               ) : (
-                <Button icon={<UndoOutlined />} onClick={() => this.restartJob(job)} />
+                <Tooltip placement="bottom" title={'Restart the job'}>
+                  <Button icon={<UndoOutlined />} onClick={() => this.restartJob(job)} />
+                </Tooltip>
               )
             ) : (
               ''
             )}
             <Link to={`/services/${this.props.service.name}/jobs/${job._id}`}>
-              <Button icon={<EyeOutlined />} />
+              <Tooltip placement="bottom" title={'View the job'}>
+                <Button icon={<EyeOutlined />} />
+              </Tooltip>
             </Link>
           </Space>
         )
@@ -259,7 +267,13 @@ class AutomatorService extends Component {
     return (
       <Layout.Content style={{ padding: 30, width: '100%' }}>
         <Title>Automator Service</Title>
-        <Button onClick={() => this.setState({ bulkJobCreationModalOpen: true })}>Bulk creation</Button>
+        <Button
+          type="primary"
+          style={{ 'box-shadow': '0 0 8px #a4abb6' }}
+          onClick={() => this.setState({ bulkJobCreationModalOpen: true })}
+        >
+          Bulk creation
+        </Button>
         <BulkJobCreationModal
           visible={bulkJobCreationModalOpen}
           api={api}
@@ -286,7 +300,9 @@ class AutomatorService extends Component {
             title="Jobs"
             extra={
               <>
-                <Button onClick={() => this.fetchData()}>{isFetching ? <LoadingOutlined /> : <ReloadOutlined />}</Button>
+                <Button style={{ margin: '10px' }} onClick={() => this.fetchData()}>
+                  {isFetching ? <LoadingOutlined /> : <ReloadOutlined />}
+                </Button>
                 <Button onClick={() => this.startPolling()}>{pollingStart ? 'Stop polling' : 'Start polling'}</Button>
               </>
             }

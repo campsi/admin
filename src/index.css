@@ -3,14 +3,25 @@
 }
 
 
-.ant-layout {
+.ant-layout, .ant-modal-content {
   .ant-btn {
-    border-radius: 8px;
+    border-radius: 5px;
 
   }
   .ant-card {
-    border-radius: 8px;
-    box-shadow: 0 0 10px #889ab9;
+    box-shadow: 0 0 8px rgba(164, 171, 182, 0.7);
+  }
+  .ant-pagination-item{
+    border-radius: 5px;
+  }
+  .site-layout-background >.ant-table-wrapper{
+    box-shadow: 0 0 8px #a4abb6;
+  }
+  .ant-tabs-tab{
+    border-radius: 8px 8px 0 0 !important;
+  }
+  .ant-input, .ant-input-number, .ant-select, .ant-select-selector  {
+    border-radius: 5px;
   }
 }
 
