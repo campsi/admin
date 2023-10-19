@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Menu, Layout } from 'antd';
-import { CloudOutlined, ContainerOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import {
+  CloudOutlined,
+  ContainerOutlined,
+  UnorderedListOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined
+} from '@ant-design/icons';
 import { useState } from 'react';
 
 export default function AdminMenu({ services }) {
   const [collapsed, setCollapsed] = useState(false);
-
+  const token = localStorage.getItem('access_token');
   return (
     <Layout.Sider collapsible width={250} collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}>
       <Menu mode="inline" theme="dark" defaultSelectedKeys={['1']} defaultOpenKeys={['sub1']} style={{ minHeight: '100%' }}>
@@ -26,6 +32,22 @@ export default function AdminMenu({ services }) {
                     );
                   })}
                 </Menu.SubMenu>
+              );
+            case 'AuthService':
+              const AuthLink = `/services/${serviceName}`;
+              return (
+                <Menu.Item
+                  key={AuthLink}
+                  icon={
+                    token && token !== 'undefined' ? (
+                      <CheckCircleOutlined style={{ color: 'green' }} />
+                    ) : (
+                      <CloseCircleOutlined style={{ color: 'red' }} />
+                    )
+                  }
+                >
+                  <Link to={AuthLink}>{service.title || serviceName}</Link>
+                </Menu.Item>
               );
             default:
               const link = `/services/${serviceName}`;
