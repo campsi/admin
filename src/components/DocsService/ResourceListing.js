@@ -126,9 +126,7 @@ class ResourceListing extends Component {
 
           }
           //this.handleTableChange();
-
         }
-
         //console.log("did update END state :", this.state)
 
       }
