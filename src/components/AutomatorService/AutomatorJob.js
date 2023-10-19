@@ -10,6 +10,7 @@ import GtmDetails from './Details/GtmDetails';
 import {
   CheckCircleOutlined,
   DislikeOutlined,
+  ExclamationCircleOutlined,
   LikeOutlined,
   LoadingOutlined,
   QuestionCircleOutlined,
@@ -22,6 +23,14 @@ import copyText from '../../utils/copyText';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
+function urlify(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, function (url) {
+    return '<a target="_blank" href="' + url + '">' + url + '</a>';
+  });
+  // or alternatively
+  // return text.replace(urlRegex, '<a href="$1">$1</a>')
+}
 class AutomatorJob extends Component {
   state = {
     job: {},
@@ -50,6 +59,36 @@ class AutomatorJob extends Component {
   renderActionPanel(action) {
     const { job } = this.state;
     if (job.actions?.[action]?.result?.error) {
+      if (job.actions[action].result.error.translations) {
+        const tabList = [
+          {
+            key: 'en',
+            tab: 'English'
+          },
+          {
+            key: 'fr',
+            tab: 'French'
+          }
+        ];
+        const contentList = {
+          en: <p dangerouslySetInnerHTML={{ __html: urlify(job.actions[action].result.error.translations.en) }} />,
+          fr: <p dangerouslySetInnerHTML={{ __html: urlify(job.actions[action].result.error.translations.fr) }} />
+        };
+        return (
+          <Card
+            style={{ width: '100%', boxShadow: 'unset', color: 'red' }}
+            headStyle={{ fontSize: '22px' }}
+            title={'Error: ' + job.actions[action].result.error.name}
+            tabList={tabList}
+            activeTabKey={this.state.activeTabKey}
+            onTabChange={key => {
+              this.setState({ activeTabKey: key });
+            }}
+          >
+            {contentList[this.state.activeTabKey || 'en']}
+          </Card>
+        );
+      }
       return (
         <TextArea
           readOnly
@@ -145,6 +184,13 @@ class AutomatorJob extends Component {
 
     function getTab(action) {
       if (job.actions?.[action]?.result?.error) {
+        if (job.actions[action].result.error.translations) {
+          return (
+            <>
+              <ExclamationCircleOutlined /> {action}
+            </>
+          );
+        }
         return (
           <>
             <WarningOutlined /> {action}

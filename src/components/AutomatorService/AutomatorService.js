@@ -4,7 +4,14 @@ import { withAppContext } from '../../App';
 import PropTypes from 'prop-types';
 import { Link, Route, Routes } from 'react-router-dom';
 import AutomatorJob from './AutomatorJob';
-import { DeleteOutlined, EyeOutlined, LoadingOutlined, ReloadOutlined, UndoOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+  EyeOutlined,
+  LoadingOutlined,
+  ReloadOutlined,
+  UndoOutlined
+} from '@ant-design/icons';
 import AutomatorJobForm from './AutomatorJobForm';
 import actions from './AutomatorJobActions';
 import BulkJobCreationForm from './BulkJobCreationForm';
@@ -97,9 +104,14 @@ class AutomatorService extends Component {
                   return null;
                 }
                 let color = 'default';
-
+                let icon = null;
                 if (value[action].result?.error) {
-                  color = 'red';
+                  if (value[action].result.error.translations) {
+                    color = 'orange';
+                    icon = <ExclamationCircleOutlined />;
+                  } else {
+                    color = 'red';
+                  }
                 } else if (value[action].result) {
                   color = 'green';
                 } else if (value[action].preview) {
@@ -111,7 +123,7 @@ class AutomatorService extends Component {
                   }
                 }
                 return (
-                  <Tag color={color} key={action}>
+                  <Tag icon={icon} color={color} key={action}>
                     {action}
                   </Tag>
                 );
