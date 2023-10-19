@@ -11,12 +11,19 @@ import BulkJobCreationForm from './BulkJobCreationForm';
 import { debounce } from '../../utils/debounce';
 const { Title } = Typography;
 
-function BulkJobCreationModal({ api, services, ...props }) {
+function BulkJobCreationModal({ api, services, loadingBulkJobCreation, setLoadingBulkJobCreation, ...props }) {
   const [form] = Form.useForm();
-
   return (
-    <Modal width={800} {...props} okText="Submit" cancelText="Leave" onOk={() => form.submit()} title="Create Jobs in bulk">
-      <BulkJobCreationForm api={api} services={services} form={form} />
+    <Modal
+      width={800}
+      {...props}
+      okText="Submit"
+      cancelText="Leave"
+      okButtonProps={{ loading: loadingBulkJobCreation }}
+      onOk={form.submit}
+      title="Create Jobs in bulk"
+    >
+      <BulkJobCreationForm setBulkButton={setLoadingBulkJobCreation} api={api} services={services} form={form} />
     </Modal>
   );
 }
@@ -120,7 +127,9 @@ class AutomatorService extends Component {
             {this.state.jobsDeleting.includes(job._id) ? (
               <Button disabled icon={<LoadingOutlined />} />
             ) : (
-              <Button danger title={'delete the job'} icon={<DeleteOutlined />} onClick={() => this.deleteJob(job._id)} />
+              <Tooltip placement="bottom" title={'Delete the job'}>
+                <Button danger icon={<DeleteOutlined />} onClick={() => this.deleteJob(job._id)} />
+              </Tooltip>
             )}
             {job.status === 'Done' || job.status === 'Error' ? (
               this.state.jobsToRestart.includes(job._id) ? (
@@ -271,11 +280,14 @@ class AutomatorService extends Component {
           type="primary"
           style={{ 'box-shadow': '0 0 8px #a4abb6' }}
           onClick={() => this.setState({ bulkJobCreationModalOpen: true })}
+          icon={this.state.loadingBulkJobCreation && <LoadingOutlined />}
         >
           Bulk creation
         </Button>
         <BulkJobCreationModal
           visible={bulkJobCreationModalOpen}
+          setLoadingBulkJobCreation={value => this.setState({ loadingBulkJobCreation: value })}
+          loadingBulkJobCreation={this.state.loadingBulkJobCreation}
           api={api}
           services={services}
           onCancel={() => {

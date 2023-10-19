@@ -8,7 +8,7 @@ import { generateRelationField } from '../RelationField/RelationField';
  * Cooldown duration before creating subsequent jobs
  * @type {number}
  */
-const COOLDOWN = 500;
+const COOLDOWN = 100;
 
 async function sleep(timeout) {
   return new Promise(resolve => {
@@ -16,7 +16,7 @@ async function sleep(timeout) {
   });
 }
 
-export default function BulkJobCreationForm({ api, services, form }) {
+export default function BulkJobCreationForm({ api, services, form, setBulkButton }) {
   const [jobTemplate, setJobTemplate] = useState({});
   const [tasks, setTasks] = useState([]);
 
@@ -61,11 +61,14 @@ export default function BulkJobCreationForm({ api, services, form }) {
     }, null);
 
     if (pending) {
+      setBulkButton(true);
       createJob(pending).then(result => {
         console.info('Created job', { result });
       });
+    } else {
+      setBulkButton(false);
     }
-  }, [tasksState, tasks, api.client]);
+  }, [tasksState, tasks, api.client, setBulkButton]);
 
   /**
    * RelationField that points to the templates/jobs resource.
@@ -153,7 +156,6 @@ export default function BulkJobCreationForm({ api, services, form }) {
       </div>
     );
   }
-
   return (
     <>
       <Form form={form} onFinish={handleFinish}>
