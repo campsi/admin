@@ -93,8 +93,8 @@ class AuthService extends Component {
                   {'Connected'}
                 </Tag>
                 <Button
-                  type="ghost"
-                  color={'red'}
+                  type="primary"
+                  danger
                   onClick={async () => {
                     await revokeAccessToken();
                     this.setState({ me: null });
