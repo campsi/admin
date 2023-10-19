@@ -2,6 +2,18 @@
   background: #fff;
 }
 
+
+.ant-layout {
+  .ant-btn {
+    border-radius: 8px;
+
+  }
+  .ant-card {
+    border-radius: 8px;
+    box-shadow: 0 0 10px #889ab9;
+  }
+}
+
 .main-page-content {
   padding: 30px;
   margin-top: 30px;
