@@ -38,9 +38,9 @@ class ResourceListing extends Component {
 
   async componentDidMount() {
     if(window?.location?.search) {
-      const urlParams = new URLSearchParams(window?.location?.search);
-      const page = urlParams.get('page');
-      const perPage = urlParams.get('perPage');
+      const urlParams = new URLSearchParams(window.location.search);
+      const page = parseInt(urlParams.get('page'));
+      const perPage = parseInt(urlParams.get('perPage'));
 
       if(this.state.perPage !== perPage) {
         this.setState({ perPage });
@@ -109,6 +109,11 @@ class ResourceListing extends Component {
   }
   async componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.params.resourceName !== this.props.params.resourceName) {
+      // reset state when changing resource
+      this.setState({
+        page: 1,
+        perPage: 25,
+      });
       await this.updateVisibleProperties();
       await this.fetchData();
     }
