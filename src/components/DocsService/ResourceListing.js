@@ -48,33 +48,14 @@ class ResourceListing extends Component {
 
   async componentWillUnmount() {
     window.removeEventListener("popstate", this.handlePopState)
-
   }
 
   async handlePopState(event) {
-    // this.setState((state) => ({
-    //   message: state.message + 'You pressed the enter key! '
-    // }));
-        //   if(e) {
-    //   const urlParams = new URLSearchParams(window.location.search);
-    //   const page = parseInt(urlParams.get('page'));
-    //   const perPage = parseInt(urlParams.get('perPage'));
-    //   console.log('in popstate page and perpage :', page, perPage)
-
-    //   if(this.state.perPage !== perPage) {
-    //     this.setState({ perPage });
-    //   }
-    //   if(this.state.page !== page) {
-    //     this.setState({ page });
-    //   }
-    // }
     const urlParams = new URLSearchParams(window?.location?.search);
       const page = parseInt(urlParams.get('page'));
       const perPage = parseInt(urlParams.get('perPage'));
 
     if(this.state.perPage !== perPage || this.state.page !== page) {
-      console.log('popstate', event, perPage, page);
-
       if(this.state.perPage !== perPage) {
          this.setState({ perPage });
       }
@@ -82,9 +63,7 @@ class ResourceListing extends Component {
          this.setState({ page });
       }
       await this.fetchData({}, {}, { current: page, pageSize: perPage });
-
     }
-
   }
 
   async quickUpdate(id, propertyName, value) {
