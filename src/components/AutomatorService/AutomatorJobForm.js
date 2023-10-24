@@ -96,14 +96,26 @@ function AutomatorJobForm({ onFinish, api }) {
         <Tabs type="card">
           <TabPane tab={getActionTab('scanner')} key="scanner">
             {approvalOption('scanner')}
-            <Form.Item name={['actions', 'scanner', 'maxTabs']} label="Max Tabs" help="Max 25" initialValue={4}>
+            <Form.Item name={['actions', 'scanner', 'maxTabs']} label="Max Tabs" help="Max 25" initialValue={8}>
               <InputNumber min={1} max={25} />
             </Form.Item>
-            <Form.Item name={['actions', 'scanner', 'maxPages']} label="Max Pages" help="Max 150" initialValue={10}>
+            <Form.Item name={['actions', 'scanner', 'maxPages']} label="Max Pages" help="Max 150" initialValue={50}>
               <InputNumber min={1} max={150} />
             </Form.Item>
             <Form.Item label="PDF Languages" name={['actions', 'scanner', 'languages']} initialValue={['en']}>
-              <Select mode="tags" />
+              <Select
+                mode="multiple"
+                options={[
+                  {
+                    label: 'English',
+                    value: 'en'
+                  },
+                  {
+                    label: 'French',
+                    value: 'fr'
+                  }
+                ]}
+              />
             </Form.Item>
             <Form.Item
               name={['actions', 'scanner', 'testCMP']}
@@ -137,18 +149,6 @@ function AutomatorJobForm({ onFinish, api }) {
           </TabPane>
           <TabPane tab={getActionTab('provisioning')} key="provisioning">
             {approvalOption('provisioning')}
-            <Form.Item
-              name={['actions', 'provisioning', 'database']}
-              initialValue={process.env.NODE_ENV === 'production' ? 'prod' : 'test'}
-              label="Database"
-              hidden={true}
-              help="Do not spam the production for testing purposes."
-            >
-              <Select>
-                <Select.Option value="prod">Production</Select.Option>
-                <Select.Option value="test">Test</Select.Option>
-              </Select>
-            </Form.Item>
             <Form.Item name={['actions', 'provisioning', 'name']} label="Project Name">
               <Input />
             </Form.Item>
@@ -159,7 +159,39 @@ function AutomatorJobForm({ onFinish, api }) {
               initialValue={['en']}
               rules={[{ required: isActionActive('provisioning') }]}
             >
-              <Select mode="tags" />
+              <Select
+                mode="multiple"
+                options={[
+                  {
+                    label: 'English',
+                    value: 'en'
+                  },
+                  {
+                    label: 'French',
+                    value: 'fr'
+                  },
+                  {
+                    label: 'Spanish',
+                    value: 'es'
+                  },
+                  {
+                    label: 'Italian',
+                    value: 'it'
+                  },
+                  {
+                    label: 'German',
+                    value: 'de'
+                  },
+                  {
+                    label: 'Portuguese',
+                    value: 'pt'
+                  },
+                  {
+                    label: 'Dutch',
+                    value: 'nl'
+                  }
+                ]}
+              />
             </Form.Item>
             <Form.Item label="Cookies to update" name={['actions', 'provisioning', 'cookies']}>
               <Select mode="tags" />
