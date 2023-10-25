@@ -9,6 +9,11 @@ const { Title } = Typography;
 const { Option } = Select;
 
 class ResourceListing extends Component {
+  constructor(props) {
+    super(props);
+    this.handlePopState = this.handlePopState.bind(this);
+  }
+
   state = {
     perPage: 25,
     page: 1,
@@ -22,6 +27,8 @@ class ResourceListing extends Component {
   };
 
   async componentDidMount() {
+    window.addEventListener("popstate", this.handlePopState);
+
     if(window?.location?.search) {
       const urlParams = new URLSearchParams(window.location.search);
       const page = parseInt(urlParams.get('page'));
@@ -37,6 +44,26 @@ class ResourceListing extends Component {
 
     await this.updateVisibleProperties();
     await this.fetchData();
+  }
+
+  async componentWillUnmount() {
+    window.removeEventListener("popstate", this.handlePopState)
+  }
+
+  async handlePopState(event) {
+    const urlParams = new URLSearchParams(window?.location?.search);
+      const page = parseInt(urlParams.get('page'));
+      const perPage = parseInt(urlParams.get('perPage'));
+
+    if(this.state.perPage !== perPage || this.state.page !== page) {
+      if(this.state.perPage !== perPage) {
+         this.setState({ perPage });
+      }
+      if(this.state.page !== page) {
+         this.setState({ page });
+      }
+      await this.fetchData({}, {}, { current: page, pageSize: perPage });
+    }
   }
 
   async quickUpdate(id, propertyName, value) {
@@ -123,6 +150,25 @@ class ResourceListing extends Component {
       return;
     }
 
+    const urlParams = new URLSearchParams(window?.location?.search);
+
+    if(urlParams && urlParams.has('page') && urlParams.has('perPage')) {
+      if(parseInt(urlParams.get('page')) !== page) {
+        urlParams.set("page", page);
+      }
+      if(parseInt(urlParams.get('perPage')) !== perPage) {
+        urlParams.set("perPage", perPage);
+      }
+      if(urlParams.toString() !== new URLSearchParams(window?.location?.search).toString()) {
+        window.history.pushState( {'test': 'test1'} , '', window.location.pathname + '?' + urlParams.toString() );
+      }
+    }
+    else {
+      urlParams.append("page", page);
+      urlParams.append("perPage", perPage);
+      window.history.replaceState( {} , '', window.location.pathname + '?' + urlParams.toString() );
+    }
+
     const params = new URLSearchParams({
       perPage: perPage,
       page: page
@@ -152,28 +198,6 @@ class ResourceListing extends Component {
       lastPage: Number(response.headers['x-last-page']),
       totalCount: Number(response.headers['x-total-count'])
     });
-
-    const urlParams = new URLSearchParams(window?.location?.search);
-
-    if(urlParams && urlParams.has('page') && urlParams.has('perPage')) {
-
-      if(parseInt(urlParams.get('page')) !== page) {
-        urlParams.set("page", page);
-      }
-
-      if(parseInt(urlParams.get('perPage')) !== perPage) {
-        urlParams.set("perPage", perPage);
-      }
-
-      if(urlParams.toString() !== new URLSearchParams(window?.location?.search).toString()) {
-        window.history.pushState( {} , '', window.location.pathname + '?' + urlParams.toString() );
-      }
-    }
-    else {
-      urlParams.append("page", page);
-      urlParams.append("perPage", perPage);
-      window.history.replaceState( {} , '', window.location.pathname + '?' + urlParams.toString() );
-    }
   }
 
   handleTableChange = async (pagination, filters, sorter) => {
