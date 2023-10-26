@@ -156,7 +156,11 @@ class NotificationForm extends Component {
                     icon: <ExclamationCircleOutlined />,
                     content: 'The operation is definitive and irreversible',
                     onOk: async () => {
-                      await this.deleteDocument();
+                      try {
+                        await this.deleteDocument();
+                      } catch (error) {
+                        notification.error({ message: error.message });
+                      }
                     }
                   });
                 }}
