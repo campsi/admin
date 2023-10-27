@@ -27,7 +27,10 @@ function BulkJobCreationModal({ api, services, loadingBulkJobCreation, setLoadin
       okText="Submit"
       cancelText="Leave"
       okButtonProps={{ loading: loadingBulkJobCreation }}
-      onOk={form.submit}
+      onOk={() => {
+        setLoadingBulkJobCreation(true);
+        form.submit();
+      }}
       title="Create Jobs in bulk"
     >
       <BulkJobCreationForm setBulkButton={setLoadingBulkJobCreation} api={api} services={services} form={form} />
