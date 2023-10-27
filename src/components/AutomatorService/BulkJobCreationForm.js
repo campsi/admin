@@ -42,6 +42,9 @@ export default function BulkJobCreationForm({ api, services, form, setBulkButton
         error = err;
       }
       await sleep(COOLDOWN);
+      if (tasks.filter(task => task.status === 'default').length === 1) {
+        setBulkButton(false);
+      }
       if (tasks.length === 0) {
         // tasks have been cleared, we don't want to regenerate the tasks list.
         return;
@@ -64,8 +67,6 @@ export default function BulkJobCreationForm({ api, services, form, setBulkButton
       createJob(pending).then(result => {
         console.info('Created job', { result });
       });
-    } else {
-      setBulkButton(false);
     }
   }, [tasksState, tasks, api.client, setBulkButton]);
 
