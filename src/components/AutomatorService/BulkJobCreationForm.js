@@ -61,7 +61,6 @@ export default function BulkJobCreationForm({ api, services, form, setBulkButton
     }, null);
 
     if (pending) {
-      setBulkButton(true);
       createJob(pending).then(result => {
         console.info('Created job', { result });
       });
