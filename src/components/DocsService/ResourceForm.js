@@ -253,7 +253,11 @@ function getActions(service, resourceName) {
           icon: <ExclamationCircleOutlined />,
           content: 'The operation is definitive and irreversible',
           onOk: async () => {
-            await this.deleteDocument();
+            try {
+              await this.deleteDocument();
+            } catch (error) {
+              notification.error({ message: error.message });
+            }
           }
         });
       }}
@@ -285,14 +289,18 @@ function getActions(service, resourceName) {
                 icon: <ExclamationCircleOutlined />,
                 content: service.resources[resourceName].schema['ui:approvalDoc'].disapprovalDescription,
                 onOk: async () => {
-                  const { api, service, params } = this.props;
-                  const { resourceName, id } = params;
-                  await api.client.post(`${service.name}/${resourceName}/${id}/disapprove`, {
-                    resource: { ...this.state.doc.data, _id: this.state.doc.id }
-                  });
-                  this.setState({
-                    redirectTo: `/services/${service.name}/resources/${resourceName}/`
-                  });
+                  try {
+                    const { api, service, params } = this.props;
+                    const { resourceName, id } = params;
+                    await api.client.post(`${service.name}/${resourceName}/${id}/disapprove`, {
+                      resource: { ...this.state.doc.data, _id: this.state.doc.id }
+                    });
+                    this.setState({
+                      redirectTo: `/services/${service.name}/resources/${resourceName}/`
+                    });
+                  } catch (error) {
+                    notification.error({ message: error.message });
+                  }
                 }
               });
             }}
@@ -308,14 +316,18 @@ function getActions(service, resourceName) {
                 icon: <ExclamationCircleOutlined />,
                 content: service.resources[resourceName].schema['ui:approvalDoc'].approvalDescription,
                 onOk: async () => {
-                  const { api, service, params } = this.props;
-                  const { resourceName, id } = params;
-                  await api.client.post(`${service.name}/${resourceName}/${id}/approve`, {
-                    resource: { ...this.formRef.state.formData, _id: this.state.doc.id }
-                  });
-                  this.setState({
-                    redirectTo: `/services/${service.name}/resources/${resourceName}/`
-                  });
+                  try {
+                    const { api, service, params } = this.props;
+                    const { resourceName, id } = params;
+                    await api.client.post(`${service.name}/${resourceName}/${id}/approve`, {
+                      resource: { ...this.formRef.state.formData, _id: this.state.doc.id }
+                    });
+                    this.setState({
+                      redirectTo: `/services/${service.name}/resources/${resourceName}/`
+                    });
+                  } catch (error) {
+                    notification.error({ message: error.message });
+                  }
                 }
               });
             }}

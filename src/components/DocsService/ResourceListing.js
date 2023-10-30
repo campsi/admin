@@ -27,17 +27,17 @@ class ResourceListing extends Component {
   };
 
   async componentDidMount() {
-    window.addEventListener("popstate", this.handlePopState);
+    window.addEventListener('popstate', this.handlePopState);
 
-    if(window?.location?.search) {
+    if (window?.location?.search) {
       const urlParams = new URLSearchParams(window.location.search);
       const page = parseInt(urlParams.get('page'));
       const perPage = parseInt(urlParams.get('perPage'));
 
-      if(this.state.perPage !== perPage) {
+      if (this.state.perPage !== perPage) {
         this.setState({ perPage });
       }
-      if(this.state.page !== page) {
+      if (this.state.page !== page) {
         this.setState({ page });
       }
     }
@@ -47,20 +47,20 @@ class ResourceListing extends Component {
   }
 
   async componentWillUnmount() {
-    window.removeEventListener("popstate", this.handlePopState)
+    window.removeEventListener('popstate', this.handlePopState);
   }
 
   async handlePopState(event) {
     const urlParams = new URLSearchParams(window?.location?.search);
-      const page = parseInt(urlParams.get('page'));
-      const perPage = parseInt(urlParams.get('perPage'));
+    const page = parseInt(urlParams.get('page'));
+    const perPage = parseInt(urlParams.get('perPage'));
 
-    if(this.state.perPage !== perPage || this.state.page !== page) {
-      if(this.state.perPage !== perPage) {
-         this.setState({ perPage });
+    if (this.state.perPage !== perPage || this.state.page !== page) {
+      if (this.state.perPage !== perPage) {
+        this.setState({ perPage });
       }
-      if(this.state.page !== page) {
-         this.setState({ page });
+      if (this.state.page !== page) {
+        this.setState({ page });
       }
       await this.fetchData({}, {}, { current: page, pageSize: perPage });
     }
@@ -115,7 +115,7 @@ class ResourceListing extends Component {
       // reset state when changing resource
       this.setState({
         page: 1,
-        perPage: 25,
+        perPage: 25
       });
       await this.updateVisibleProperties();
       await this.fetchData();
@@ -152,21 +152,20 @@ class ResourceListing extends Component {
 
     const urlParams = new URLSearchParams(window?.location?.search);
 
-    if(urlParams && urlParams.has('page') && urlParams.has('perPage')) {
-      if(parseInt(urlParams.get('page')) !== page) {
-        urlParams.set("page", page);
+    if (urlParams && urlParams.has('page') && urlParams.has('perPage')) {
+      if (parseInt(urlParams.get('page')) !== page) {
+        urlParams.set('page', page);
       }
-      if(parseInt(urlParams.get('perPage')) !== perPage) {
-        urlParams.set("perPage", perPage);
+      if (parseInt(urlParams.get('perPage')) !== perPage) {
+        urlParams.set('perPage', perPage);
       }
-      if(urlParams.toString() !== new URLSearchParams(window?.location?.search).toString()) {
-        window.history.pushState( {'test': 'test1'} , '', window.location.pathname + '?' + urlParams.toString() );
+      if (urlParams.toString() !== new URLSearchParams(window?.location?.search).toString()) {
+        window.history.pushState({}, '', window.location.pathname + '?' + urlParams.toString());
       }
-    }
-    else {
-      urlParams.append("page", page);
-      urlParams.append("perPage", perPage);
-      window.history.replaceState( {} , '', window.location.pathname + '?' + urlParams.toString() );
+    } else {
+      urlParams.append('page', page);
+      urlParams.append('perPage', perPage);
+      window.history.replaceState({}, '', window.location.pathname + '?' + urlParams.toString());
     }
 
     const params = new URLSearchParams({
