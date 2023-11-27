@@ -6,6 +6,7 @@ import MatchString from '../MatchString/MatchString';
 import LocalizedText from '../LocalizedText/LocalizedText';
 import Asset from '../Asset/Asset';
 import JsonTextArea from '../JsonTextArea/JsonTextArea';
+import LocalizedTextWithCountry from "../LocalizedTextWithCountry/LocalizedTextWithCountry"
 
 function DocsService(props) {
   useParams();
@@ -19,6 +20,7 @@ function DocsService(props) {
             customWidgets={{
               DetectionStrategy: DetectionStrategy,
               LocalizedString: LocalizedText,
+              LocalizedStringWithCountry: LocalizedTextWithCountry,
               MatchString: MatchString,
               Asset: Asset,
               JsonTextArea: JsonTextArea
