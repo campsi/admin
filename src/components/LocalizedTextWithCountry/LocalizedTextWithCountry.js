@@ -11,7 +11,14 @@ export default function LocalizedTextWithCountry({ formData, schema, name, onCha
   const value = formData?.__lang || { [locale]: '' };
   const fieldValue = value[locale];
   const InputComponent = schema['ui:multiline'] ? TextArea : Input;
-  const [selectLanguageSpan, selectCountrySpan, inputSpan] = schema['ui:multiline'] ? [12,12, 24] : [4,4, 16];
+  const [selectLanguageSpan, selectCountrySpan, inputSpan] = schema['ui:multiline'] ? [12, 12, 24] : [4, 4, 16];
+  const activeLanguages = new Set(Object.keys(value).map(l => l.split('-')[0]));
+  const activeCountries = new Set(
+    Object.keys(value)
+      .filter(l => l.startsWith(selectedLanguage))
+      .map(l => l.split('-')[1])
+      .filter(Boolean)
+  );
 
   function sanitizeValue(value) {
     const result = {};
@@ -30,10 +37,22 @@ export default function LocalizedTextWithCountry({ formData, schema, name, onCha
     <Form.Item label={schema.title || name}>
       <Row style={{ width: '100%' }}>
         <Col span={selectLanguageSpan}>
-          <LanguageSelect onChange={l => {setSelectedLanguage(l); setSelectedCountry('default');}} value={selectedLanguage} activeLanguages={Object.keys(value)} />
+          <LanguageSelect
+            onChange={l => {
+              setSelectedLanguage(l);
+              setSelectedCountry('default');
+            }}
+            value={selectedLanguage}
+            activeLanguages={[...activeLanguages]}
+          />
         </Col>
         <Col span={selectCountrySpan}>
-          <CountrySelect onChange={c => setSelectedCountry(c)} value={selectedCountry} currentLanguage={selectedLanguage} />
+          <CountrySelect
+            onChange={c => setSelectedCountry(c)}
+            value={selectedCountry}
+            currentLanguage={selectedLanguage}
+            activeCountries={[...activeCountries]}
+          />
         </Col>
         <Col span={inputSpan}>
           <InputComponent
