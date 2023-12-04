@@ -107,11 +107,11 @@ function AutomatorJobForm({ onFinish, api }) {
                 mode="multiple"
                 options={[
                   {
-                    label: 'English',
+                    label: 'English 🇬🇧',
                     value: 'en'
                   },
                   {
-                    label: 'French',
+                    label: 'French 🇫🇷',
                     value: 'fr'
                   }
                 ]}
@@ -163,31 +163,35 @@ function AutomatorJobForm({ onFinish, api }) {
                 mode="multiple"
                 options={[
                   {
-                    label: 'English',
+                    label: 'English 🇬🇧',
                     value: 'en'
                   },
                   {
-                    label: 'French',
+                    label: 'French 🇫🇷',
                     value: 'fr'
                   },
                   {
-                    label: 'Spanish',
+                    label: 'Canada 🇨🇦',
+                    value: 'fr-ca'
+                  },
+                  {
+                    label: 'Spanish 🇪🇸',
                     value: 'es'
                   },
                   {
-                    label: 'Italian',
+                    label: 'Italian 🇮🇹',
                     value: 'it'
                   },
                   {
-                    label: 'German',
+                    label: 'German 🇩🇪',
                     value: 'de'
                   },
                   {
-                    label: 'Portuguese',
+                    label: 'Portuguese 🇵🇹',
                     value: 'pt'
                   },
                   {
-                    label: 'Dutch',
+                    label: 'Dutch 🇳🇱',
                     value: 'nl'
                   }
                 ]}
