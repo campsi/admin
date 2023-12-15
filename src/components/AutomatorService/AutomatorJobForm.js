@@ -113,6 +113,10 @@ function AutomatorJobForm({ onFinish, api }) {
                   {
                     label: 'French 🇫🇷',
                     value: 'fr'
+                  },
+                  {
+                    label: 'Quebec 🇨🇦🇲🇶',
+                    value: 'fr-CA-QC'
                   }
                 ]}
               />
@@ -171,8 +175,8 @@ function AutomatorJobForm({ onFinish, api }) {
                     value: 'fr'
                   },
                   {
-                    label: 'Canada 🇨🇦',
-                    value: 'fr-ca'
+                    label: 'Quebec 🇨🇦🇲🇶',
+                    value: 'fr-CA-QC'
                   },
                   {
                     label: 'Spanish 🇪🇸',
