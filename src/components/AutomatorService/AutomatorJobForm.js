@@ -115,7 +115,7 @@ function AutomatorJobForm({ onFinish, api }) {
                     value: 'fr'
                   },
                   {
-                    label: 'Quebec 🇨🇦',
+                    label: 'Quebec 🇨🇦🇲🇶',
                     value: 'fr-CA-QC'
                   }
                 ]}
@@ -175,7 +175,7 @@ function AutomatorJobForm({ onFinish, api }) {
                     value: 'fr'
                   },
                   {
-                    label: 'Quebec 🇨🇦',
+                    label: 'Quebec 🇨🇦🇲🇶',
                     value: 'fr-CA-QC'
                   },
                   {
