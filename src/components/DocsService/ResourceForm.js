@@ -109,7 +109,7 @@ class ResourceForm extends Component {
   }
 
   getUISchema() {
-    const { service, params, customWidgets } = this.props;
+    const { api, service, params, customWidgets } = this.props;
     const { resourceName, id } = params;
     const resource = service.resources[resourceName];
     const result = {};
@@ -139,6 +139,23 @@ class ResourceForm extends Component {
         if (key.startsWith('ui:') && !uiSchema[key]) {
           if (schema['ui:readonly']) {
             uiSchema['ui:readonly'] = id !== 'new' && schema['ui:readonly'];
+          } else if (schema['ui:nextValue']) {
+            if (schema['ui:nextValue'].api) {
+              const apiParams = schema['ui:nextValue'].api;
+              if (!this.state.schema?.[schema['ui:nextValue'].api.value]) {
+                api.client[apiParams.method](apiParams.path).then(response => {
+                  this.setState({
+                    schema: {
+                      ...this.state.schema,
+                      [apiParams.value]: response.data[apiParams.value]
+                    }
+                  });
+                });
+              }
+              uiSchema[`ui:${schema['ui:nextValue'].key}`] = `Next value: ${this.state.schema?.[apiParams.value]}`;
+            } else {
+              uiSchema[`ui:${schema['ui:nextValue'].key}`] = `Next value: ${schema['ui:nextValue'].value}`;
+            }
           } else {
             uiSchema[key] = schema[key];
           }
