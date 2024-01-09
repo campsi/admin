@@ -56,47 +56,51 @@ class AutomatorJob extends Component {
     });
   }
 
+  renderError(error = {}) {
+    if (error.translations) {
+      const tabList = [
+        {
+          key: 'en',
+          tab: 'English'
+        },
+        {
+          key: 'fr',
+          tab: 'French'
+        }
+      ];
+      const contentList = {
+        en: <p dangerouslySetInnerHTML={{ __html: urlify(error.translations.en) }} />,
+        fr: <p dangerouslySetInnerHTML={{ __html: urlify(error.translations.fr) }} />
+      };
+      return (
+        <Card
+          style={{ width: '100%', boxShadow: 'unset', color: 'red' }}
+          headStyle={{ fontSize: '22px' }}
+          title={'Error: ' + error.name}
+          tabList={tabList}
+          activeTabKey={this.state.activeTabKey}
+          onTabChange={key => {
+            this.setState({ activeTabKey: key });
+          }}
+        >
+          {contentList[this.state.activeTabKey || 'en']}
+        </Card>
+      );
+    }
+    return (
+      <TextArea
+        readOnly
+        rows={6}
+        style={{ width: '100%', fontFamily: 'Monaco, monospace' }}
+        defaultValue={JSON.stringify(error, null, 2)}
+      />
+    );
+  }
+
   renderActionPanel(action) {
     const { job } = this.state;
     if (job.actions?.[action]?.result?.error) {
-      if (job.actions[action].result.error.translations) {
-        const tabList = [
-          {
-            key: 'en',
-            tab: 'English'
-          },
-          {
-            key: 'fr',
-            tab: 'French'
-          }
-        ];
-        const contentList = {
-          en: <p dangerouslySetInnerHTML={{ __html: urlify(job.actions[action].result.error.translations.en) }} />,
-          fr: <p dangerouslySetInnerHTML={{ __html: urlify(job.actions[action].result.error.translations.fr) }} />
-        };
-        return (
-          <Card
-            style={{ width: '100%', boxShadow: 'unset', color: 'red' }}
-            headStyle={{ fontSize: '22px' }}
-            title={'Error: ' + job.actions[action].result.error.name}
-            tabList={tabList}
-            activeTabKey={this.state.activeTabKey}
-            onTabChange={key => {
-              this.setState({ activeTabKey: key });
-            }}
-          >
-            {contentList[this.state.activeTabKey || 'en']}
-          </Card>
-        );
-      }
-      return (
-        <TextArea
-          readOnly
-          rows={6}
-          style={{ width: '100%', fontFamily: 'Monaco, monospace' }}
-          defaultValue={JSON.stringify(job.actions[action].result.error, null, 2)}
-        />
-      );
+      return this.renderError(job.actions[action].result.error);
     }
     if (job.actions?.[action]?.preview && job.actions?.[action]?.approval.approved === undefined) {
       return (
@@ -237,6 +241,7 @@ class AutomatorJob extends Component {
       <Card title="Job detail" extra={<Button onClick={() => this.fetchData()} icon={<ReloadOutlined />} />}>
         <Tabs type="card" key={job.id}>
           <TabPane tab="job details" key="tab_details">
+            {job.message?.error && this.renderError(job.message.error)}
             <Descriptions bordered column={2} size="small">
               <Descriptions.Item label="status">{job.status}</Descriptions.Item>
               <Descriptions.Item label="Custom ID">{job.params?.customId}</Descriptions.Item>
