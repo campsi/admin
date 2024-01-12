@@ -234,15 +234,18 @@ class ResourceForm extends Component {
                 this.formRef = ref;
               }}
               liveValidate
-              onFocus={e =>
-                document.getElementById(e).addEventListener(
-                  'wheel',
-                  function (e) {
-                    e.preventDefault();
-                  },
-                  { passive: false }
-                )
-              }
+              onFocus={e => {
+                const element = document.getElementById(e);
+                if (element.type === 'number') {
+                  element.addEventListener(
+                    'wheel',
+                    function (e) {
+                      e.preventDefault();
+                    },
+                    { passive: false }
+                  );
+                }
+              }}
               onSubmit={({ formData }) => this.updateDocument(formData)}
             />
           </Card>
