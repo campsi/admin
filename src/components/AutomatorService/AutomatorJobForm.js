@@ -130,6 +130,14 @@ function AutomatorJobForm({ onFinish, api }) {
               <Switch />
             </Form.Item>
             <Form.Item
+              name={['actions', 'scanner', 'newPDF']}
+              initialValue={false}
+              valuePropName="checked"
+              label="Use the new PDF"
+            >
+              <Switch />
+            </Form.Item>
+            <Form.Item
               name={['actions', 'scanner', 'followSubDomains']}
               initialValue={false}
               valuePropName="checked"
