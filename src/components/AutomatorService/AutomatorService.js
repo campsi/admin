@@ -8,9 +8,12 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   EyeOutlined,
+  FileExcelOutlined,
+  FilePdfOutlined,
   LoadingOutlined,
   ReloadOutlined,
-  UndoOutlined
+  UndoOutlined,
+  VerticalAlignBottomOutlined
 } from '@ant-design/icons';
 import AutomatorJobForm from './AutomatorJobForm';
 import actions from './AutomatorJobActions';
@@ -162,6 +165,22 @@ class AutomatorService extends Component {
                 <Button icon={<EyeOutlined />} />
               </Tooltip>
             </Link>
+            {job.actions?.scanner?.result?.xlsxURL ? (
+              <a href={job.actions?.scanner?.result.xlsxURL} download>
+                <Tooltip placement="bottom" title={'Download Excel'}>
+                  <Button icon={<FileExcelOutlined />} />
+                </Tooltip>
+              </a>
+            ) : null}
+            {Object.entries(job.actions?.scanner?.result?.pdfURLs || {}).length
+              ? Object.entries(job.actions?.scanner?.result?.pdfURLs || {}).map(([language, url]) => (
+                  <a href={url} download>
+                    <Tooltip placement="bottom" title={`Download PDF report in ${language}`}>
+                      <Button icon={<FilePdfOutlined />} />
+                    </Tooltip>
+                  </a>
+                ))
+              : null}
           </Space>
         )
       }

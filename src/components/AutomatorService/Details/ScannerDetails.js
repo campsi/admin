@@ -1,5 +1,5 @@
 import { Descriptions, Button, Space, Table, Tag, Typography } from 'antd';
-import { VerticalAlignBottomOutlined } from '@ant-design/icons';
+import { FileExcelOutlined, FilePdfOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { GlobalOutlined } from '@ant-design/icons';
 import { withAppContext } from '../../../App';
 import PropTypes from 'prop-types';
@@ -257,19 +257,19 @@ class ScannerDetails extends Component {
           </Item>
           <Item label="Download Excel" span={2}>
             <a href={metadata.xlsxURL} download>
-              <Button icon={<VerticalAlignBottomOutlined />} />
+              <Button icon={<FileExcelOutlined />} />
             </a>
           </Item>
           <Item label="Download PDF" span={2}>
             {metadata.pdfURL && (
               <a href={metadata.pdfURL} download>
-                <Button icon={<VerticalAlignBottomOutlined />} />
+                <Button icon={<FilePdfOutlined />} />
               </a>
             )}
             {metadata.pdfURLs &&
               Object.values(metadata.pdfURLs).map(url => (
                 <a style={{ padding: '5px' }} href={url} download>
-                  <Button icon={<VerticalAlignBottomOutlined />} />
+                  <Button icon={<FilePdfOutlined />} />
                 </a>
               ))}
           </Item>
