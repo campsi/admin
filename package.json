@@ -47,7 +47,8 @@
   "scripts": {
     "start": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "start-win": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts start",
-    "build": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "build-win": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "fmt": "prettier --write \"**/*.{js,jsx,ts,tsx,md}\"",
