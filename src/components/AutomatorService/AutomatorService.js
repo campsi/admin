@@ -166,7 +166,7 @@ class AutomatorService extends Component {
               </Tooltip>
             </Link>
             {job.actions?.scanner?.result?.xlsxURL ? (
-              <a href={job.actions?.scanner?.result.xlsxURL} download>
+              <a href={job.actions?.scanner?.result.xlsxURL} download target="_blank">
                 <Tooltip placement="bottom" title={'Download Excel'}>
                   <Button icon={<FileExcelOutlined />} />
                 </Tooltip>
@@ -174,7 +174,7 @@ class AutomatorService extends Component {
             ) : null}
             {Object.entries(job.actions?.scanner?.result?.pdfURLs || {}).length
               ? Object.entries(job.actions?.scanner?.result?.pdfURLs || {}).map(([language, url]) => (
-                  <a href={url} download>
+                  <a href={url} download target="_blank">
                     <Tooltip placement="bottom" title={`Download PDF report in ${language}`}>
                       <Button icon={<FilePdfOutlined />} />
                     </Tooltip>

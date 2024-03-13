@@ -256,19 +256,19 @@ class ScannerDetails extends Component {
             {metadata.vendorsTriggeredWithoutConsent}
           </Item>
           <Item label="Download Excel" span={2}>
-            <a href={metadata.xlsxURL} download>
+            <a href={metadata.xlsxURL} download target="_blank">
               <Button icon={<FileExcelOutlined />} />
             </a>
           </Item>
           <Item label="Download PDF" span={2}>
             {metadata.pdfURL && (
-              <a href={metadata.pdfURL} download>
+              <a href={metadata.pdfURL} download target="_blank">
                 <Button icon={<FilePdfOutlined />} />
               </a>
             )}
             {metadata.pdfURLs &&
               Object.values(metadata.pdfURLs).map(url => (
-                <a style={{ padding: '5px' }} href={url} download>
+                <a style={{ padding: '5px' }} href={url} download target="_blank">
                   <Button icon={<FilePdfOutlined />} />
                 </a>
               ))}
