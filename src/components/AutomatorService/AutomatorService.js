@@ -19,6 +19,11 @@ import AutomatorJobForm from './AutomatorJobForm';
 import actions from './AutomatorJobActions';
 import BulkJobCreationForm from './BulkJobCreationForm';
 import { debounce } from '../../utils/debounce';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 const { Title } = Typography;
 
 function BulkJobCreationModal({ api, services, loadingBulkJobCreation, setLoadingBulkJobCreation, ...props }) {
@@ -128,15 +133,34 @@ class AutomatorService extends Component {
                     color = 'blue';
                   }
                 }
+                const duration =
+                  !value[action].result?.startedAt || !value[action].result?.endedAt
+                    ? ''
+                    : dayjs.duration(dayjs(value[action].result?.endedAt).diff(value[action].result?.startedAt));
+
                 return (
-                  <Tag icon={icon} color={color} key={action}>
-                    {action}
-                  </Tag>
+                  <Tooltip
+                    title={
+                      typeof duration === 'object'
+                        ? duration['$ms'] < 60000
+                          ? `${Math.round(duration.asSeconds())} seconds`
+                          : duration.humanize()
+                        : duration
+                    }
+                  >
+                    <Tag icon={icon} color={color} key={action}>
+                      {action}
+                    </Tag>
+                  </Tooltip>
                 );
               })}
             </div>
           );
         }
+      },
+      {
+        title: 'Global duration',
+        render: job => (!job.startedAt || !job.endedAt ? '' : dayjs.duration(dayjs(job.endedAt).diff(job.startedAt)).humanize())
       },
       {
         title: '',

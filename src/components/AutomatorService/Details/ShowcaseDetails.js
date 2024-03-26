@@ -18,7 +18,7 @@ class ShowcaseDetails extends Component {
 
   updateStateFromProps() {
     this.setState({
-      dataSource: this.props.result.map(output => {
+      dataSource: (this.props.result.media || []).map(output => {
         return { key: output.name, ...output };
       })
     });
