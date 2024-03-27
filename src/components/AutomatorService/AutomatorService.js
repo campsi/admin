@@ -190,7 +190,7 @@ class AutomatorService extends Component {
               </Tooltip>
             </Link>
             {job.actions?.scanner?.result?.xlsxURL ? (
-              <a href={job.actions?.scanner?.result.xlsxURL} download target="_blank">
+              <a href={job.actions?.scanner?.result.xlsxURL} download target="_blank" rel="noreferrer">
                 <Tooltip placement="bottom" title={'Download Excel'}>
                   <Button icon={<FileExcelOutlined />} />
                 </Tooltip>
@@ -198,7 +198,7 @@ class AutomatorService extends Component {
             ) : null}
             {Object.entries(job.actions?.scanner?.result?.pdfURLs || {}).length
               ? Object.entries(job.actions?.scanner?.result?.pdfURLs || {}).map(([language, url]) => (
-                  <a href={url} download target="_blank">
+                  <a href={url} download target="_blank" rel="noreferrer">
                     <Tooltip placement="bottom" title={`Download PDF report in ${language}`}>
                       <Button icon={<FilePdfOutlined />} />
                     </Tooltip>
@@ -336,7 +336,7 @@ class AutomatorService extends Component {
         <Title>Automator Service</Title>
         <Button
           type="primary"
-          style={{ 'box-shadow': '0 0 8px #a4abb6' }}
+          style={{ boxShadow: '0 0 8px #a4abb6' }}
           onClick={() => this.setState({ bulkJobCreationModalOpen: true })}
           icon={this.state.loadingBulkJobCreation && <LoadingOutlined />}
         >
@@ -395,6 +395,7 @@ class AutomatorService extends Component {
                   });
                 }
               }}
+              rowKey={record => record._id}
             />
           </Card>
           <AutomatorJobForm onFinish={job => this.startJob(job)} api={this.props.api} />
