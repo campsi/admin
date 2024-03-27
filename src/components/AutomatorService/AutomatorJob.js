@@ -250,9 +250,13 @@ class AutomatorJob extends Component {
               <Descriptions.Item label="createdBy">{job.createdBy}</Descriptions.Item>
               <Descriptions.Item label="createdAt">{job.createdAt}</Descriptions.Item>
               <Descriptions.Item label="Priority">{job.params?.priority}</Descriptions.Item>
-              <Descriptions.Item label="Duration">
-                {!job.startedAt || !job.endedAt ? '' : dayjs.duration(dayjs(job.endedAt).diff(job.startedAt)).humanize()}
-              </Descriptions.Item>
+              {!job.startedAt || !job.endedAt ? (
+                ''
+              ) : (
+                <Descriptions.Item label="Duration">
+                  {dayjs.duration(dayjs(job.endedAt).diff(job.startedAt)).humanize()}
+                </Descriptions.Item>
+              )}
               <Descriptions.Item>
                 <Button
                   type="default"

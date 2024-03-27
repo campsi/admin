@@ -136,7 +136,7 @@ class AutomatorService extends Component {
                 const duration =
                   !value[action].result?.startedAt || !value[action].result?.endedAt
                     ? ''
-                    : dayjs.duration(dayjs(value[action].result?.endedAt).diff(value[action].result?.startedAt));
+                    : dayjs.duration(dayjs(value[action].result.endedAt).diff(value[action].result.startedAt));
 
                 return (
                   <Tooltip

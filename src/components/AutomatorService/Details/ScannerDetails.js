@@ -5,6 +5,8 @@ import { withAppContext } from '../../../App';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import DurationItem from './DurationItem';
+import dayjs from 'dayjs';
 
 const { Title } = Typography;
 const { Item } = Descriptions;
@@ -240,6 +242,14 @@ class ScannerDetails extends Component {
 
   render() {
     const { dataSource, metadata } = this.state;
+    const { result } = this.props;
+    const duration = !result?.startedAt || !result?.endedAt ? '' : dayjs.duration(dayjs(result.endedAt).diff(result.startedAt));
+    const displayedDuration =
+      typeof duration === 'object'
+        ? duration['$ms'] < 60000
+          ? `${Math.round(duration.asSeconds())} seconds`
+          : duration.humanize()
+        : duration;
     return (
       <Space size={'middle'} direction={'vertical'} style={{ width: '100%' }}>
         <Descriptions bordered column={3} size="large">
@@ -287,6 +297,10 @@ class ScannerDetails extends Component {
                   ))
                 : ''}
             </div>
+          </Item>
+          {/*<DurationItem />*/}
+          <Item label="Duration" span={2}>
+            {displayedDuration}
           </Item>
         </Descriptions>
         <Table

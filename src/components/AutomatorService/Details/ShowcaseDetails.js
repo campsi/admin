@@ -1,4 +1,4 @@
-import { Table } from 'antd';
+import { Descriptions, Table } from 'antd';
 import { Component } from 'react';
 
 class ShowcaseDetails extends Component {
@@ -70,7 +70,12 @@ class ShowcaseDetails extends Component {
 
   render() {
     const { dataSource } = this.state;
-    return <Table columns={this.getColumns()} dataSource={dataSource} />;
+    return (
+      <>
+        <Descriptions bordered column={3} size="large"></Descriptions>
+        <Table columns={this.getColumns()} dataSource={dataSource} />
+      </>
+    );
   }
 }
 
