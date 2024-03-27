@@ -20,6 +20,7 @@ import {
 import AutomatorJobActions from './AutomatorJobActions';
 import Meta from 'antd/es/card/Meta';
 import copyText from '../../utils/copyText';
+import dayjs from 'dayjs';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
@@ -249,6 +250,9 @@ class AutomatorJob extends Component {
               <Descriptions.Item label="createdBy">{job.createdBy}</Descriptions.Item>
               <Descriptions.Item label="createdAt">{job.createdAt}</Descriptions.Item>
               <Descriptions.Item label="Priority">{job.params?.priority}</Descriptions.Item>
+              <Descriptions.Item label="Duration">
+                {!job.startedAt || !job.endedAt ? '' : dayjs.duration(dayjs(job.endedAt).diff(job.startedAt)).humanize()}
+              </Descriptions.Item>
               <Descriptions.Item>
                 <Button
                   type="default"
