@@ -1,5 +1,7 @@
 import { Descriptions } from 'antd';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { getDisplayedDuration } from '../automatorHelpers';
+import React from 'react';
 const { Item } = Descriptions;
 
 function Color({ value }) {
@@ -24,6 +26,7 @@ function Color({ value }) {
 }
 
 function StylesheetDetails({ result }) {
+  const duration = getDisplayedDuration(result);
   return (
     <Descriptions bordered column={3} size="small">
       <Item label="Font" span={3}>
@@ -42,6 +45,7 @@ function StylesheetDetails({ result }) {
       <Item label="Theme Color">
         <Color value={result.themeColor} />
       </Item>
+      {duration ? <Item label="Duration">{duration}</Item> : ''}
     </Descriptions>
   );
 }
