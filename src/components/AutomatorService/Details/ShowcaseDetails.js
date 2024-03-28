@@ -1,5 +1,6 @@
 import { Descriptions, Table } from 'antd';
 import { Component } from 'react';
+import { getDisplayedDuration } from '../automatorHelpers';
 
 class ShowcaseDetails extends Component {
   state = {
@@ -70,9 +71,18 @@ class ShowcaseDetails extends Component {
 
   render() {
     const { dataSource } = this.state;
+    const { result } = this.props;
+    const duration = getDisplayedDuration(result);
     return (
       <>
-        <Descriptions bordered column={3} size="large"></Descriptions>
+        {duration ? (
+          <>
+            <Descriptions bordered column={3} size="large">
+              <Descriptions.Item label="Duration">{duration}</Descriptions.Item>
+            </Descriptions>
+            <br />
+          </>
+        ) : null}
         <Table columns={this.getColumns()} dataSource={dataSource} />
       </>
     );
