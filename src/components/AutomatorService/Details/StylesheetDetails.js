@@ -45,7 +45,7 @@ function StylesheetDetails({ result }) {
       <Item label="Theme Color">
         <Color value={result.themeColor} />
       </Item>
-      {duration ? <Item label="Duration">{duration}</Item> : ''}
+      {duration && <Item label="Duration">{duration}</Item>}
     </Descriptions>
   );
 }

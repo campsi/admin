@@ -35,11 +35,11 @@ function ProvisioningDetails({ result, api }) {
           {result.publishId}
         </Item>
       ) : null}
-      {duration ? (
+      {duration && (
         <Item label="Duration" span={2}>
           {duration}
         </Item>
-      ) : null}
+      )}
       <Item label="Embed code">
         <TextArea
           style={{

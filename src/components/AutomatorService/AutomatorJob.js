@@ -252,7 +252,7 @@ class AutomatorJob extends Component {
               <Descriptions.Item label="createdBy">{job.createdBy}</Descriptions.Item>
               <Descriptions.Item label="createdAt">{job.createdAt}</Descriptions.Item>
               <Descriptions.Item label="Priority">{job.params?.priority}</Descriptions.Item>
-              {duration ? <Descriptions.Item label="Duration">{duration}</Descriptions.Item> : null}
+              {duration && <Descriptions.Item label="Duration">{duration}</Descriptions.Item>}
               <Descriptions.Item>
                 <Button
                   type="default"

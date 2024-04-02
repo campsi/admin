@@ -291,11 +291,11 @@ class ScannerDetails extends Component {
                 : ''}
             </div>
           </Item>
-          {duration ? (
+          {duration && (
             <Item label="Duration" span={2}>
               {duration}
             </Item>
-          ) : null}
+          )}
         </Descriptions>
         <Table
           columns={this.getColumns()}

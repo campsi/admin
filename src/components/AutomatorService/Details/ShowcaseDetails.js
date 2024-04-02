@@ -75,14 +75,14 @@ class ShowcaseDetails extends Component {
     const duration = getDisplayedDuration(result);
     return (
       <>
-        {duration ? (
+        {duration && (
           <>
             <Descriptions bordered column={3} size="large">
               <Descriptions.Item label="Duration">{duration}</Descriptions.Item>
             </Descriptions>
             <br />
           </>
-        ) : null}
+        )}
         <Table columns={this.getColumns()} dataSource={dataSource} />
       </>
     );
