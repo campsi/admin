@@ -30,11 +30,11 @@ function ProvisioningDetails({ result, api }) {
       <Item label="Cookies ids" span={2}>
         {result.cookies?.join(', ')}
       </Item>
-      {result.publishId ? (
+      {result.publishId && (
         <Item label="PublishId" span={2}>
           {result.publishId}
         </Item>
-      ) : null}
+      )}
       {duration && (
         <Item label="Duration" span={2}>
           {duration}
