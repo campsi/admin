@@ -20,6 +20,8 @@ import {
 import AutomatorJobActions from './AutomatorJobActions';
 import Meta from 'antd/es/card/Meta';
 import copyText from '../../utils/copyText';
+import dayjs from 'dayjs';
+import { getDisplayedDuration } from './automatorHelpers';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
@@ -177,6 +179,7 @@ class AutomatorJob extends Component {
   render() {
     const { job, isFetching } = this.state;
     const allActions = Object.keys(AutomatorJobActions);
+    const duration = getDisplayedDuration(job);
 
     if (isFetching) {
       return (
@@ -249,6 +252,7 @@ class AutomatorJob extends Component {
               <Descriptions.Item label="createdBy">{job.createdBy}</Descriptions.Item>
               <Descriptions.Item label="createdAt">{job.createdAt}</Descriptions.Item>
               <Descriptions.Item label="Priority">{job.params?.priority}</Descriptions.Item>
+              {duration && <Descriptions.Item label="Duration">{duration}</Descriptions.Item>}
               <Descriptions.Item>
                 <Button
                   type="default"

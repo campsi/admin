@@ -3,8 +3,9 @@ import { FileExcelOutlined, FilePdfOutlined, VerticalAlignBottomOutlined } from 
 import { GlobalOutlined } from '@ant-design/icons';
 import { withAppContext } from '../../../App';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { getDisplayedDuration } from '../automatorHelpers';
 
 const { Title } = Typography;
 const { Item } = Descriptions;
@@ -240,6 +241,8 @@ class ScannerDetails extends Component {
 
   render() {
     const { dataSource, metadata } = this.state;
+    const { result } = this.props;
+    const duration = getDisplayedDuration(result);
     return (
       <Space size={'middle'} direction={'vertical'} style={{ width: '100%' }}>
         <Descriptions bordered column={3} size="large">
@@ -256,19 +259,19 @@ class ScannerDetails extends Component {
             {metadata.vendorsTriggeredWithoutConsent}
           </Item>
           <Item label="Download Excel" span={2}>
-            <a href={metadata.xlsxURL} download target="_blank">
+            <a href={metadata.xlsxURL} download target="_blank" rel="noreferrer">
               <Button icon={<FileExcelOutlined />} />
             </a>
           </Item>
           <Item label="Download PDF" span={2}>
             {metadata.pdfURL && (
-              <a href={metadata.pdfURL} download target="_blank">
+              <a href={metadata.pdfURL} download target="_blank" rel="noreferrer">
                 <Button icon={<FilePdfOutlined />} />
               </a>
             )}
             {metadata.pdfURLs &&
               Object.values(metadata.pdfURLs).map(url => (
-                <a style={{ padding: '5px' }} href={url} download target="_blank">
+                <a style={{ padding: '5px' }} href={url} download target="_blank" rel="noreferrer">
                   <Button icon={<FilePdfOutlined />} />
                 </a>
               ))}
@@ -288,6 +291,11 @@ class ScannerDetails extends Component {
                 : ''}
             </div>
           </Item>
+          {duration && (
+            <Item label="Duration" span={2}>
+              {duration}
+            </Item>
+          )}
         </Descriptions>
         <Table
           columns={this.getColumns()}

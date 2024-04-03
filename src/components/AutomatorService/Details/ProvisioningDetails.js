@@ -1,5 +1,7 @@
 import { Descriptions, Input } from 'antd';
 import { withAppContext } from '../../../App';
+import { getDisplayedDuration } from '../automatorHelpers';
+import React from 'react';
 const { TextArea } = Input;
 const { Item } = Descriptions;
 
@@ -19,6 +21,7 @@ const getEmbedCode = ({ projectId, version }) => {
 };
 
 function ProvisioningDetails({ result, api }) {
+  const duration = getDisplayedDuration(result);
   return (
     <Descriptions bordered column={2}>
       <Item label="ProjectId" span={2}>
@@ -27,9 +30,16 @@ function ProvisioningDetails({ result, api }) {
       <Item label="Cookies ids" span={2}>
         {result.cookies?.join(', ')}
       </Item>
-      <Item label="PublishId" span={2}>
-        {result.publishId}
-      </Item>
+      {result.publishId && (
+        <Item label="PublishId" span={2}>
+          {result.publishId}
+        </Item>
+      )}
+      {duration && (
+        <Item label="Duration" span={2}>
+          {duration}
+        </Item>
+      )}
       <Item label="Embed code">
         <TextArea
           style={{
