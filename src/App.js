@@ -4,7 +4,6 @@ import { Component, createContext } from 'react';
 import AdminMenu from './components/AdminMenu/AdminMenu';
 import Service from './components/Service/Service';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import 'antd/dist/antd.min.css';
 import { Layout } from 'antd';
 import Playground from './components/Playground/Playground';
 

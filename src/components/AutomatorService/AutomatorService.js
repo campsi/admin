@@ -343,7 +343,7 @@ class AutomatorService extends Component {
           Bulk creation
         </Button>
         <BulkJobCreationModal
-          visible={bulkJobCreationModalOpen}
+          open={bulkJobCreationModalOpen}
           setLoadingBulkJobCreation={value => this.setState({ loadingBulkJobCreation: value })}
           loadingBulkJobCreation={this.state.loadingBulkJobCreation}
           api={api}

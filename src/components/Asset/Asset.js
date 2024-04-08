@@ -19,7 +19,7 @@ class Asset extends Component {
   }
 
   render() {
-    const { formData } = this.props;
+    const { formData = {} } = this.props;
     const { uploadModalVisible, isUploading, uploadProgress, currentAssetsService, detailsVisible } = this.state;
 
     return (
@@ -28,8 +28,10 @@ class Asset extends Component {
           <Row>
             <Card
               style={{ width: '100%' }}
-              bodyStyle={{
-                padding: 0
+              styles={{
+                body: {
+                  padding: 0
+                }
               }}
               size="small"
               title={
@@ -88,7 +90,7 @@ class Asset extends Component {
           </Row>
         </Col>
         <Modal
-          visible={uploadModalVisible}
+          open={uploadModalVisible}
           onCancel={() => {
             this.setState({ uploadModalVisible: false });
           }}

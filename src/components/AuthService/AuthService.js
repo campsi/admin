@@ -126,10 +126,10 @@ class AuthService extends Component {
               <Card title="Log in">
                 <Form onFinish={values => this.login(values)}>
                   <Form.Item label="Email" name="email">
-                    <Input type="email" />
+                    <Input id="login_email" type="email" />
                   </Form.Item>
                   <Form.Item label="Password" name="password">
-                    <Input type="password" />
+                    <Input id="login_password" type="password" />
                   </Form.Item>
                   <Form.Item>
                     <Button type="primary" htmlType="submit">
@@ -141,10 +141,10 @@ class AuthService extends Component {
               <Card title="Create Account">
                 <Form onFinish={formData => this.register(formData)}>
                   <Form.Item label="Email" name="email" rules={[{ required: true }, { type: 'email' }]}>
-                    <Input type="email" />
+                    <Input id="create_email" type="email" />
                   </Form.Item>
                   <Form.Item name="password" label="Password" rules={[{ required: true }]}>
-                    <Input type="password" />
+                    <Input id="create_password" type="password" />
                   </Form.Item>
                   <Button type="primary" htmlType="submit">
                     Sign up
