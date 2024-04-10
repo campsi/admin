@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import LanguageSelect from '../LanguageSelect/LanguageSelect';
-import { Col, Form, Input, Row } from 'antd';
+import { Button, Col, Flex, Form, Input, Row } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 const { TextArea } = Input;
 
 export function cleanLocalizedValue(value) {
@@ -45,27 +46,43 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
     return undefined;
   }
 
+  const buttons = (
+    <Button.Group>
+      <Button icon={<DeleteOutlined />} danger />
+    </Button.Group>
+  );
+
   return (
     <Form.Item label={schema.title || name}>
       <Row style={{ width: '100%' }}>
         <Col span={selectSpan}>
-          <LanguageSelect onChange={l => setSelectedLanguage(l)} value={selectedLanguage} activeLanguages={Object.keys(value)} />
+          <Flex>
+            <LanguageSelect
+              onChange={l => setSelectedLanguage(l)}
+              value={selectedLanguage}
+              activeLanguages={Object.keys(value)}
+            />
+            {schema['ui:multiline'] && buttons}
+          </Flex>
         </Col>
         <Col span={inputSpan}>
-          <InputComponent
-            value={fieldValue}
-            type="text"
-            rows={6}
-            onChange={event => {
-              const newValue = {
-                __lang: sanitizeValue({
-                  ...value,
-                  [selectedLanguage]: event.target.value
-                })
-              };
-              onChange(newValue);
-            }}
-          />
+          <Flex>
+            <InputComponent
+              value={fieldValue}
+              type="text"
+              rows={6}
+              onChange={event => {
+                const newValue = {
+                  __lang: sanitizeValue({
+                    ...value,
+                    [selectedLanguage]: event.target.value
+                  })
+                };
+                onChange(newValue);
+              }}
+            />
+            {!schema['ui:multiline'] && buttons}
+          </Flex>
         </Col>
       </Row>
     </Form.Item>
