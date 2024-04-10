@@ -184,7 +184,7 @@ class ResourceForm extends Component {
 
     return (
       <Layout style={{ padding: 30 }}>
-        redirectTo && window.location.pathname !== redirectTo && <Navigate to={redirectTo} replace />
+        {redirectTo && window.location.pathname !== redirectTo && <Navigate to={redirectTo} replace />}
         <Title>Resource form</Title>
         <Space direction="vertical">
           <Card title="Document details">
@@ -263,7 +263,7 @@ ResourceForm.propTypes = {
     name: PropTypes.string.isRequired,
     class: PropTypes.string.isRequired
   }).isRequired,
-  customWidgets: PropTypes.objectOf(PropTypes.element),
+  customWidgets: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.element, PropTypes.func])),
   ...withParams.propTypes,
   ...withAppContext.propTypes
 };
