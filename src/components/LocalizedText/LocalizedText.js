@@ -2,6 +2,7 @@ import { useState } from 'react';
 import LanguageSelect from '../LanguageSelect/LanguageSelect';
 import { Button, Col, Flex, Form, Input, Row } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import cloneDeep from 'clone-deep';
 const { TextArea } = Input;
 
 export function cleanLocalizedValue(value) {
@@ -22,7 +23,6 @@ export function cleanLocalizedValue(value) {
     });
     return result;
   }
-
   return value;
 }
 
@@ -46,9 +46,28 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
     return undefined;
   }
 
+  function updateLocaleValue(newValue) {
+    const newFormData = {
+      ...formData,
+      __lang: sanitizeValue({
+        ...value,
+        [selectedLanguage]: newValue
+      })
+    };
+    onChange(newFormData);
+  }
+
+  function deleteLocale() {
+    const newFormData = cloneDeep(formData);
+    delete newFormData.__lang[selectedLanguage];
+    onChange(newFormData);
+  }
+
+  const languageHasValue = Object.hasOwn(formData?.__lang || {}, selectedLanguage);
+
   const buttons = (
     <Button.Group>
-      <Button icon={<DeleteOutlined />} danger />
+      <Button disabled={!languageHasValue} icon={<DeleteOutlined />} danger onClick={deleteLocale} />
     </Button.Group>
   );
 
@@ -72,13 +91,7 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
               type="text"
               rows={6}
               onChange={event => {
-                const newValue = {
-                  __lang: sanitizeValue({
-                    ...value,
-                    [selectedLanguage]: event.target.value
-                  })
-                };
-                onChange(newValue);
+                updateLocaleValue(event.target.value);
               }}
             />
             {!schema['ui:multiline'] && buttons}

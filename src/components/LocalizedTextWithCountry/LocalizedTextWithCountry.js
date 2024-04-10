@@ -4,6 +4,7 @@ import CountrySelect from '../CountrySelect/CountrySelect';
 import SubdivisionSelect from '../SubdivisionSelect/SubdivisionSelect';
 import { Button, Col, Flex, Form, Input, Row } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import cloneDeep from 'clone-deep';
 const { TextArea } = Input;
 
 export default function LocalizedTextWithCountry({ formData, schema, name, onChange }) {
@@ -55,9 +56,28 @@ export default function LocalizedTextWithCountry({ formData, schema, name, onCha
     return undefined;
   }
 
+  function updateLocaleValue(newValue) {
+    const newFormData = {
+      ...formData,
+      __lang: sanitizeValue({
+        ...value,
+        [locale]: newValue
+      })
+    };
+    onChange(newFormData);
+  }
+
+  function deleteLocale() {
+    const newFormData = cloneDeep(formData);
+    delete newFormData.__lang[locale];
+    onChange(newFormData);
+  }
+
+  const localeHasValue = Object.hasOwn(formData?.__lang || {}, locale);
+
   const buttons = (
     <Button.Group>
-      <Button icon={<DeleteOutlined />} danger />
+      <Button disabled={!localeHasValue} icon={<DeleteOutlined />} danger onClick={deleteLocale} />
     </Button.Group>
   );
 
@@ -104,13 +124,7 @@ export default function LocalizedTextWithCountry({ formData, schema, name, onCha
               type="text"
               rows={6}
               onChange={event => {
-                const newValue = {
-                  __lang: sanitizeValue({
-                    ...value,
-                    [locale]: event.target.value
-                  })
-                };
-                onChange(newValue);
+                updateLocaleValue(event.target.value);
               }}
             />
             {!schema['ui:multiline'] && buttons}
