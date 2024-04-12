@@ -11,20 +11,20 @@ const { Option } = Select;
 class ResourceListing extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isFetching: true,
+      perPage: 25,
+      page: 1,
+      items: [],
+      totalCount: 0,
+      lastPage: 1,
+      selectedState: undefined,
+      language: 'en',
+      visibleProperties: [],
+      filters: {}
+    };
     this.handlePopState = this.handlePopState.bind(this);
   }
-
-  state = {
-    perPage: 25,
-    page: 1,
-    items: [],
-    totalCount: 0,
-    lastPage: 1,
-    selectedState: undefined,
-    language: 'en',
-    visibleProperties: [],
-    filters: {}
-  };
 
   async componentDidMount() {
     window.addEventListener('popstate', this.handlePopState);
@@ -114,8 +114,16 @@ class ResourceListing extends Component {
     if (prevProps.params.resourceName !== this.props.params.resourceName) {
       // reset state when changing resource
       this.setState({
+        isFetching: true,
+        perPage: 25,
         page: 1,
-        perPage: 25
+        items: [],
+        totalCount: 0,
+        lastPage: 1,
+        selectedState: undefined,
+        language: 'en',
+        visibleProperties: [],
+        filters: {}
       });
       await this.updateVisibleProperties();
       await this.fetchData();
@@ -149,6 +157,8 @@ class ResourceListing extends Component {
       }
       return;
     }
+
+    this.setState({ isFetching: true });
 
     const urlParams = new URLSearchParams(window?.location?.search);
 
@@ -377,7 +387,7 @@ class ResourceListing extends Component {
             <Table
               columns={columns}
               rowKey={item => item.id}
-              dataSource={this.state.items}
+              dataSource={this.state.isFetching ? [] : this.state.items}
               onChange={this.handleTableChange}
               current={this.state.page}
               totalSize={this.state.totalCount}
