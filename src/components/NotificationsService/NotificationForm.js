@@ -8,6 +8,7 @@ import { generateRelationField } from '../RelationField/RelationField';
 import { cleanLocalizedValue } from '../LocalizedText/LocalizedText';
 import { Navigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import validator from '@rjsf/validator-ajv8';
 
 const { confirm } = Modal;
 const { Title } = Typography;
@@ -171,7 +172,7 @@ class NotificationForm extends Component {
                 type={'primary'}
                 onClick={() => {
                   // @link https://github.com/rjsf-team/react-jsonschema-form/issues/2104
-                  this.formRef.formElement.dispatchEvent(
+                  this.formRef.current.formElement.current.dispatchEvent(
                     new CustomEvent('submit', {
                       cancelable: true,
                       bubbles: true
@@ -186,6 +187,7 @@ class NotificationForm extends Component {
             <Form
               className="rjsf ant-form-vertical"
               schema={resource.schema}
+              validator={validator}
               formData={notification.data}
               formContext={{
                 id: notification._id,
@@ -193,9 +195,7 @@ class NotificationForm extends Component {
                 createdBy: notification.createdBy
               }}
               uiSchema={this.getUISchema()}
-              ref={ref => {
-                this.formRef = ref;
-              }}
+              ref={this.formRef}
               liveValidate
               onSubmit={({ formData }) => this.updateDocument(formData)}
             />

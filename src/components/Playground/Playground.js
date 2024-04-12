@@ -3,6 +3,7 @@ import { Card } from 'antd';
 import LocalizedText from '../LocalizedText/LocalizedText';
 import MatchString from '../MatchString/MatchString';
 import JsonTextArea from '../JsonTextArea/JsonTextArea';
+import validator from '@rjsf/validator-ajv8';
 
 const schema = {
   type: 'object',
@@ -102,7 +103,7 @@ const formData = {
 function Playground() {
   return (
     <Card title="Playground" style={{ margin: 30 }}>
-      <Form schema={schema} uiSchema={uiSchema} formData={formData} onChange={data => console.info(data)} />
+      <Form schema={schema} validator={validator} uiSchema={uiSchema} formData={formData} onChange={data => console.info(data)} />
     </Card>
   );
 }

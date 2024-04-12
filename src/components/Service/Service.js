@@ -4,6 +4,7 @@ import AssetsService from '../AssetsService/AssetsService';
 import { useParams } from 'react-router-dom';
 import AutomatorService from '../AutomatorService/AutomatorService';
 import NotificationsService from '../NotificationsService/NotificationsService';
+import { Layout, Space } from 'antd';
 
 const ServiceComponents = {
   DocsService,
@@ -12,6 +13,14 @@ const ServiceComponents = {
   AssetsService,
   NotificationsService
 };
+
+const NoService = () => (
+  <Layout.Content style={{ padding: 30 }}>
+    <Space direction="horizontal" style={{ width: '100%', justifyContent: 'center' }}>
+      <span style={{ fontSize: 24 }}>This service has no administration panel</span>
+    </Space>
+  </Layout.Content>
+);
 
 function Service(props) {
   const params = useParams();
@@ -23,7 +32,7 @@ function Service(props) {
   }
   service.name = serviceName;
   const ServiceComponent = ServiceComponents[service.class];
-  return ServiceComponent ? <ServiceComponent service={service} /> : null;
+  return ServiceComponent ? <ServiceComponent service={service} /> : NoService();
 }
 
 export default Service;

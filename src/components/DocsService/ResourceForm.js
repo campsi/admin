@@ -8,6 +8,7 @@ import { generateRelationField } from '../RelationField/RelationField';
 import { cleanLocalizedValue } from '../LocalizedText/LocalizedText';
 import { Navigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import validator from '@rjsf/validator-ajv8';
 
 const { confirm } = Modal;
 const { Title } = Typography;
@@ -223,6 +224,7 @@ class ResourceForm extends Component {
             <Form
               className="rjsf ant-form-vertical"
               schema={resource.schema}
+              validator={validator}
               formData={doc.data}
               formContext={{
                 id: doc.id,
@@ -230,9 +232,7 @@ class ResourceForm extends Component {
                 createdBy: doc.createdBy
               }}
               uiSchema={this.getUISchema()}
-              ref={ref => {
-                this.formRef = ref;
-              }}
+              ref={this.formRef}
               liveValidate
               onFocus={e => {
                 const element = document.getElementById(e);
@@ -263,7 +263,7 @@ ResourceForm.propTypes = {
     name: PropTypes.string.isRequired,
     class: PropTypes.string.isRequired
   }).isRequired,
-  customWidgets: PropTypes.objectOf(PropTypes.element),
+  customWidgets: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.element, PropTypes.func])),
   ...withParams.propTypes,
   ...withAppContext.propTypes
 };
@@ -298,7 +298,7 @@ function getActions(service, resourceName) {
       type={'primary'}
       onClick={() => {
         // @link https://github.com/rjsf-team/react-jsonschema-form/issues/2104
-        this.formRef.formElement.dispatchEvent(
+        this.formRef.current.formElement.current.dispatchEvent(
           new CustomEvent('submit', {
             cancelable: true,
             bubbles: true
@@ -349,7 +349,7 @@ function getActions(service, resourceName) {
                     const { api, service, params } = this.props;
                     const { resourceName, id } = params;
                     await api.client.post(`${service.name}/${resourceName}/${id}/approve`, {
-                      resource: { ...this.formRef.state.formData, _id: this.state.doc.id }
+                      resource: { ...this.formRef.current.state.formData, _id: this.state.doc.id }
                     });
                     this.setState({
                       redirectTo: `/services/${service.name}/resources/${resourceName}/`
