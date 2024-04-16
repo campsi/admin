@@ -2,9 +2,10 @@ import { useState } from 'react';
 import LanguageSelect from '../LanguageSelect/LanguageSelect';
 import CountrySelect from '../CountrySelect/CountrySelect';
 import SubdivisionSelect from '../SubdivisionSelect/SubdivisionSelect';
-import { Button, Col, Flex, Form, Input, Row } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Col, Flex, Form, Input, Row, Space, Tooltip } from 'antd';
+import { CheckCircleOutlined, DeleteOutlined, ZhihuOutlined } from '@ant-design/icons';
 import cloneDeep from 'clone-deep';
+import { getLocaleName } from '../../utils/i18n';
 const { TextArea } = Input;
 
 export default function LocalizedTextWithCountry({ formData, schema, name, onChange }) {
@@ -73,12 +74,68 @@ export default function LocalizedTextWithCountry({ formData, schema, name, onCha
     onChange(newFormData);
   }
 
+  function toggleRetranslateFlag(locale) {
+    const newFormData = cloneDeep(formData);
+    if (newFormData.__flags?.retranslate) {
+      if (newFormData.__flags.retranslate.includes(locale)) {
+        newFormData.__flags.retranslate = newFormData.__flags.retranslate.filter(loc => loc !== locale);
+      } else {
+        newFormData.__flags.retranslate.push(locale);
+      }
+    } else {
+      newFormData.__flags = {
+        retranslate: [locale]
+      };
+    }
+    onChange(newFormData);
+  }
+
+  function setRetranslateFlag(locales) {
+    const newFormData = cloneDeep(formData);
+    if (Array.isArray(locales) && locales.length > 0) {
+      newFormData.__flags = {
+        retranslate: locales
+      };
+    } else {
+      newFormData.__flags.retranslate = [];
+    }
+    onChange(newFormData);
+  }
+
+  const englishLocaleIsSelected = locale === 'en';
+  const nonEnglishActiveLocales = Object.keys(value).filter(loc => loc !== 'en');
   const localeHasValue = Object.hasOwn(formData?.__lang || {}, locale);
+  const localeFlaggedToRetranslate = formData?.__flags?.retranslate?.includes(locale);
+  const translationChecked = englishLocaleIsSelected ? formData?.__flags?.retranslate?.length > 0 : localeFlaggedToRetranslate;
+  const allLocalesAreFlagged = nonEnglishActiveLocales.filter(x => !formData?.__flags?.retranslate?.includes(x)).length === 0;
+  const checkColor = englishLocaleIsSelected && !allLocalesAreFlagged ? '#faad14' : '#52c41a';
 
   const buttons = (
-    <Button.Group>
-      <Button disabled={!localeHasValue} icon={<DeleteOutlined />} danger onClick={deleteLocale} />
-    </Button.Group>
+    <Space>
+      {' '}
+      <Tooltip
+        placement="rightBottom"
+        title={englishLocaleIsSelected ? 'retranslate all other locales' : 'retranslate this locale'}
+        arrow={true}
+      >
+        <Button
+          disabled={englishLocaleIsSelected ? nonEnglishActiveLocales.length === 0 : !localeHasValue}
+          onClick={() => {
+            if (englishLocaleIsSelected) {
+              setRetranslateFlag(translationChecked ? [] : nonEnglishActiveLocales);
+            } else {
+              toggleRetranslateFlag(locale);
+            }
+          }}
+          icon={translationChecked ? <CheckCircleOutlined style={{ color: checkColor }} /> : <ZhihuOutlined />}
+          type="primary"
+          ghost
+        />
+      </Tooltip>
+      <Tooltip placement="rightBottom" title={`Delete ${getLocaleName(locale)} text`} arrow={true}>
+        <Button disabled={!localeHasValue} onClick={deleteLocale} icon={<DeleteOutlined />} danger />
+      </Tooltip>
+    </Space>
   );
 
   return (
