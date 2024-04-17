@@ -12,7 +12,12 @@ export function cleanLocalizedValue(value) {
   }
 
   if (typeof value === 'object' && value !== null) {
-    if (value.__lang && Object.keys(value.__lang).length === 0) {
+    // Remove empty localized values
+    if (Object.hasOwn(value, '__lang') && Object.keys(value.__lang).length === 0) {
+      return undefined;
+    }
+    // Remove localized values without language
+    if (Object.hasOwn(value, '__flags') && !Object.hasOwn(value, '__lang')) {
       return undefined;
     }
     const result = {};
