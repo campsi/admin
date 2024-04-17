@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import LanguageSelect from '../LanguageSelect/LanguageSelect';
-import { Button, Col, Flex, Form, Input, Row } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Col, Flex, Form, Input, Row, Space, Tooltip } from 'antd';
+import { CheckCircleOutlined, DeleteOutlined, ZhihuOutlined } from '@ant-design/icons';
 import cloneDeep from 'clone-deep';
+import { getLanguageName } from '../../utils/i18n';
 const { TextArea } = Input;
 
 export function cleanLocalizedValue(value) {
@@ -11,7 +12,12 @@ export function cleanLocalizedValue(value) {
   }
 
   if (typeof value === 'object' && value !== null) {
-    if (value.__lang && Object.keys(value.__lang).length === 0) {
+    // Remove empty localized values
+    if (Object.hasOwn(value, '__lang') && Object.keys(value.__lang).length === 0) {
+      return undefined;
+    }
+    // Remove localized values without language
+    if (Object.hasOwn(value, '__flags') && !Object.hasOwn(value, '__lang')) {
       return undefined;
     }
     const result = {};
@@ -34,16 +40,8 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
   const [selectSpan, inputSpan] = schema['ui:multiline'] ? [24, 24] : [8, 16];
 
   function sanitizeValue(value) {
-    const result = {};
-    Object.keys(value).forEach(lang => {
-      if (value[lang]) {
-        result[lang] = value[lang];
-      }
-    });
-    if (Object.keys(result).length > 0) {
-      return result;
-    }
-    return undefined;
+    // !! Don't delete empty languages !!
+    return Object.keys(value).length > 0 ? value : undefined;
   }
 
   function updateLocaleValue(newValue) {
@@ -63,12 +61,70 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
     onChange(newFormData);
   }
 
+  function toggleRetranslateFlag(language) {
+    const newFormData = cloneDeep(formData);
+    if (newFormData.__flags?.retranslate) {
+      if (newFormData.__flags.retranslate.includes(language)) {
+        newFormData.__flags.retranslate = newFormData.__flags.retranslate.filter(lang => lang !== language);
+      } else {
+        newFormData.__flags.retranslate.push(language);
+      }
+    } else {
+      newFormData.__flags = {
+        retranslate: [language]
+      };
+    }
+    onChange(newFormData);
+  }
+
+  function setRetranslateFlag(languages) {
+    const newFormData = cloneDeep(formData);
+    if (Array.isArray(languages) && languages.length > 0) {
+      newFormData.__flags = {
+        retranslate: languages
+      };
+    } else {
+      newFormData.__flags.retranslate = [];
+    }
+    onChange(newFormData);
+  }
+
+  const englishLanguageIsSelected = selectedLanguage === 'en';
+  const nonEnglishActiveLanguages = Object.keys(value).filter(lang => lang !== 'en');
   const languageHasValue = Object.hasOwn(formData?.__lang || {}, selectedLanguage);
+  const languageFlaggedToRetranslate = formData?.__flags?.retranslate?.includes(selectedLanguage);
+  const translationChecked = englishLanguageIsSelected
+    ? formData?.__flags?.retranslate?.length > 0
+    : languageFlaggedToRetranslate;
+  const allLanguagesAreFlagged = nonEnglishActiveLanguages.filter(x => !formData?.__flags?.retranslate?.includes(x)).length === 0;
+  const checkColor = englishLanguageIsSelected && !allLanguagesAreFlagged ? '#faad14' : '#52c41a';
 
   const buttons = (
-    <Button.Group>
-      <Button disabled={!languageHasValue} icon={<DeleteOutlined />} danger onClick={deleteLocale} />
-    </Button.Group>
+    <Space>
+      {' '}
+      <Tooltip
+        placement="rightBottom"
+        title={englishLanguageIsSelected ? 'retranslate all other languages' : 'retranslate this language'}
+        arrow={true}
+      >
+        <Button
+          disabled={englishLanguageIsSelected ? nonEnglishActiveLanguages.length === 0 : !languageHasValue}
+          onClick={() => {
+            if (englishLanguageIsSelected) {
+              setRetranslateFlag(translationChecked ? [] : nonEnglishActiveLanguages);
+            } else {
+              toggleRetranslateFlag(selectedLanguage);
+            }
+          }}
+          icon={translationChecked ? <CheckCircleOutlined style={{ color: checkColor }} /> : <ZhihuOutlined />}
+          type="primary"
+          ghost
+        />
+      </Tooltip>
+      <Tooltip placement="rightBottom" title={`Delete ${getLanguageName(selectedLanguage)} text`} arrow={true}>
+        <Button disabled={!languageHasValue} onClick={deleteLocale} icon={<DeleteOutlined />} danger />
+      </Tooltip>
+    </Space>
   );
 
   return (
@@ -93,6 +149,7 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
               onChange={event => {
                 updateLocaleValue(event.target.value);
               }}
+              placeholder={languageHasValue ? '(empty string)' : '(no translation yet)'}
             />
             {!schema['ui:multiline'] && buttons}
           </Flex>
