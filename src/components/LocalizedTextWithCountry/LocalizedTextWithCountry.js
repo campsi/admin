@@ -45,16 +45,8 @@ export default function LocalizedTextWithCountry({ formData, schema, name, onCha
   );
 
   function sanitizeValue(value) {
-    const result = {};
-    Object.keys(value).forEach(locale => {
-      if (value[locale]) {
-        result[locale] = value[locale];
-      }
-    });
-    if (Object.keys(result).length > 0) {
-      return result;
-    }
-    return undefined;
+    // !! Don't delete empty locales !!
+    return Object.keys(value).length > 0 ? value : undefined;
   }
 
   function updateLocaleValue(newValue) {
@@ -183,6 +175,7 @@ export default function LocalizedTextWithCountry({ formData, schema, name, onCha
               onChange={event => {
                 updateLocaleValue(event.target.value);
               }}
+              placeholder={localeHasValue ? '(empty string)' : '(no translation yet)'}
             />
             {!schema['ui:multiline'] && buttons}
           </Flex>

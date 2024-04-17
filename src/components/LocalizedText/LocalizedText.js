@@ -35,16 +35,8 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
   const [selectSpan, inputSpan] = schema['ui:multiline'] ? [24, 24] : [8, 16];
 
   function sanitizeValue(value) {
-    const result = {};
-    Object.keys(value).forEach(lang => {
-      if (value[lang]) {
-        result[lang] = value[lang];
-      }
-    });
-    if (Object.keys(result).length > 0) {
-      return result;
-    }
-    return undefined;
+    // !! Don't delete empty languages !!
+    return Object.keys(value).length > 0 ? value : undefined;
   }
 
   function updateLocaleValue(newValue) {
@@ -152,6 +144,7 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
               onChange={event => {
                 updateLocaleValue(event.target.value);
               }}
+              placeholder={languageHasValue ? '(empty string)' : '(no translation yet)'}
             />
             {!schema['ui:multiline'] && buttons}
           </Flex>
