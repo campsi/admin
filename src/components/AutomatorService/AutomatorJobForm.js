@@ -102,6 +102,9 @@ function AutomatorJobForm({ onFinish, api }) {
             <Form.Item name={['actions', 'scanner', 'maxPages']} label="Max Pages" help="Max 150" initialValue={50}>
               <InputNumber min={1} max={150} />
             </Form.Item>
+            <Form.Item name={['actions', 'scanner', 'speedUp']} label="Speed Up" valuePropName="checked" initialValue={false}>
+              <Switch />
+            </Form.Item>
             <Form.Item label="PDF Languages" name={['actions', 'scanner', 'languages']} initialValue={['en']}>
               <Select
                 mode="multiple"

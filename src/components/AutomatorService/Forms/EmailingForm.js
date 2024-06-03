@@ -43,9 +43,7 @@ export default function EmailingForm({ api }) {
           }}
         >
           <Select.Option value="sendgrid">Sendgrid</Select.Option>
-          <Select.Option value="hubspot" disabled>
-            Hubspot
-          </Select.Option>
+          <Select.Option value="hubspot">Hubspot</Select.Option>
           <Select.Option value="sendinblue" disabled>
             SendInBlue
           </Select.Option>
