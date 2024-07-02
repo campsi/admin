@@ -128,7 +128,7 @@ export default function LocalizedText({ formData, schema, name, onChange }) {
   );
 
   return (
-    <Form.Item label={schema.title || name}>
+    <Form.Item required={schema['ui:required']} label={schema.title || name}>
       <Row style={{ width: '100%' }}>
         <Col span={selectSpan}>
           <Flex>

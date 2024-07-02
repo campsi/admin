@@ -35,11 +35,29 @@ body {
 }
 
 .bg-blue {
-  background: #dde7fa;
-  border: 2px solid #a2c6ff;
+  background: #eef5ff;
+  border: 2px solid #c6dafc;
   border-radius: 4px;
 }
 .bg-blue .ant-form-item-extra {
+  display: none;
+}
+
+.bg-red {
+  background: #ffeeee;
+  border: 2px solid #fcc6c6;
+  border-radius: 4px;
+}
+.bg-red .ant-form-item-extra {
+  display: none;
+}
+
+.bg-orange {
+  background: #fffaee;
+  border: 2px solid #fcebc6;
+  border-radius: 4px;
+}
+.bg-orange .ant-form-item-extra {
   display: none;
 }
 

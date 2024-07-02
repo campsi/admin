@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withAppContext } from '../../App';
 import withParams from '../../utils/withParams';
 import Form from '@rjsf/antd';
-import { Button, Card, Descriptions, Empty, Layout, Modal, notification, Radio, Space, Table, Typography } from 'antd';
+import { Button, Card, Descriptions, Empty, Layout, Modal, notification, Radio, Space, Table, Tag, Typography } from 'antd';
 import { generateRelationField } from '../RelationField/RelationField';
 import { cleanLocalizedValue } from '../LocalizedText/LocalizedText';
 import { Navigate } from 'react-router-dom';
@@ -130,6 +130,7 @@ class ResourceForm extends Component {
       } else if (schema.properties) {
         Object.entries(schema.properties).forEach(([propertyName, propertySchema]) => {
           uiSchema[propertyName] = propertySchema.virtual ? { 'ui:readonly': true } : {};
+          propertySchema['ui:required'] = schema.required?.includes(propertyName);
           parseSchema(schema.properties[propertyName], uiSchema[propertyName]);
         });
       }
