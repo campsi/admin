@@ -133,6 +133,7 @@ class ResourceListing extends Component {
   async fetchData(filters = {}, sorter = {}, pagination) {
     /* Destructuring the props object. */
     const { api, service, authenticated } = this.props;
+    const { visibleProperties } = this.state;
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
@@ -141,7 +142,9 @@ class ResourceListing extends Component {
       perPage = pagination.pageSize;
       page = pagination.current;
     }
-
+    const properties = visibleProperties.map(prop => {
+      return { name: prop, ...resource.schema.properties[prop] };
+    });
     const allowedMethods = resourceClass.permissions[authenticated ? 'owner' : 'public']?.[selectedState];
     if (!allowedMethods) {
       if (authenticated) {
@@ -180,7 +183,8 @@ class ResourceListing extends Component {
 
     const params = new URLSearchParams({
       perPage: perPage,
-      page: page
+      page: page,
+      embed: `${properties.map(p => p.name).join(',')}`
     });
 
     Object.keys(filters)
@@ -245,7 +249,9 @@ class ResourceListing extends Component {
           return '';
         }
         return (
-          <Link to={`/services/${service}/resources/${resource}/${value}`}>{row[embeddedIndex]?.[labelIndex] || value}</Link>
+          <Link to={`/services/${service}/resources/${resource}/${value}`}>
+            {row[embeddedIndex]?.[labelIndex] || row.data[embeddedIndex]?.[labelIndex] || value}
+          </Link>
         );
       }
 
