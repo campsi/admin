@@ -73,6 +73,15 @@ class Api {
     const response = await this.client.get('/');
     return response.data.services || [];
   }
+
+  async getAvailableLocales(service) {
+    try {
+      const response = await this.client.get(`governance/${service}/locales`);
+      return response.data || {};
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
 
 export default Api;
