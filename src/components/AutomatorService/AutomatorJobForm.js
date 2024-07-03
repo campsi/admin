@@ -6,6 +6,7 @@ import EmailingForm from './Forms/EmailingForm';
 import copyText from '../../utils/copyText';
 import { formatJobValues } from './AutomatorService';
 import styled from 'styled-components';
+import LocalizedSelect from '../LocalizedSelect/LocalizedSelect';
 
 const CenteredDiv = styled.div`
   justify-content: center;
@@ -163,46 +164,10 @@ function AutomatorJobForm({ onFinish, api }) {
               label="Languages"
               name={['actions', 'provisioning', 'languages']}
               required={isActionActive('provisioning')}
-              initialValue={['en']}
+              initialValue={['en-GB']}
               rules={[{ required: isActionActive('provisioning') }]}
             >
-              <Select
-                mode="multiple"
-                options={[
-                  {
-                    label: 'English 🇬🇧',
-                    value: 'en'
-                  },
-                  {
-                    label: 'French 🇫🇷',
-                    value: 'fr'
-                  },
-                  {
-                    label: 'Quebec 🇨🇦🇲🇶',
-                    value: 'fr-CA-QC'
-                  },
-                  {
-                    label: 'Spanish 🇪🇸',
-                    value: 'es'
-                  },
-                  {
-                    label: 'Italian 🇮🇹',
-                    value: 'it'
-                  },
-                  {
-                    label: 'German 🇩🇪',
-                    value: 'de'
-                  },
-                  {
-                    label: 'Portuguese 🇵🇹',
-                    value: 'pt'
-                  },
-                  {
-                    label: 'Dutch 🇳🇱',
-                    value: 'nl'
-                  }
-                ]}
-              />
+              <LocalizedSelect api={api} ressource={'cookies'} />
             </Form.Item>
             <Form.Item label="Cookies to update" name={['actions', 'provisioning', 'cookies']}>
               <Select mode="tags" />
