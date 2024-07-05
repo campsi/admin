@@ -16,8 +16,10 @@ const { Title } = Typography;
 class ResourceForm extends Component {
   state = {
     selectedState: undefined,
+    lastStateUpdate: undefined,
     users: [],
-    doc: {}
+    doc: {},
+    formData: {}
   };
 
   formRef = React.createRef();
@@ -208,7 +210,13 @@ class ResourceForm extends Component {
               <Radio.Group
                 value={selectedState}
                 onChange={event => {
-                  this.setState({ selectedState: event.target.value });
+                  const toUpdate = {
+                    selectedState: event.target.value
+                  };
+                  if (this.state.lastStateUpdate === selectedState) {
+                    toUpdate.doc = { ...doc, states: { ...doc.states, [selectedState]: { data: this.state.formData } } };
+                  }
+                  this.setState(toUpdate);
                 }}
               >
                 {Object.keys(resourceClass.states).map(state => {
@@ -226,7 +234,7 @@ class ResourceForm extends Component {
               className="rjsf ant-form-vertical"
               schema={resource.schema}
               validator={validator}
-              formData={doc.data}
+              formData={this.state.doc.states?.[selectedState]?.data}
               formContext={{
                 id: doc.id,
                 createdAt: doc.createdAt,
@@ -246,6 +254,12 @@ class ResourceForm extends Component {
                     { passive: false }
                   );
                 }
+              }}
+              onChange={e => {
+                this.setState({
+                  formData: e.formData,
+                  lastStateUpdate: this.state.selectedState
+                });
               }}
               onSubmit={({ formData }) => this.updateDocument(formData)}
             />
