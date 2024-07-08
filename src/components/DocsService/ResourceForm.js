@@ -56,6 +56,9 @@ class ResourceForm extends Component {
     const response = await api.client.get(`${service.name}/${resourceName}/${id}`);
     this.setState({
       doc: response.data,
+      selectedState: response.data.state,
+      lastStateUpdate: response.data.state,
+      formData: response.data.states[response.data.state]?.data,
       isFetching: false
     });
   }
@@ -92,12 +95,21 @@ class ResourceForm extends Component {
       try {
         const method = doc.id ? 'put' : 'post';
         const url = doc.id ? `${service.name}/${resourceName}/${doc.id}` : `${service.name}/${resourceName}`;
-
-        const response = await api.client[method](url, cleanLocalizedValue(newValue));
+        let response = {};
+        for (const state of Object.keys(doc.states)) {
+          if (state === this.state.selectedState) {
+            response[state] = (await api.client[method](url + `/${state}`, cleanLocalizedValue(newValue))).data;
+          } else {
+            response[state] = (await api.client[method](url + `/${state}`, cleanLocalizedValue(doc.states[state]?.data))).data;
+          }
+        }
         notification.success({ message: 'Document saved' });
         this.setState(
           {
-            doc: response.data,
+            doc: {
+              ...doc,
+              states: response
+            },
             redirectTo: doc.id
               ? null // existing doc, no redirect
               : `/services/${service.name}/resources/${resourceName}/${response.data.id}`
@@ -211,10 +223,14 @@ class ResourceForm extends Component {
                 value={selectedState}
                 onChange={event => {
                   const toUpdate = {
+                    doc: { ...doc },
                     selectedState: event.target.value
                   };
+                  if (!Object.keys(doc.states).includes(event.target.value)) {
+                    toUpdate.doc.states[event.target.value] = { data: { ...doc.states[doc.state].data, CampsiIsNewState: true } };
+                  }
                   if (this.state.lastStateUpdate === selectedState) {
-                    toUpdate.doc = { ...doc, states: { ...doc.states, [selectedState]: { data: this.state.formData } } };
+                    toUpdate.doc.states[selectedState] = { data: this.state.formData };
                   }
                   this.setState(toUpdate);
                 }}
@@ -232,7 +248,10 @@ class ResourceForm extends Component {
           >
             <Form
               className="rjsf ant-form-vertical"
-              schema={resource.schema}
+              schema={{
+                ...resource.schema,
+                properties: { ...resource.schema.properties, CampsiIsNewState: { type: 'boolean' } }
+              }}
               validator={validator}
               formData={this.state.doc.states?.[selectedState]?.data}
               formContext={{
