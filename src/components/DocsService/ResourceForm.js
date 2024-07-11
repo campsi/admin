@@ -9,9 +9,20 @@ import { cleanLocalizedValue } from '../LocalizedText/LocalizedText';
 import { Navigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import validator from '@rjsf/validator-ajv8';
+import styled from 'styled-components';
 
 const { confirm } = Modal;
 const { Title } = Typography;
+
+const StatesButtonGroup = styled.div`
+  text-align: center;
+  width: 350px;
+  height: 80px;
+  margin-top: 10px;
+  div {
+    margin-bottom: 5px;
+  }
+`;
 
 class ResourceForm extends Component {
   state = {
@@ -188,8 +199,25 @@ class ResourceForm extends Component {
     const { resourceName } = params;
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
-
     const { doc, selectedState = resourceClass.defaultState, users, redirectTo } = this.state;
+
+    const useDocState = async () => {
+      const { api, service } = this.props;
+      await api.client.put(`${service.name}/${resourceName}/${doc.id}/state`, {
+        from: selectedState,
+        to: resourceClass.defaultState
+      });
+      await this.fetchData();
+      this.setState({ selectedState: resourceClass.defaultState });
+    };
+
+    const copyDefaultDocState = () => {
+      const toUpdate = {
+        doc: { ...doc }
+      };
+      toUpdate.doc.states[selectedState] = { data: { ...doc.states[resourceClass.defaultState]?.data } };
+      this.setState(toUpdate);
+    };
 
     if (!doc) {
       return <Empty description="No document" />;
@@ -217,27 +245,41 @@ class ResourceForm extends Component {
           <Card
             title="Document data"
             extra={
-              <Radio.Group
-                value={selectedState}
-                onChange={event => {
-                  const toUpdate = {
-                    doc: { ...doc },
-                    selectedState: event.target.value
-                  };
-                  if (!Object.keys(doc.states).includes(event.target.value)) {
-                    toUpdate.doc.states[event.target.value] = { data: { ...doc.states[doc.state].data } };
-                  }
-                  this.setState(toUpdate);
-                }}
-              >
-                {Object.keys(resourceClass.states).map(state => {
-                  return (
-                    <Radio.Button key={state} value={state}>
-                      {state}
-                    </Radio.Button>
-                  );
-                })}
-              </Radio.Group>
+              <StatesButtonGroup>
+                <Radio.Group
+                  value={selectedState}
+                  onChange={event => {
+                    const toUpdate = {
+                      doc: { ...doc },
+                      selectedState: event.target.value
+                    };
+                    this.setState(toUpdate);
+                  }}
+                >
+                  {Object.keys(resourceClass.states).map(state => {
+                    return (
+                      <Radio.Button key={state} value={state}>
+                        {state}
+                      </Radio.Button>
+                    );
+                  })}
+                </Radio.Group>
+                <br />
+                <Button.Group>
+                  <Button
+                    disabled={selectedState === resourceClass.defaultState}
+                    danger
+                    key={`use${selectedState}`}
+                    onClick={useDocState}
+                  >{`Use as ${resourceClass.defaultState} state`}</Button>
+                  <Button
+                    disabled={selectedState === resourceClass.defaultState}
+                    type="primary"
+                    key={`update${selectedState}`}
+                    onClick={copyDefaultDocState}
+                  >{`Copy ${resourceClass.defaultState} state`}</Button>
+                </Button.Group>
+              </StatesButtonGroup>
             }
             actions={getActions.bind(this)(service, resourceName)}
           >
