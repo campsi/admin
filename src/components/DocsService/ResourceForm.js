@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withAppContext } from '../../App';
 import withParams from '../../utils/withParams';
 import Form from '@rjsf/antd';
-import { Button, Card, Descriptions, Empty, Layout, Modal, notification, Radio, Space, Table, Tag, Typography } from 'antd';
+import { Button, Card, Descriptions, Empty, Layout, Modal, notification, Radio, Space, Table, Typography } from 'antd';
 import { generateRelationField } from '../RelationField/RelationField';
 import { cleanLocalizedValue } from '../LocalizedText/LocalizedText';
 import { Navigate } from 'react-router-dom';
@@ -16,10 +16,8 @@ const { Title } = Typography;
 class ResourceForm extends Component {
   state = {
     selectedState: undefined,
-    lastStateUpdate: undefined,
     users: [],
-    doc: {},
-    formData: {}
+    doc: {}
   };
 
   formRef = React.createRef();
@@ -57,8 +55,6 @@ class ResourceForm extends Component {
     this.setState({
       doc: response.data,
       selectedState: response.data.state,
-      lastStateUpdate: response.data.state,
-      formData: response.data.states[response.data.state]?.data,
       isFetching: false
     });
   }
@@ -97,10 +93,12 @@ class ResourceForm extends Component {
         const url = doc.id ? `${service.name}/${resourceName}/${doc.id}` : `${service.name}/${resourceName}`;
         let response = {};
         for (const state of Object.keys(doc.states)) {
-          if (state === this.state.selectedState) {
-            response[state] = (await api.client[method](url + `/${state}`, cleanLocalizedValue(newValue))).data;
-          } else {
-            response[state] = (await api.client[method](url + `/${state}`, cleanLocalizedValue(doc.states[state]?.data))).data;
+          if (state === doc.state || JSON.stringify(doc.states[state]?.data) !== JSON.stringify(doc.states[doc.state]?.data)) {
+            if (state === this.state.selectedState) {
+              response[state] = (await api.client[method](url + `/${state}`, cleanLocalizedValue(newValue))).data;
+            } else {
+              response[state] = (await api.client[method](url + `/${state}`, cleanLocalizedValue(doc.states[state]?.data))).data;
+            }
           }
         }
         notification.success({ message: 'Document saved' });
@@ -227,10 +225,7 @@ class ResourceForm extends Component {
                     selectedState: event.target.value
                   };
                   if (!Object.keys(doc.states).includes(event.target.value)) {
-                    toUpdate.doc.states[event.target.value] = { data: { ...doc.states[doc.state].data, CampsiIsNewState: true } };
-                  }
-                  if (this.state.lastStateUpdate === selectedState) {
-                    toUpdate.doc.states[selectedState] = { data: this.state.formData };
+                    toUpdate.doc.states[event.target.value] = { data: { ...doc.states[doc.state].data } };
                   }
                   this.setState(toUpdate);
                 }}
@@ -248,10 +243,7 @@ class ResourceForm extends Component {
           >
             <Form
               className="rjsf ant-form-vertical"
-              schema={{
-                ...resource.schema,
-                properties: { ...resource.schema.properties, CampsiIsNewState: { type: 'boolean' } }
-              }}
+              schema={resource.schema}
               validator={validator}
               formData={this.state.doc.states?.[selectedState]?.data}
               formContext={{
@@ -276,8 +268,7 @@ class ResourceForm extends Component {
               }}
               onChange={e => {
                 this.setState({
-                  formData: e.formData,
-                  lastStateUpdate: this.state.selectedState
+                  doc: { ...doc, states: { ...doc.states, [selectedState]: { data: e.formData } } }
                 });
               }}
               onSubmit={({ formData }) => this.updateDocument(formData)}
