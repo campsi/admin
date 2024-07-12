@@ -3,15 +3,26 @@ import PropTypes from 'prop-types';
 import { withAppContext } from '../../App';
 import withParams from '../../utils/withParams';
 import Form from '@rjsf/antd';
-import { Button, Card, Descriptions, Empty, Layout, Modal, notification, Radio, Space, Table, Tag, Typography } from 'antd';
+import { Button, Card, Descriptions, Empty, Layout, Modal, notification, Radio, Space, Table, Typography } from 'antd';
 import { generateRelationField } from '../RelationField/RelationField';
 import { cleanLocalizedValue } from '../LocalizedText/LocalizedText';
 import { Navigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import validator from '@rjsf/validator-ajv8';
+import styled from 'styled-components';
 
 const { confirm } = Modal;
 const { Title } = Typography;
+
+const StatesButtonGroup = styled.div`
+  text-align: center;
+  width: 350px;
+  height: 80px;
+  margin-top: 10px;
+  div {
+    margin-bottom: 5px;
+  }
+`;
 
 class ResourceForm extends Component {
   state = {
@@ -54,6 +65,7 @@ class ResourceForm extends Component {
     const response = await api.client.get(`${service.name}/${resourceName}/${id}`);
     this.setState({
       doc: response.data,
+      selectedState: response.data.state,
       isFetching: false
     });
   }
@@ -90,12 +102,23 @@ class ResourceForm extends Component {
       try {
         const method = doc.id ? 'put' : 'post';
         const url = doc.id ? `${service.name}/${resourceName}/${doc.id}` : `${service.name}/${resourceName}`;
-
-        const response = await api.client[method](url, cleanLocalizedValue(newValue));
+        let response = {};
+        for (const state of Object.keys(doc.states)) {
+          if (state === doc.state || JSON.stringify(doc.states[state]?.data) !== JSON.stringify(doc.states[doc.state]?.data)) {
+            if (state === this.state.selectedState) {
+              response[state] = (await api.client[method](url + `/${state}`, cleanLocalizedValue(newValue))).data;
+            } else {
+              response[state] = (await api.client[method](url + `/${state}`, cleanLocalizedValue(doc.states[state]?.data))).data;
+            }
+          }
+        }
         notification.success({ message: 'Document saved' });
         this.setState(
           {
-            doc: response.data,
+            doc: {
+              ...doc,
+              states: response
+            },
             redirectTo: doc.id
               ? null // existing doc, no redirect
               : `/services/${service.name}/resources/${resourceName}/${response.data.id}`
@@ -176,8 +199,25 @@ class ResourceForm extends Component {
     const { resourceName } = params;
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
-
     const { doc, selectedState = resourceClass.defaultState, users, redirectTo } = this.state;
+
+    const useDocState = async () => {
+      const { api, service } = this.props;
+      await api.client.put(`${service.name}/${resourceName}/${doc.id}/state`, {
+        from: selectedState,
+        to: resourceClass.defaultState
+      });
+      await this.fetchData();
+      this.setState({ selectedState: resourceClass.defaultState });
+    };
+
+    const copyDefaultDocState = () => {
+      const toUpdate = {
+        doc: { ...doc }
+      };
+      toUpdate.doc.states[selectedState] = { data: { ...doc.states[resourceClass.defaultState]?.data } };
+      this.setState(toUpdate);
+    };
 
     if (!doc) {
       return <Empty description="No document" />;
@@ -205,20 +245,41 @@ class ResourceForm extends Component {
           <Card
             title="Document data"
             extra={
-              <Radio.Group
-                value={selectedState}
-                onChange={event => {
-                  this.setState({ selectedState: event.target.value });
-                }}
-              >
-                {Object.keys(resourceClass.states).map(state => {
-                  return (
-                    <Radio.Button key={state} value={state}>
-                      {state}
-                    </Radio.Button>
-                  );
-                })}
-              </Radio.Group>
+              <StatesButtonGroup>
+                <Radio.Group
+                  value={selectedState}
+                  onChange={event => {
+                    const toUpdate = {
+                      doc: { ...doc },
+                      selectedState: event.target.value
+                    };
+                    this.setState(toUpdate);
+                  }}
+                >
+                  {Object.keys(resourceClass.states).map(state => {
+                    return (
+                      <Radio.Button key={state} value={state}>
+                        {state}
+                      </Radio.Button>
+                    );
+                  })}
+                </Radio.Group>
+                <br />
+                <Button.Group>
+                  <Button
+                    disabled={selectedState === resourceClass.defaultState}
+                    danger
+                    key={`use${selectedState}`}
+                    onClick={useDocState}
+                  >{`Use as ${resourceClass.defaultState} state`}</Button>
+                  <Button
+                    disabled={selectedState === resourceClass.defaultState}
+                    type="primary"
+                    key={`update${selectedState}`}
+                    onClick={copyDefaultDocState}
+                  >{`Copy ${resourceClass.defaultState} state`}</Button>
+                </Button.Group>
+              </StatesButtonGroup>
             }
             actions={getActions.bind(this)(service, resourceName)}
           >
@@ -226,7 +287,7 @@ class ResourceForm extends Component {
               className="rjsf ant-form-vertical"
               schema={resource.schema}
               validator={validator}
-              formData={doc.data}
+              formData={this.state.doc.states?.[selectedState]?.data}
               formContext={{
                 id: doc.id,
                 createdAt: doc.createdAt,
@@ -246,6 +307,11 @@ class ResourceForm extends Component {
                     { passive: false }
                   );
                 }
+              }}
+              onChange={e => {
+                this.setState({
+                  doc: { ...doc, states: { ...doc.states, [selectedState]: { data: e.formData } } }
+                });
               }}
               onSubmit={({ formData }) => this.updateDocument(formData)}
             />
