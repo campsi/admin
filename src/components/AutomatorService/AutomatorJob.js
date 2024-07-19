@@ -20,8 +20,9 @@ import {
 import AutomatorJobActions from './AutomatorJobActions';
 import Meta from 'antd/es/card/Meta';
 import copyText from '../../utils/copyText';
-import dayjs from 'dayjs';
 import { getDisplayedDuration } from './automatorHelpers';
+import styled from 'styled-components';
+import dayjs from 'dayjs';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
@@ -33,6 +34,22 @@ function urlify(text) {
   // or alternatively
   // return text.replace(urlRegex, '<a href="$1">$1</a>')
 }
+
+const ButtonIcon = styled.button`
+  height: auto;
+  margin: 5px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+  img {
+    border-radius: 5px;
+    margin-top: 3px;
+    height: 40px;
+    display: inline-flex;
+  }
+`;
+
 class AutomatorJob extends Component {
   state = {
     job: {},
@@ -176,6 +193,18 @@ class AutomatorJob extends Component {
     }
   }
 
+  getCloudWatchLink(job) {
+    const env = process.env.REACT_APP_API_URL.includes('test') ? 'staging' : 'prod';
+    const start = new dayjs(job.updatedAt).subtract(5, 'hour').valueOf();
+    const end = new dayjs(job.updatedAt).add(5, 'hour').valueOf();
+    return `https://eu-west-1.console.aws.amazon.com/cloudwatch/home?region=eu-west-1#logsV2:log-groups/log-group/$252Faws$252Fecs$252Fautomator-v2-task-${env}/log-events$3FfilterPattern$3D${job._id}$26start$3D${start}$26end$3D${end}`;
+  }
+  getDatadogLink(job) {
+    const env = process.env.REACT_APP_API_URL.includes('test') ? 'staging' : 'prod';
+    const start = new dayjs(job.updatedAt).subtract(5, 'hour').valueOf();
+    const end = new dayjs(job.updatedAt).add(5, 'hour').valueOf();
+    return `https://app.datadoghq.eu/logs?query=service%3Aautomator-v2%20%40jobId%3A${job._id}%20env%3A${env}%20&agg_m=count&agg_m_source=base&agg_t=count&cols=host%2Cservice&fromUser=true&messageDisplay=inline&refresh_mode=paused&storage=hot&stream_sort=desc&viz=stream&from_ts=${start}&to_ts=${end}&live=false`;
+  }
   render() {
     const { job, isFetching } = this.state;
     const allActions = Object.keys(AutomatorJobActions);
@@ -242,7 +271,7 @@ class AutomatorJob extends Component {
     }
     return (
       <Card title="Job detail" extra={<Button onClick={() => this.fetchData()} icon={<ReloadOutlined />} />}>
-        <Tabs type="card" key={job.id}>
+        <Tabs type="card" key={job._id}>
           <TabPane tab="job details" key="tab_details">
             {job.message?.error && this.renderError(job.message.error)}
             <Descriptions bordered column={2} size="small">
@@ -251,7 +280,18 @@ class AutomatorJob extends Component {
               <Descriptions.Item label="Domain">{job.params?.domain}</Descriptions.Item>
               <Descriptions.Item label="createdBy">{job.createdBy}</Descriptions.Item>
               <Descriptions.Item label="createdAt">{job.createdAt}</Descriptions.Item>
-              <Descriptions.Item label="Priority">{job.params?.priority}</Descriptions.Item>
+              <Descriptions.Item label="Links">
+                <ButtonIcon type="default" htmlType="button">
+                  <a target="_blank" href={this.getDatadogLink(job)} rel="noreferrer">
+                    <img src="https://axeptio.imgix.net/2024/07/a35249c4-7a4f-4a42-8b3b-713315139d38.svg" alt={'datadog'} />
+                  </a>
+                </ButtonIcon>
+                <ButtonIcon type="default" htmlType="button">
+                  <a target="_blank" href={this.getCloudWatchLink(job)} rel="noreferrer">
+                    <img src="https://axeptio.imgix.net/2024/07/ac58aaed-39f0-4ba6-aec1-6eeb88e1fb3f.png" alt={'cloudwatch'} />
+                  </a>
+                </ButtonIcon>
+              </Descriptions.Item>
               {duration && <Descriptions.Item label="Duration">{duration}</Descriptions.Item>}
               <Descriptions.Item>
                 <Button
