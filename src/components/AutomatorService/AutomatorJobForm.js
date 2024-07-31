@@ -305,6 +305,28 @@ function AutomatorJobForm({ onFinish, api }) {
               )}
             </Form.List>
           </TabPane>
+          <TabPane tab={getActionTab('pdf')} key="pdf">
+            {approvalOption('pdf')}
+            <Form.Item label="PDF Languages" name={['actions', 'pdf', 'languages']} initialValue={['en']}>
+              <Select
+                mode="multiple"
+                options={[
+                  {
+                    label: 'English 🇬🇧',
+                    value: 'en'
+                  },
+                  {
+                    label: 'French 🇫🇷',
+                    value: 'fr'
+                  },
+                  {
+                    label: 'Quebec 🇨🇦🇲🇶',
+                    value: 'fr-CA-QC'
+                  }
+                ]}
+              />
+            </Form.Item>
+          </TabPane>
           <TabPane tab={getActionTab('scoring')} key="scoring">
             <CenteredDiv>
               <Alert
