@@ -20,6 +20,10 @@ const actionsMap = {
     name: 'gtm',
     title: 'GTM'
   },
+  pdf: {
+    name: 'pdf',
+    title: 'PDF'
+  },
   scoring: {
     name: 'scoring',
     title: 'Scoring'

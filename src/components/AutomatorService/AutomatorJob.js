@@ -23,6 +23,7 @@ import copyText from '../../utils/copyText';
 import { getDisplayedDuration } from './automatorHelpers';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
+import PDFdetails from './Details/PDFDetails';
 const { TabPane } = Tabs;
 const { TextArea } = Input;
 
@@ -186,6 +187,8 @@ class AutomatorJob extends Component {
         return <ShowcaseDetails result={job.actions[action].result ?? job.actions[action].preview} />;
       case 'gtm':
         return <GtmDetails result={job.actions[action].result ?? job.actions[action].preview} />;
+      case 'pdf':
+        return <PDFdetails result={job.actions[action].result ?? job.actions[action].preview} />;
       case 'emailing':
         return <></>;
       default:
