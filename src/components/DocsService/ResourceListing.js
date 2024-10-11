@@ -1,10 +1,10 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { withAppContext } from '../../App';
 import withParams from '../../utils/withParams';
 import { Link } from 'react-router-dom';
 import { CheckOutlined, CloseOutlined, FileOutlined, SearchOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { Layout, Typography, Table, notification, Card, Space, Button, Select, Input } from 'antd';
+import { Layout, Typography, Table, notification, Card, Space, Button, Select, Input, Radio } from 'antd';
 const { Title } = Typography;
 const { Option } = Select;
 
@@ -130,14 +130,15 @@ class ResourceListing extends Component {
     }
   }
 
-  async fetchData(filters = {}, sorter = {}, pagination) {
+  async fetchData(filters = {}, sorter = {}, pagination, selectedState) {
     /* Destructuring the props object. */
     const { api, service, authenticated } = this.props;
     const { visibleProperties } = this.state;
     const { resourceName } = this.props.params;
     const resource = service.resources[resourceName];
     const resourceClass = service.classes[resource.class];
-    let { perPage, page, selectedState = resourceClass.defaultState } = this.state;
+    selectedState = selectedState ?? this.state.selectedState ?? resourceClass.defaultState;
+    let { perPage, page } = this.state;
     if (pagination) {
       perPage = pagination.pageSize;
       page = pagination.current;
@@ -204,12 +205,14 @@ class ResourceListing extends Component {
       const field = Array.isArray(sorter.field) ? sorter.field.join('.') : sorter.field;
       params.append('sort', `${sorter.order !== 'ascend' ? `-states.${selectedState}.` : `states.${selectedState}.`}${field}`);
     }
+    params.append('state', selectedState);
     const response = await api.client.get(`/${service.name}/${resourceName}?${params.toString()}`);
     this.setState({
       items: response.data,
       isFetching: false,
       lastPage: Number(response.headers['x-last-page']),
-      totalCount: Number(response.headers['x-total-count'])
+      totalCount: Number(response.headers['x-total-count']),
+      selectedState: selectedState
     });
   }
 
@@ -327,8 +330,9 @@ class ResourceListing extends Component {
   render() {
     const { service } = this.props;
     const { resourceName } = this.props.params;
-    const { language, visibleProperties } = this.state;
+    const { language, visibleProperties, selectedState } = this.state;
     const resource = service.resources[resourceName];
+    const resourceClass = service.classes[resource.class];
 
     const allProperties = Object.keys(resource.schema.properties).map(prop => {
       return { name: prop, ...resource.schema.properties[prop] };
@@ -373,7 +377,7 @@ class ResourceListing extends Component {
         </Title>
         <Space direction="vertical">
           <Card>
-            <Space>
+            <Space style={{ marginBottom: '20px' }}>
               <Link to={`/services/${service.name}/resources/${resourceName}/new`}>
                 <Button>Create new document</Button>
               </Link>
@@ -388,6 +392,27 @@ class ResourceListing extends Component {
                 {this.renderPropertyOptions(allProperties)}
               </Select>
             </Space>
+            <Space.Compact block>
+              <Radio.Group
+                value={selectedState}
+                onChange={event => {
+                  const { page, perPage } = this.state;
+                  const toUpdate = {
+                    selectedState: event.target.value
+                  };
+                  this.setState(toUpdate);
+                  this.fetchData(this.state.filters, {}, { current: page, pageSize: perPage }, event.target.value);
+                }}
+              >
+                {Object.keys(resourceClass.states).map(state => {
+                  return (
+                    <Radio.Button key={state} value={state}>
+                      {state}
+                    </Radio.Button>
+                  );
+                })}
+              </Radio.Group>
+            </Space.Compact>
           </Card>
           <div className="site-layout-background">
             <Table
