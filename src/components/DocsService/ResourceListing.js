@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { withAppContext } from '../../App';
 import withParams from '../../utils/withParams';
 import { Link } from 'react-router-dom';
-import { CheckOutlined, CloseOutlined, FileOutlined, SearchOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, ExclamationCircleOutlined, FileOutlined, SearchOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { Layout, Typography, Table, notification, Card, Space, Button, Select, Input, Radio } from 'antd';
+import { Layout, Typography, Table, notification, Card, Space, Button, Select, Input, Radio, Flex, Modal } from 'antd';
+import ButtonGroup from 'antd/es/button/button-group';
 const { Title } = Typography;
 const { Option } = Select;
+const { confirm } = Modal;
 
 class ResourceListing extends Component {
   constructor(props) {
@@ -328,7 +330,7 @@ class ResourceListing extends Component {
   }
 
   render() {
-    const { service } = this.props;
+    const { service, api } = this.props;
     const { resourceName } = this.props.params;
     const { language, visibleProperties, selectedState } = this.state;
     const resource = service.resources[resourceName];
@@ -392,7 +394,7 @@ class ResourceListing extends Component {
                 {this.renderPropertyOptions(allProperties)}
               </Select>
             </Space>
-            <Space.Compact block>
+            <Flex justify="space-between" align="center">
               <Radio.Group
                 value={selectedState}
                 onChange={event => {
@@ -412,7 +414,37 @@ class ResourceListing extends Component {
                   );
                 })}
               </Radio.Group>
-            </Space.Compact>
+              <ButtonGroup>
+                {resource.schema['ui:functions'].map(func => {
+                  return (
+                    <Button
+                      key={func.name}
+                      onClick={async () => {
+                        if (func.warning) {
+                          confirm({
+                            title: func.warning.title,
+                            icon: <ExclamationCircleOutlined />,
+                            content: func.warning.content,
+                            onOk: async () => {
+                              try {
+                                await api.client.get(func.url);
+                              } catch (error) {
+                                notification.error({ message: error.message });
+                              }
+                            }
+                          });
+                        } else {
+                          await api.client.get(func.url);
+                        }
+                      }}
+                      danger={func.warning}
+                    >
+                      {func.name}
+                    </Button>
+                  );
+                })}
+              </ButtonGroup>
+            </Flex>
           </Card>
           <div className="site-layout-background">
             <Table
