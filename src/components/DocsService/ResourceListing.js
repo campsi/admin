@@ -420,21 +420,23 @@ class ResourceListing extends Component {
                     <Button
                       key={func.name}
                       onClick={async () => {
+                        const executeFunc = async () => {
+                          try {
+                            const resp = await api.client.get(func.url);
+                            notification.success({ message: resp.data.message ?? 'Success' });
+                          } catch (error) {
+                            notification.error({ message: error.response.data.message ?? error.message });
+                          }
+                        };
                         if (func.warning) {
                           confirm({
                             title: func.warning.title,
                             icon: <ExclamationCircleOutlined />,
                             content: func.warning.content,
-                            onOk: async () => {
-                              try {
-                                await api.client.get(func.url);
-                              } catch (error) {
-                                notification.error({ message: error.message });
-                              }
-                            }
+                            onOk: executeFunc
                           });
                         } else {
-                          await api.client.get(func.url);
+                          await executeFunc();
                         }
                       }}
                       danger={func.warning}
