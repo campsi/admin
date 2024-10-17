@@ -415,7 +415,7 @@ class ResourceListing extends Component {
                 })}
               </Radio.Group>
               <ButtonGroup>
-                {resource.schema['ui:functions'].map(func => {
+                {resource.schema['ui:functions']?.map(func => {
                   return (
                     <Button
                       key={func.name}
