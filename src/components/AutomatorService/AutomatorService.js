@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Typography, Layout, Table, Tag, Card, Space, Button, Modal, Form, Input, Tooltip } from 'antd';
+import { Typography, Layout, Table, Tag, Card, Space, Button, Modal, Form, Input, Tooltip, Select } from 'antd';
 import { withAppContext } from '../../App';
 import PropTypes from 'prop-types';
 import { Link, Route, Routes } from 'react-router-dom';
@@ -12,8 +12,7 @@ import {
   FilePdfOutlined,
   LoadingOutlined,
   ReloadOutlined,
-  UndoOutlined,
-  VerticalAlignBottomOutlined
+  UndoOutlined
 } from '@ant-design/icons';
 import AutomatorJobForm from './AutomatorJobForm';
 import actions from './AutomatorJobActions';
@@ -57,6 +56,7 @@ class AutomatorService extends Component {
     this.fetchData = this.fetchData.bind(this);
   }
   state = {
+    tags: [],
     bulkJobCreationModalOpen: false,
     activeActions: [],
     jobs: [],
@@ -370,6 +370,17 @@ class AutomatorService extends Component {
             title="Jobs"
             extra={
               <>
+                <Select
+                  style={{ width: '100px' }}
+                  mode="multiple"
+                  allowClear
+                  placeholder="Job Tags"
+                  onChange={console.log}
+                  options={this.state.tags}
+                />
+                <Button style={{ margin: '10px' }} onClick={() => this.fetchData()}>
+                  <FileExcelOutlined />
+                </Button>
                 <Button style={{ margin: '10px' }} onClick={() => this.fetchData()}>
                   {isFetching ? <LoadingOutlined /> : <ReloadOutlined />}
                 </Button>
