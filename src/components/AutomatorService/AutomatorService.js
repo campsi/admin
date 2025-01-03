@@ -21,6 +21,8 @@ import { debounce } from '../../utils/debounce';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
+import { downloadCSV } from '../CSVtools/utils';
+import { convertJobsToCSVString } from './automatorHelpers';
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 const { Title } = Typography;
@@ -251,6 +253,23 @@ class AutomatorService extends Component {
       await this.fetchData();
     }
   }
+  async downloadJobsCSV() {
+    const { api, service } = this.props;
+    if (!this.state.selectedTags && !this.state.selectedTags.length > 0) {
+      return;
+    } else {
+      this.setState({ downloadingCSV: true });
+    }
+    const response = await api.client.get(
+      `${service.name}/jobs?perPage=${this.state.totalCount}${
+        this.state.domainFilter ? '&domain=' + this.state.domainFilter : ''
+      }${this.state.selectedTags ? '&tags=' + this.state.selectedTags.join(',') : ''}`,
+      { timeout: 20000 }
+    );
+
+    downloadCSV('jobs.csv', convertJobsToCSVString(response.data));
+    this.setState({ downloadingCSV: false });
+  }
 
   async restartJob(jobToRestart) {
     const { api, service } = this.props;
@@ -273,7 +292,18 @@ class AutomatorService extends Component {
   async componentDidMount() {
     if (this.props.authenticated) {
       await this.fetchData();
+      await this.fetchTags();
     }
+  }
+
+  async fetchTags() {
+    const { api, service } = this.props;
+    const response = await api.client.get(`${service.name}/tags`);
+    await this.setStateAsync({
+      tags: response.data.map(obj => {
+        return { label: obj.tag, value: obj.tag };
+      })
+    });
   }
 
   async componentDidUpdate(prevProps, prevState, snapshot) {
@@ -289,7 +319,7 @@ class AutomatorService extends Component {
     const response = await api.client.get(
       `${service.name}/jobs?perPage=${perPage}&page=${page}&sort=${sort}${
         this.state.domainFilter ? '&domain=' + this.state.domainFilter : ''
-      }`,
+      }${this.state.selectedTags ? '&tags=' + this.state.selectedTags.join(',') : ''}`,
       { timeout: 20000 }
     );
     await this.setStateAsync({
@@ -375,11 +405,14 @@ class AutomatorService extends Component {
                   mode="multiple"
                   allowClear
                   placeholder="Job Tags"
-                  onChange={console.log}
+                  onChange={value => {
+                    this.setState({ selectedTags: value });
+                    this.fetchData();
+                  }}
                   options={this.state.tags}
                 />
-                <Button style={{ margin: '10px' }} onClick={() => this.fetchData()}>
-                  <FileExcelOutlined />
+                <Button style={{ margin: '10px' }} onClick={this.downloadJobsCSV.bind(this)}>
+                  {this.state.downloadingCSV ? <LoadingOutlined /> : <FileExcelOutlined />}
                 </Button>
                 <Button style={{ margin: '10px' }} onClick={() => this.fetchData()}>
                   {isFetching ? <LoadingOutlined /> : <ReloadOutlined />}
