@@ -63,6 +63,7 @@ class AutomatorService extends Component {
     activeActions: [],
     jobs: [],
     isFetching: false,
+    selectedTags: [],
     columns: [
       {
         title: 'Created At',
@@ -298,7 +299,7 @@ class AutomatorService extends Component {
 
   async fetchTags() {
     const { api, service } = this.props;
-    const response = await api.client.get(`${service.name}/tags`);
+    const response = await api.client.get(`${service.name}/tags`, { timeout: 60000 });
     await this.setStateAsync({
       tags: response.data.map(obj => {
         return { label: obj.tag, value: obj.tag };
