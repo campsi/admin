@@ -31,18 +31,18 @@ export function convertJobsToCSVString(jsonData) {
   ];
 
   const rows = jsonData.map(item => [
-    item.status || '',
-    item.params?.domain || '',
-    'CMP custom', // Assuming static value for CMP Found
-    item.actions?.scanner?.result?.nbVendorsFound || 0,
-    item.actions?.scanner?.result?.vendorsWellConfigured || 0,
-    item.actions?.scanner?.result?.vendorsTriggeredWithoutConsent || 0,
-    'https://example.com/en.PDF', // Placeholder for PDF URL EN
-    'https://example.com/fr.PDF', // Placeholder for PDF URL FR
-    item.actions?.scanner?.result?.vendorsTriggeredWithoutConsent || 0,
-    item.actions?.scanner?.result?.vendorsExemptOfConsent || 0,
-    item.actions?.showcase?.result?.media?.[0]?.url || '',
-    item.actions?.showcase?.result?.media?.[1]?.url || ''
+    item.status,
+    item.params?.domain,
+    item.actions?.scanner?.result?.CMP,
+    item.actions?.scanner?.result?.nbVendorsFound,
+    item.actions?.scanner?.result?.vendorsWellConfigured,
+    item.actions?.scanner?.result?.vendorsTriggeredWithoutConsent,
+    item.actions?.scanner?.result?.pdfURLs?.en,
+    item.actions?.scanner?.result?.pdfURLs?.fr,
+    item.actions?.scanner?.result?.vendorsTriggeredWithoutConsent,
+    item.actions?.scanner?.result?.vendorsExemptOfConsent,
+    item.actions?.showcase?.result?.media?.[0]?.url,
+    item.actions?.showcase?.result?.media?.[1]?.url
   ]);
 
   return headers.join(',') + '\n' + rows.map(row => row.join(',')).join('\n');
