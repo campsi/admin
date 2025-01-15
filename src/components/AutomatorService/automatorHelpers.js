@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
+import { isConsentModeV2Vendor } from '../../utils/comoV2';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -22,6 +23,7 @@ export function convertJobsToCSVString(jsonData) {
     'Vendors',
     'Vendors Well Configured',
     'Vendors Bad Configured',
+    'is ComoV2 Required',
     'pdfurlEN',
     'pdfurlFR',
     'Vendors Triggered Without Consent',
@@ -36,7 +38,9 @@ export function convertJobsToCSVString(jsonData) {
     item.actions?.scanner?.result?.CMP,
     item.actions?.scanner?.result?.nbVendorsFound,
     item.actions?.scanner?.result?.vendorsWellConfigured,
-    item.actions?.scanner?.result?.vendorsTriggeredWithoutConsent,
+    parseInt(item.actions?.scanner?.result?.nbVendorsFound - item.actions?.scanner?.result?.vendorsWellConfigured) ||
+      (item.actions?.scanner?.result?.CMP ? 0 : ''),
+    item.actions?.scanner?.result?.knownVendors.some(vendor => isConsentModeV2Vendor(vendor)),
     item.actions?.scanner?.result?.pdfURLs?.en,
     item.actions?.scanner?.result?.pdfURLs?.fr,
     item.actions?.scanner?.result?.vendorsTriggeredWithoutConsent,
