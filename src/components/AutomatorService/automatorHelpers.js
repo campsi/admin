@@ -40,7 +40,7 @@ export function convertJobsToCSVString(jsonData) {
     item.actions?.scanner?.result?.vendorsWellConfigured,
     parseInt(item.actions?.scanner?.result?.nbVendorsFound - item.actions?.scanner?.result?.vendorsWellConfigured) ||
       (item.actions?.scanner?.result?.CMP ? 0 : ''),
-    item.actions?.scanner?.result?.knownVendors.some(vendor => isConsentModeV2Vendor(vendor)),
+    item.actions?.scanner?.result?.knownVendors?.some(vendor => isConsentModeV2Vendor(vendor)),
     item.actions?.scanner?.result?.pdfURLs?.en,
     item.actions?.scanner?.result?.pdfURLs?.fr,
     item.actions?.scanner?.result?.vendorsTriggeredWithoutConsent,
