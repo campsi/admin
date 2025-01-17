@@ -265,7 +265,7 @@ class AutomatorService extends Component {
       `${service.name}/jobs?perPage=${this.state.totalCount}${
         this.state.domainFilter ? '&domain=' + this.state.domainFilter : ''
       }${this.state.selectedTags ? '&tags=' + this.state.selectedTags.join(',') : ''}`,
-      { timeout: 20000 }
+      { timeout: 60000 }
     );
 
     downloadCSV('jobs.csv', convertJobsToCSVString(response.data));
